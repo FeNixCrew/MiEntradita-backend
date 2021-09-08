@@ -65,7 +65,7 @@ class TicketTest {
     }
 
     @Test
-    fun `un ticket esta asociado a un partido determinado sadasd`() {
+    fun `a ticket is associated with a specific game`() {
         val partidoEsperado = Game(river, defe)
 
         assertThat(ticket.game).matches {
@@ -97,5 +97,4 @@ class TicketTest {
 
         assertThat(ticket.wasAttended()).isTrue
     }
-
 }
