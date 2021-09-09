@@ -18,24 +18,24 @@ class StadiumTest {
     }
 
     @Test
-    fun `a stadium have a know name`() {
-        assertThat(monumental.knowName).isEqualTo("Monumental")
+    fun `un estadio sabe cual es su nombre conocido`() {
+        assertThat(monumental.knownName).isEqualTo("Monumental")
     }
 
     @Test
-    fun `a stadium have a real name`() {
+    fun `un estadio conoce su nombre real`() {
         assertThat(monumental.realName).isEqualTo("Antonio Vespucio Liberti")
     }
 
     @Test
-    fun `a stadium has a certain capacity`() {
-        assertThat(monumental.availableCapacity).isEqualTo(70074)
+    fun `un estadio conoce su capacidad`() {
+        assertThat(monumental.capacity).isEqualTo(70074)
     }
 
     @Test
-    fun `a stadium is located in a certain place`() {
+    fun `un estadio conoce su ubicacion`() {
         assertThat(monumental.location.location).isEqualTo("Av. Pres. Figueroa Alcorta 7597,CABA")
         assertThat(monumental.location.latitude).isEqualTo(-34.545278)
-        assertThat(monumental.location.longuitude).isEqualTo(-58.449444)
+        assertThat(monumental.location.longitude).isEqualTo(-58.449444)
     }
 }

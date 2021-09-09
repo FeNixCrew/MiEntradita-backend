@@ -1,5 +1,6 @@
 package ar.edu.unq.mientradita.model
 
+import ar.edu.unq.mientradita.model.builders.TeamBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -9,20 +10,27 @@ class TeamTest {
 
     @BeforeEach
     fun setUp(){
-        racing = Team("Racing")
+        racing = TeamBuilder().withName("Racing").build()
     }
 
     @Test
-    fun `two teams are NOT equals when have different name`(){
-        val anotherRacing = Team("Racing club de Avellaneda")
+    fun `dos equipos no son iguales cuando tienen nombres distintos`(){
+        val otroRacing = TeamBuilder().withName("Racing club de Avellaneda").build()
 
-        assertThat(racing.isEquals(anotherRacing)).isFalse
+        assertThat(racing.isEquals(otroRacing)).isFalse
     }
 
     @Test
-    fun `two teams are equals when have same name`(){
-        val anotherRacing = Team("Racing")
+    fun `dos equipos son iguales cuando tienen el mismo nombre`(){
+        val elMismoRacing = TeamBuilder().withName("Racing").build()
 
-        assertThat(racing.isEquals(anotherRacing)).isTrue
+        assertThat(racing.isEquals(elMismoRacing)).isTrue
+    }
+
+    @Test
+    fun `dos equipos son iguales cuando tienen el mismo nombre sin importar el case sensitive`(){
+        val elMismoRacing = TeamBuilder().withName("racing").build()
+
+        assertThat(racing.isEquals(elMismoRacing)).isTrue
     }
 }

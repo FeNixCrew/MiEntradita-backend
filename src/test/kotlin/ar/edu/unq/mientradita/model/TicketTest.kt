@@ -1,100 +1,72 @@
 package ar.edu.unq.mientradita.model
 
-import ar.edu.unq.mientradita.model.exception.OldTicketException
+import ar.edu.unq.mientradita.model.builders.FanBuilder
+import ar.edu.unq.mientradita.model.builders.GameBuilder
+import ar.edu.unq.mientradita.model.builders.TeamBuilder
+import ar.edu.unq.mientradita.model.builders.TicketBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 import java.time.Month
 
 class TicketTest {
-    lateinit var ticket: Ticket
-    lateinit var game: Game
+    lateinit var entrada: Ticket
+    lateinit var partido: Game
     lateinit var river: Team
     lateinit var defe: Team
+    lateinit var horarioDePartido: LocalDateTime
 
     @BeforeEach
     fun setUp() {
-        river = Team("River Plate")
-        defe = Team("Defensa y Justicia")
-        game = Game(river, defe)
-        val date = LocalDateTime.of(2021, 9, 12, 16, 0, 0)
-        ticket = Ticket(reservation = date, game = game)
-
-    }
-
-    // TODO revisar nombres de los tests
-
-    @Test
-    fun `a ticket has a date and time`() {
-        assertThat(ticket.reservation.year).isEqualTo(2021)
-        assertThat(ticket.reservation.month).isEqualTo(Month.SEPTEMBER)
-        assertThat(ticket.reservation.dayOfMonth).isEqualTo(12)
-        assertThat(ticket.reservation.hour).isEqualTo(16)
-        assertThat(ticket.reservation.minute).isEqualTo(0)
+        val teamBuilder = TeamBuilder()
+        river = teamBuilder.withName("River Plate").build()
+        defe = teamBuilder.withName("Defensa y Justicia").build()
+        horarioDePartido = LocalDateTime.of(2021, 9, 12, 16, 0, 0)
+        partido = GameBuilder().withLocal(river).withVisitant(defe).withGameStart(horarioDePartido).build()
+        entrada = TicketBuilder().withGame(partido).build()
     }
 
     @Test
-    fun `a ticket is pending for use`() {
-        assertThat(ticket.state).isEqualTo(StateOfTicket.PENDING)
+    fun `una entrada sabe el momento en el que fue reservada`() {
+        entrada = TicketBuilder()
+                    .withReservation(horarioDePartido.minusDays(3))
+                    .build()
+
+        assertThat(entrada.reservation.year).isEqualTo(2021)
+        assertThat(entrada.reservation.month).isEqualTo(Month.SEPTEMBER)
+        assertThat(entrada.reservation.dayOfMonth).isEqualTo(horarioDePartido.dayOfMonth.minus(3))
+        assertThat(entrada.reservation.hour).isEqualTo(16)
+        assertThat(entrada.reservation.minute).isEqualTo(0)
     }
 
     @Test
-    fun `a ticket was not initially used`() {
-        assertThat(ticket.wasAttended()).isFalse
-    }
-
-
-    @Test
-    fun `the ticket was presented dlkasdnmlas`() {
-        ticket.makeAsPresent()
-        assertThat(ticket.state).isEqualTo(StateOfTicket.PRESENT)
+    fun `una entrada esta relacionada con un partido`() {
+        assertThat(entrada.game).isEqualTo(partido)
     }
 
     @Test
-    fun `a ticket was used`() {
-        ticket.makeAsPresent()
-        assertThat(ticket.wasAttended()).isTrue
+    fun `una entrada esta relacionada con un hincha`() {
+        val fan = FanBuilder().withUsername("fenix").build()
+        entrada = TicketBuilder().withFan(fan).build()
+
+        assertThat(entrada.fan).isEqualTo(fan)
     }
 
     @Test
-    fun `the ticket was not presented`() {
-        ticket.makeAsAbsent()
-        assertThat(ticket.state).isEqualTo(StateOfTicket.ABSENT)
+    fun `una entrada inicialmente tiene un estado de pendiente`() {
+        assertThat(entrada.state).isEqualTo(Attend.PENDING)
     }
 
     @Test
-    fun `a ticket is associated with a specific game`() {
-        val partidoEsperado = Game(river, defe)
-
-        assertThat(ticket.game).matches {
-            it.local.name == partidoEsperado.local.name &&
-                    it.visitant.name == partidoEsperado.visitant.name
-        }
-
+    fun `una entrada se puede marcar como presente`() {
+        entrada.markAsPresent()
+        assertThat(entrada.state).isEqualTo(Attend.PRESENT)
     }
 
     @Test
-    fun `a user cannot use a ticket that has already expired `() {
-        val ticket = Ticket(LocalDateTime.of(2021, 9, 6, 16, 0, 0), game = game)
-
-        val exception = assertThrows<OldTicketException> {
-            ticket.makeAsPresent()
-        }
-
-        assertThat(exception.message).isEqualTo("Esta entrada para el partido de River Plate vs Defensa y Justicia ya expiro")
-
-    }
-
-    @Test
-    fun `a ticket that has already expired has already been attended `() {
-        val ticket = Ticket(LocalDateTime.of(2021, 9, 6, 16, 0, 0), game = game)
-
-        assertThrows<OldTicketException> {
-            ticket.makeAsPresent()
-        }
-
-        assertThat(ticket.wasAttended()).isTrue
+    fun `una entrada se puede marcar como ausente`() {
+        entrada.markAsAbsent()
+        assertThat(entrada.state).isEqualTo(Attend.ABSENT)
     }
 }

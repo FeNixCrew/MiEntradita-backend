@@ -1,24 +1,18 @@
 package ar.edu.unq.mientradita.model
 
-import ar.edu.unq.mientradita.model.exception.OldTicketException
 import java.time.LocalDateTime
 
-class Ticket(val reservation: LocalDateTime,
-             var state: StateOfTicket = StateOfTicket.PENDING,
-             val game: Game) {
+class Ticket(val fan: Fan,
+             val game: Game,
+             val reservation: LocalDateTime = LocalDateTime.now(),
+             var state: Attend = Attend.PENDING,
+             ) {
 
-    fun makeAsPresent() {
-        if (reservation < LocalDateTime.now()) {
-            makeAsAbsent()
-            throw OldTicketException(game)
-        } else {
-            state = StateOfTicket.PRESENT
-        }
+    fun markAsPresent() {
+        state = Attend.PRESENT
     }
 
-    fun makeAsAbsent() {
-        state = StateOfTicket.ABSENT
+    fun markAsAbsent() {
+        state = Attend.ABSENT
     }
-
-    fun wasAttended() = state.wasAttended()
 }
