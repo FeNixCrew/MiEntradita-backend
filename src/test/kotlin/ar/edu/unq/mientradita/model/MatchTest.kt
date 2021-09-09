@@ -1,7 +1,7 @@
 package ar.edu.unq.mientradita.model
 
-import ar.edu.unq.mientradita.model.builders.FanBuilder
-import ar.edu.unq.mientradita.model.builders.GameBuilder
+import ar.edu.unq.mientradita.model.builders.SpectatorBuilder
+import ar.edu.unq.mientradita.model.builders.MatchBuilder
 import ar.edu.unq.mientradita.model.builders.TeamBuilder
 import ar.edu.unq.mientradita.model.builders.TicketBuilder
 import ar.edu.unq.mientradita.model.exception.DifferentGameException
@@ -13,24 +13,24 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 
-class GameTest {
-    lateinit var partido: Game
+class MatchTest {
+    lateinit var partido: Match
     lateinit var entrada: Ticket
     lateinit var horaDelPartido: LocalDateTime
     @BeforeEach
     fun setUp() {
         horaDelPartido = LocalDateTime.of(2021, 1, 1, 16, 30)
-        partido = GameBuilder().withGameStart(horaDelPartido).build()
+        partido = MatchBuilder().withMatchStart(horaDelPartido).build()
         entrada = TicketBuilder().build()
     }
 
     @Test
     fun `al reservar una entrada se decrementa en uno la cantidad de entradas disponibles`() {
-        partido = GameBuilder()
+        partido = MatchBuilder()
             .withAvailableTickets(10)
-            .withGameStart(horaDelPartido)
+            .withMatchStart(horaDelPartido)
             .build()
-        val hincha = FanBuilder().build()
+        val hincha = SpectatorBuilder().build()
         val horaDeCompraDeEntrada = horaDelPartido.minusDays(5)
         val entradasAntesDeQueUnHinchaReserve = partido.availableTickets
 
@@ -41,8 +41,8 @@ class GameTest {
 
     @Test
     fun `se puede entrar a un partido a partir de tres horas antes de que comience`() {
-        partido = GameBuilder()
-            .withGameStart(horaDelPartido)
+        partido = MatchBuilder()
+            .withMatchStart(horaDelPartido)
             .build()
         entrada = TicketBuilder()
             .withGame(partido)
@@ -55,9 +55,9 @@ class GameTest {
 
     @Test
     fun `se puede entrar a un partido hasta noveta minutos luego de que comience`() {
-        partido = GameBuilder()
+        partido = MatchBuilder()
             .withAvailableTickets(10)
-            .withGameStart(horaDelPartido)
+            .withMatchStart(horaDelPartido)
             .build()
         entrada = TicketBuilder()
             .withGame(partido)
@@ -72,7 +72,7 @@ class GameTest {
     @Test
     fun `se levanta una excepcion al querer entrar a un partido con una entrada que pertenece a otro juego`(){
         val local = TeamBuilder().withName("racing").build()
-        partido = GameBuilder().withLocal(local).build()
+        partido = MatchBuilder().withHome(local).build()
         entrada = TicketBuilder().build()
 
         val exception = assertThrows<DifferentGameException> {
@@ -84,8 +84,8 @@ class GameTest {
 
     @Test
     fun `se levanta una excepcion al querer entrar a un partido en una fecha menor a tres horas antes del partido`(){
-        partido = GameBuilder()
-            .withGameStart(horaDelPartido)
+        partido = MatchBuilder()
+            .withMatchStart(horaDelPartido)
             .build()
         entrada = TicketBuilder()
             .withGame(partido)
@@ -101,11 +101,11 @@ class GameTest {
 
     @Test
     fun `se levanta una excepcion al querer entrar a un partido en una fecha mayor a una hora y media luego del partido`(){
-        partido = GameBuilder()
-            .withGameStart(horaDelPartido)
+        partido = MatchBuilder()
+            .withMatchStart(horaDelPartido)
             .build()
         entrada = TicketBuilder()
-            .withGame(GameBuilder().build())
+            .withGame(MatchBuilder().build())
             .build()
 
         val horarioAntesDePoderEntrarAlPartido = horaDelPartido.plusMinutes(91)

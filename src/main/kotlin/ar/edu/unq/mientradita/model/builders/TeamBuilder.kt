@@ -16,7 +16,7 @@ class TeamBuilder {
         return this
     }
 
-    fun withRealName(stadium: Stadium): TeamBuilder {
+    fun withStadium(stadium: Stadium): TeamBuilder {
         this.stadium = stadium
         return this
     }

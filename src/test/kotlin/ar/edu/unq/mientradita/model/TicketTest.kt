@@ -1,7 +1,7 @@
 package ar.edu.unq.mientradita.model
 
-import ar.edu.unq.mientradita.model.builders.FanBuilder
-import ar.edu.unq.mientradita.model.builders.GameBuilder
+import ar.edu.unq.mientradita.model.builders.SpectatorBuilder
+import ar.edu.unq.mientradita.model.builders.MatchBuilder
 import ar.edu.unq.mientradita.model.builders.TeamBuilder
 import ar.edu.unq.mientradita.model.builders.TicketBuilder
 import org.assertj.core.api.Assertions.assertThat
@@ -12,7 +12,7 @@ import java.time.Month
 
 class TicketTest {
     lateinit var entrada: Ticket
-    lateinit var partido: Game
+    lateinit var partido: Match
     lateinit var river: Team
     lateinit var defe: Team
     lateinit var horarioDePartido: LocalDateTime
@@ -23,7 +23,7 @@ class TicketTest {
         river = teamBuilder.withName("River Plate").build()
         defe = teamBuilder.withName("Defensa y Justicia").build()
         horarioDePartido = LocalDateTime.of(2021, 9, 12, 16, 0, 0)
-        partido = GameBuilder().withLocal(river).withVisitant(defe).withGameStart(horarioDePartido).build()
+        partido = MatchBuilder().withHome(river).withAway(defe).withMatchStart(horarioDePartido).build()
         entrada = TicketBuilder().withGame(partido).build()
     }
 
@@ -42,15 +42,15 @@ class TicketTest {
 
     @Test
     fun `una entrada esta relacionada con un partido`() {
-        assertThat(entrada.game).isEqualTo(partido)
+        assertThat(entrada.match).isEqualTo(partido)
     }
 
     @Test
     fun `una entrada esta relacionada con un hincha`() {
-        val fan = FanBuilder().withUsername("fenix").build()
-        entrada = TicketBuilder().withFan(fan).build()
+        val espectador = SpectatorBuilder().withUsername("fenix").build()
+        entrada = TicketBuilder().withFan(espectador).build()
 
-        assertThat(entrada.fan).isEqualTo(fan)
+        assertThat(entrada.spectator).isEqualTo(espectador)
     }
 
     @Test

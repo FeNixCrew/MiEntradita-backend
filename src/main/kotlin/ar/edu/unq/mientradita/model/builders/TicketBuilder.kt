@@ -1,23 +1,23 @@
 package ar.edu.unq.mientradita.model.builders
 
 import ar.edu.unq.mientradita.model.Attend
-import ar.edu.unq.mientradita.model.Fan
-import ar.edu.unq.mientradita.model.Game
+import ar.edu.unq.mientradita.model.Spectator
+import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Ticket
 import java.time.LocalDateTime
 
 class TicketBuilder {
-    private var game: Game = GameBuilder().build()
+    private var match: Match = MatchBuilder().build()
     private var reservation: LocalDateTime = LocalDateTime.now()
     private var state: Attend = Attend.PENDING
-    private var fan: Fan = FanBuilder().build()
+    private var spectator: Spectator = SpectatorBuilder().build()
 
     fun build(): Ticket {
-        return Ticket(fan, game, reservation, state)
+        return Ticket(spectator, match, reservation, state)
     }
 
-    fun withGame(game: Game): TicketBuilder {
-        this.game = game
+    fun withGame(match: Match): TicketBuilder {
+        this.match = match
         return this
     }
 
@@ -26,13 +26,13 @@ class TicketBuilder {
         return this
     }
 
-    fun withState(game: Game): TicketBuilder {
-        this.game = game
+    fun withState(match: Match): TicketBuilder {
+        this.match = match
         return this
     }
 
-    fun withFan(fan: Fan): TicketBuilder {
-        this.fan = fan
+    fun withFan(spectator: Spectator): TicketBuilder {
+        this.spectator = spectator
         return this
     }
 }

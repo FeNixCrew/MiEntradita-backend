@@ -2,8 +2,8 @@ package ar.edu.unq.mientradita.model
 
 import java.time.LocalDateTime
 
-class Ticket(val fan: Fan,
-             val game: Game,
+class Ticket(val spectator: Spectator,
+             val match: Match,
              val reservation: LocalDateTime = LocalDateTime.now(),
              var state: Attend = Attend.PENDING,
              ) {

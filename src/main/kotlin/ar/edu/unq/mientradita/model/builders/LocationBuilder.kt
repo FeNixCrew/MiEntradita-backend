@@ -11,7 +11,7 @@ class LocationBuilder {
         return Location(location, latitude, longitude)
     }
 
-    fun withKnowName(location: String): LocationBuilder {
+    fun withLocation(location: String): LocationBuilder {
         this.location = location
         return this
     }

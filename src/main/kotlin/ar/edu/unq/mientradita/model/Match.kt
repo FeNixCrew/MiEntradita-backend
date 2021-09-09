@@ -5,32 +5,32 @@ import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
 import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
 import java.time.LocalDateTime
 
-class Game(val local: Team, val visitant: Team, val gameStartTime: LocalDateTime, var availableTickets: Int) {
+class Match(val home: Team, val away: Team, val matchStartTime: LocalDateTime, var availableTickets: Int) {
 
-    fun reserveTicket(fan: Fan, reserveTicketTime: LocalDateTime) {
-        val newTicket = Ticket(fan, this, reserveTicketTime)
-        fan.addTicket(newTicket)
+    fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime) {
+        val newTicket = Ticket(spectator, this, reserveTicketTime)
+        spectator.addTicket(newTicket)
         availableTickets -= 1
     }
 
     fun comeIn(ticket: Ticket, attendDate: LocalDateTime) {
-        checkIfIsTheSameGame(ticket.game)
+        checkIfIsTheSameMatch(ticket.match)
         checkIfCanComeIn(attendDate)
 
         ticket.markAsPresent()
     }
 
-    fun isEquals(game: Game) = this.local.isEquals(game.local) && this.visitant.isEquals(game.visitant)
+    fun isEquals(match: Match) = this.home.isEquals(match.home) && this.away.isEquals(match.away)
 
-    private fun checkIfIsTheSameGame(game: Game) {
-        if (!this.isEquals(game)) throw DifferentGameException()
+    private fun checkIfIsTheSameMatch(match: Match) {
+        if (!this.isEquals(match)) throw DifferentGameException()
     }
 
     private fun checkIfCanComeIn(attendDate: LocalDateTime) {
         if (attendDate < openingTime()) throw InvalidOpeningTimeException()
         if (attendDate > closingTime()) throw InvalidClosingTimeException()
     }
-    private fun openingTime() = gameStartTime.minusHours(3)
-    private fun closingTime() = gameStartTime.plusMinutes(90)
+    private fun openingTime() = matchStartTime.minusHours(3)
+    private fun closingTime() = matchStartTime.plusMinutes(90)
 
 }
