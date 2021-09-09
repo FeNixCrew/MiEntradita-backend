@@ -10,10 +10,9 @@ class TicketBuilder {
     private var match: Match = MatchBuilder().build()
     private var reservation: LocalDateTime = LocalDateTime.now()
     private var state: Attend = Attend.PENDING
-    private var spectator: Spectator = SpectatorBuilder().build()
 
     fun build(): Ticket {
-        return Ticket(spectator, match, reservation, state)
+        return Ticket(match, reservation, state)
     }
 
     fun withGame(match: Match): TicketBuilder {
@@ -28,11 +27,6 @@ class TicketBuilder {
 
     fun withState(match: Match): TicketBuilder {
         this.match = match
-        return this
-    }
-
-    fun withFan(spectator: Spectator): TicketBuilder {
-        this.spectator = spectator
         return this
     }
 }

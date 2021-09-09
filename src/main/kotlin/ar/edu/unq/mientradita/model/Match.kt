@@ -5,12 +5,25 @@ import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
 import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
 import ar.edu.unq.mientradita.model.exception.TicketsOffException
 import java.time.LocalDateTime
+import javax.persistence.*
+import kotlin.jvm.Transient
 
-class Match(val home: Team, val away: Team, val matchStartTime: LocalDateTime, var availableTickets: Int) {
+@Entity
+class Match(
+    @ManyToOne( fetch = FetchType.LAZY)
+    val home: Team,
+    @ManyToOne( fetch = FetchType.LAZY)
+    val away: Team,
+    val matchStartTime: LocalDateTime,
+    var availableTickets: Int) {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null
 
     fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime) {
         if(availableTickets == 0) throw TicketsOffException()
-        val newTicket = Ticket(spectator, this, reserveTicketTime)
+        val newTicket = Ticket(this, reserveTicketTime)
         spectator.addTicket(newTicket)
         availableTickets -= 1
     }

@@ -42,7 +42,7 @@ class SpectatorTest {
     }
 
     @Test
-    fun `un espectador que se registra tiene inicialmente un nombre, apellido, nombre de usuario,una contraseña, un email y su dni`() {
+    fun `un espectador conoce su informacion`() {
         val espectadorEsperado = Spectator("Martinez", "nico0510", "Nicolas", "nico@gmail.com", 42254396, "1234")
         assertThat(espectador).usingRecursiveComparison().isEqualTo(espectadorEsperado)
 

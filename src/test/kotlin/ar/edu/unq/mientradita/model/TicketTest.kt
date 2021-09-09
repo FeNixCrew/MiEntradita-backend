@@ -46,14 +46,6 @@ class TicketTest {
     }
 
     @Test
-    fun `una entrada esta relacionada con un hincha`() {
-        val espectador = SpectatorBuilder().withUsername("fenix").build()
-        entrada = TicketBuilder().withFan(espectador).build()
-
-        assertThat(entrada.spectator).isEqualTo(espectador)
-    }
-
-    @Test
     fun `una entrada inicialmente tiene un estado de pendiente`() {
         assertThat(entrada.state).isEqualTo(Attend.PENDING)
     }
