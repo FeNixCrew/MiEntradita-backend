@@ -7,6 +7,7 @@ import ar.edu.unq.mientradita.model.builders.TicketBuilder
 import ar.edu.unq.mientradita.model.exception.DifferentGameException
 import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
 import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
+import ar.edu.unq.mientradita.model.exception.TicketsOffException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -40,6 +41,21 @@ class MatchTest {
     }
 
     @Test
+    fun `no se puede reservar una entrada para un partido que ya no tiene entradas`(){
+        partido = MatchBuilder()
+                .withMatchStart(horaDelPartido)
+                .build()
+        val hincha = SpectatorBuilder().build()
+        val horaDeCompraDeEntrada = horaDelPartido.minusDays(5)
+
+        val excepcion = assertThrows<TicketsOffException> {
+            partido.reserveTicket(hincha, horaDeCompraDeEntrada)
+        }
+
+        assertThat(excepcion.message).isEqualTo("Ya no hay mas entradas")
+    }
+
+    @Test
     fun `se puede entrar a un partido a partir de tres horas antes de que comience`() {
         partido = MatchBuilder()
             .withMatchStart(horaDelPartido)
@@ -62,7 +78,6 @@ class MatchTest {
         entrada = TicketBuilder()
             .withGame(partido)
             .build()
-        val entradasAntesDeQueUnHinchaEntre = partido.availableTickets
 
         partido.comeIn(entrada, horaDelPartido.plusMinutes(90))
 
@@ -70,7 +85,7 @@ class MatchTest {
     }
 
     @Test
-    fun `se levanta una excepcion al querer entrar a un partido con una entrada que pertenece a otro juego`(){
+    fun `no se puede entrar a un partido con una entrada que pertenece a otro juego`(){
         val local = TeamBuilder().withName("racing").build()
         partido = MatchBuilder().withHome(local).build()
         entrada = TicketBuilder().build()
@@ -83,7 +98,7 @@ class MatchTest {
     }
 
     @Test
-    fun `se levanta una excepcion al querer entrar a un partido en una fecha menor a tres horas antes del partido`(){
+    fun `no se puede entrar a un partido en una fecha menor a tres horas antes del partido`(){
         partido = MatchBuilder()
             .withMatchStart(horaDelPartido)
             .build()
@@ -100,7 +115,7 @@ class MatchTest {
     }
 
     @Test
-    fun `se levanta una excepcion al querer entrar a un partido en una fecha mayor a una hora y media luego del partido`(){
+    fun `no se puede entrar a un partido en una fecha mayor a una hora y media luego del partido`(){
         partido = MatchBuilder()
             .withMatchStart(horaDelPartido)
             .build()

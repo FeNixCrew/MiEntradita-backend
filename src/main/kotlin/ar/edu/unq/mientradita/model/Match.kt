@@ -3,11 +3,13 @@ package ar.edu.unq.mientradita.model
 import ar.edu.unq.mientradita.model.exception.DifferentGameException
 import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
 import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
+import ar.edu.unq.mientradita.model.exception.TicketsOffException
 import java.time.LocalDateTime
 
 class Match(val home: Team, val away: Team, val matchStartTime: LocalDateTime, var availableTickets: Int) {
 
     fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime) {
+        if(availableTickets == 0) throw TicketsOffException()
         val newTicket = Ticket(spectator, this, reserveTicketTime)
         spectator.addTicket(newTicket)
         availableTickets -= 1
