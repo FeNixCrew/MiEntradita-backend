@@ -1,10 +1,11 @@
 package ar.edu.unq.mientradita.model
 
 import ar.edu.unq.mientradita.model.builders.*
+import ar.edu.unq.mientradita.model.exception.TicketFromMatchNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
+import org.junit.jupiter.api.assertThrows
 
 class SpectatorTest {
     lateinit var espectador: Spectator
@@ -76,4 +77,31 @@ class SpectatorTest {
         assertThat(espectador.myTickets().size).isEqualTo(1)
     }
 
+    @Test
+    fun `no se le puede pedir a un espectador la entrada de un partido al cual no ha reservado`(){
+        partido = MatchBuilder()
+            .withHome(TeamBuilder().withName("Tigre").build())
+            .withAway(TeamBuilder().withName("River").build())
+            .build()
+        espectador = SpectatorBuilder().withName("Nico").withSurname("Martinez").build()
+
+        val excepcion = assertThrows<TicketFromMatchNotFoundException> { espectador.findTicketFrom(partido) }
+
+        assertThat(excepcion.message)
+            .isEqualTo("No se ha encontrado una entrada reservada de Nico Martinez para el partido Tigre vs River")
+    }
+
+    @Test
+    fun `un espectador sabe encontrar una entrada de un partido que ha reservado`(){
+        partido = MatchBuilder()
+            .withHome(TeamBuilder().withName("Tigre").build())
+            .withAway(TeamBuilder().withName("River").build())
+            .withAvailableTickets(1)
+            .build()
+        espectador = SpectatorBuilder().withName("Nico").withSurname("Martinez").build()
+
+        espectador.reserveATicketFor(partido)
+
+        assertThat(espectador.findTicketFrom(partido).match).isEqualTo(partido)
+    }
 }
