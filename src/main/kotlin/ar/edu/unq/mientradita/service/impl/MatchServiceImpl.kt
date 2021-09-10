@@ -24,6 +24,9 @@ class MatchServiceImpl: MatchService {
     @Autowired
     private lateinit var spectatorRepository: SpectatorRepository
 
+    @Autowired
+    private lateinit var ticketRepository: TicketRepository
+
 
     override fun createMatch(homeId: Long, awayId: Long, ticketPrice: Double, matchStartTime: LocalDateTime): Match {
         val home = teamRepository.findById(homeId).get()
@@ -39,12 +42,17 @@ class MatchServiceImpl: MatchService {
         return matchRepository.findById(id).get()
     }
 
-    override fun reserveTicket(matchId: Long, spectatorId: Long, reserveTicketIme: LocalDateTime): Match {
-        val match = findMatchBy(matchId)
+
+    override fun comeIn(matchId: Long, ticketId: Long, spectatorId: Long, attendTime: LocalDateTime): Match {
+        val ticket = ticketRepository.findById(ticketId).get()
+        val match = matchRepository.findById(matchId).get()
         val spectator = spectatorRepository.findById(spectatorId).get()
-        match.reserveTicket(spectator,reserveTicketIme)
+
+        match.comeIn(ticket,attendTime)
         spectatorRepository.save(spectator)
+        ticketRepository.save(ticket)
 
         return matchRepository.save(match)
     }
+
 }

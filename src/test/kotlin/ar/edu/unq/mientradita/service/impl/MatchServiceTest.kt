@@ -1,5 +1,6 @@
 package ar.edu.unq.mientradita.service.impl
 
+import ar.edu.unq.mientradita.model.Attend
 import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.service.MatchService
 import ar.edu.unq.mientradita.service.SpectatorService
@@ -19,7 +20,7 @@ class MatchServiceTest {
     @Autowired
     private lateinit var spectatorService: SpectatorService
 
-    private val horarioPartido = LocalDateTime.of(2021, 10, 20, 16, 0)
+    private val horarioPartido = LocalDateTime.of(2021, 9, 20, 16, 0)
     private lateinit var equipoLocal: Team
     private lateinit var equipoVisitante: Team
 
@@ -51,7 +52,7 @@ class MatchServiceTest {
     }
 
     @Test
-    fun `se pueden reservar tickets para un partido`(){
+    fun `un espectador asiste a un partido`(){
         equipoLocal = teamService.registerTeam(
                 "racing",
                 "el cilindro",
@@ -81,15 +82,18 @@ class MatchServiceTest {
                 dni = 12345678
         )
 
-        val partidoAntesDeReservarTicket = matchService.createMatch(equipoLocal.id!!, equipoVisitante.id!!, 500.00, horarioPartido)
+        val match = matchService.createMatch(equipoLocal.id!!, equipoVisitante.id!!, 500.00, horarioPartido)
 
-        matchService.reserveTicket(partidoAntesDeReservarTicket.id!!,espectador.id!!, LocalDateTime.now())
+        val espectadorConTicket = spectatorService.reserveTicket(match.id!!,espectador.id!!, LocalDateTime.now())
 
-        val partidoDespuesDeReservarTicket = matchService.findMatchBy(partidoAntesDeReservarTicket.id!!)
+        val ticket = espectadorConTicket.myTickets().first()
 
-        assertThat(partidoAntesDeReservarTicket.availableTickets).isEqualTo(partidoDespuesDeReservarTicket.availableTickets + 1)
-        assertThat(partidoAntesDeReservarTicket.availableTickets).isGreaterThan(partidoDespuesDeReservarTicket.availableTickets)
+        matchService.comeIn(match.id!!,ticket.id!!,espectadorConTicket.id!!,horarioPartido)
+
+        val espectadorDespuesDeAsistir = spectatorService.findSpectatorById(espectadorConTicket.id!!)
+
+        assertThat(espectadorDespuesDeAsistir.myTickets().first().state).isEqualTo(Attend.PRESENT)
+
     }
-
 
 }

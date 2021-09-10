@@ -11,6 +11,6 @@ interface MatchService {
 
     fun findMatchBy(id: Long): Match
 
-    fun reserveTicket(matchId: Long,spectatorId: Long, reserveTicketIme: LocalDateTime): Match
+    fun comeIn(matchId: Long, ticketId: Long,spectatorId: Long, attendTime: LocalDateTime): Match
 
 }

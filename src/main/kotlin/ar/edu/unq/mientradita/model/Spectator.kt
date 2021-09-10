@@ -29,8 +29,8 @@ class Spectator(val surname: String, val username: String, val name: String, val
 
     fun haveTickets(): Boolean = tickets.isNotEmpty()
 
-    fun reserveATicketFor(match: Match){
-        match.reserveTicket(this, LocalDateTime.now())
+    fun reserveATicketFor(match: Match, reserveTime: LocalDateTime = LocalDateTime.now()){
+        match.reserveTicket(this, reserveTime)
     }
 
     fun addTicket(aTicket: Ticket) {
