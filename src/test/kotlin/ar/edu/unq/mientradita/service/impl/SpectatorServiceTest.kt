@@ -38,8 +38,10 @@ class SpectatorServiceTest {
         )
         val espectadorEsperado = spectatorService.findSpectatorById(espectador.id!!)
 
-        // TODO: revisar test despues de arrglar el todo de espectador
-        assertThat(espectador).usingRecursiveComparison().ignoringFields("favoriteTeams").isEqualTo(espectadorEsperado)
+        assertThat(espectador)
+            .usingRecursiveComparison()
+            .ignoringFields("favoriteTeams", "tickets")
+            .isEqualTo(espectadorEsperado)
     }
 
     @Test

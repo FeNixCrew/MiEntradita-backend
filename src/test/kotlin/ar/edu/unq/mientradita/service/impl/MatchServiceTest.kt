@@ -81,18 +81,14 @@ class MatchServiceTest {
                 email = "nico0510@gmail.com",
                 dni = 12345678
         )
-
         val match = matchService.createMatch(equipoLocal.id!!, equipoVisitante.id!!, 500.00, horarioPartido)
+        spectatorService.reserveTicket(match.id!!,espectador.id!!, horarioPartido.minusDays(4))
+        val ticket = spectatorService.findTicketFrom(espectador.id!!, match.id!!)
 
-        val espectadorConTicket = spectatorService.reserveTicket(match.id!!,espectador.id!!, LocalDateTime.now())
+        matchService.comeIn(match.id!!,ticket.id!!,espectador.id!!,horarioPartido)
 
-        val ticket = espectadorConTicket.myTickets().first()
-
-        matchService.comeIn(match.id!!,ticket.id!!,espectadorConTicket.id!!,horarioPartido)
-
-        val espectadorDespuesDeAsistir = spectatorService.findSpectatorById(espectadorConTicket.id!!)
-
-        assertThat(espectadorDespuesDeAsistir.myTickets().first().state).isEqualTo(Attend.PRESENT)
+        val ticketDespuesDeAsistirAlPartido = spectatorService.findTicketFrom(espectador.id!!, match.id!!)
+        assertThat(ticketDespuesDeAsistirAlPartido.state).isEqualTo(Attend.PRESENT)
 
     }
 

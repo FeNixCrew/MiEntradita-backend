@@ -9,6 +9,7 @@ import ar.edu.unq.mientradita.persistence.TeamRepository
 import ar.edu.unq.mientradita.service.TeamService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TeamServiceImpl: TeamService {
@@ -21,6 +22,7 @@ class TeamServiceImpl: TeamService {
     @Autowired
     private lateinit var locationRepository: LocationRepository
 
+    @Transactional
     override fun registerTeam(
         name: String,
         stadiumKnownName: String,
@@ -36,6 +38,7 @@ class TeamServiceImpl: TeamService {
         return teamRepository.save(Team(name, stadium))
     }
 
+    @Transactional
     override fun findTeamBy(id: Long): Team {
         return teamRepository.findById(id).get()
     }

@@ -10,6 +10,7 @@ import ar.edu.unq.mientradita.service.MatchService
 import ar.edu.unq.mientradita.service.SpectatorService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
@@ -28,6 +29,7 @@ class MatchServiceImpl: MatchService {
     private lateinit var ticketRepository: TicketRepository
 
 
+    @Transactional
     override fun createMatch(homeId: Long, awayId: Long, ticketPrice: Double, matchStartTime: LocalDateTime): Match {
         val home = teamRepository.findById(homeId).get()
         val away = teamRepository.findById(awayId).get()
@@ -38,6 +40,7 @@ class MatchServiceImpl: MatchService {
         return matchRepository.save(match)
     }
 
+    @Transactional
     override fun findMatchBy(id: Long): Match {
         return matchRepository.findById(id).get()
     }

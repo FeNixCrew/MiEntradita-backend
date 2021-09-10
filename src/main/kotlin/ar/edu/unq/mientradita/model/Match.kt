@@ -35,7 +35,7 @@ class Match(
         ticket.markAsPresent()
     }
 
-    private fun isEquals(match: Match) = this.home.isEquals(match.home) && this.away.isEquals(match.away)
+    fun isEquals(match: Match) = this.home.isEquals(match.home) && this.away.isEquals(match.away)
 
     private fun checkIfIsTheSameMatch(match: Match) {
         if (!this.isEquals(match)) throw DifferentGameException()
