@@ -15,7 +15,7 @@ class Spectator(val surname: String, val username: String, val name: String, val
     @Transient
     val favoriteTeams = mutableListOf<Team>()
 
-    @OneToMany( fetch = FetchType.LAZY)
+    @OneToMany( fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     val tickets = mutableListOf<Ticket>()
 
     fun haveAFavoriteTeam(): Boolean = favoriteTeams.isNotEmpty()

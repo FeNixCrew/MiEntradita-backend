@@ -1,12 +1,10 @@
 package ar.edu.unq.mientradita.service.impl
 
 import ar.edu.unq.mientradita.model.Team
-import ar.edu.unq.mientradita.model.builders.StadiumBuilder
-import ar.edu.unq.mientradita.model.builders.TeamBuilder
 import ar.edu.unq.mientradita.service.MatchService
+import ar.edu.unq.mientradita.service.SpectatorService
 import ar.edu.unq.mientradita.service.TeamService
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -18,6 +16,8 @@ class MatchServiceTest {
     private lateinit var matchService: MatchService
     @Autowired
     private lateinit var teamService : TeamService
+    @Autowired
+    private lateinit var spectatorService: SpectatorService
 
     private val horarioPartido = LocalDateTime.of(2021, 10, 20, 16, 0)
     private lateinit var equipoLocal: Team
@@ -49,4 +49,47 @@ class MatchServiceTest {
 
         assertThat(match).usingRecursiveComparison().isEqualTo(matchService.findMatchBy(match.id!!))
     }
+
+    @Test
+    fun `se pueden reservar tickets para un partido`(){
+        equipoLocal = teamService.registerTeam(
+                "racing",
+                "el cilindro",
+                "Pte Peron",
+                100,
+                "Avellaneda",
+                -34.667737,
+                -58.3682195
+        )
+
+        equipoVisitante = teamService.registerTeam(
+                "river",
+                "el monumental",
+                "Antonio Vespucio",
+                150,
+                "Nuniez",
+                -32.667737,
+                -57.3682195
+        )
+
+        val espectador = spectatorService.createSpectator(
+                name = "Nicolas",
+                surname = "Martinez",
+                username = "nico0510",
+                password = "1234",
+                email = "nico0510@gmail.com",
+                dni = 12345678
+        )
+
+        val partidoAntesDeReservarTicket = matchService.createMatch(equipoLocal.id!!, equipoVisitante.id!!, 500.00, horarioPartido)
+
+        matchService.reserveTicket(partidoAntesDeReservarTicket.id!!,espectador.id!!, LocalDateTime.now())
+
+        val partidoDespuesDeReservarTicket = matchService.findMatchBy(partidoAntesDeReservarTicket.id!!)
+
+        assertThat(partidoAntesDeReservarTicket.availableTickets).isEqualTo(partidoDespuesDeReservarTicket.availableTickets + 1)
+        assertThat(partidoAntesDeReservarTicket.availableTickets).isGreaterThan(partidoDespuesDeReservarTicket.availableTickets)
+    }
+
+
 }
