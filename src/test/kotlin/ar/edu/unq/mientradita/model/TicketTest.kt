@@ -1,8 +1,6 @@
 package ar.edu.unq.mientradita.model
 
-import ar.edu.unq.mientradita.model.builders.SpectatorBuilder
 import ar.edu.unq.mientradita.model.builders.MatchBuilder
-import ar.edu.unq.mientradita.model.builders.TeamBuilder
 import ar.edu.unq.mientradita.model.builders.TicketBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -13,17 +11,12 @@ import java.time.Month
 class TicketTest {
     lateinit var entrada: Ticket
     lateinit var partido: Match
-    lateinit var river: Team
-    lateinit var defe: Team
     lateinit var horarioDePartido: LocalDateTime
 
     @BeforeEach
     fun setUp() {
-        val teamBuilder = TeamBuilder()
-        river = teamBuilder.withName("River Plate").build()
-        defe = teamBuilder.withName("Defensa y Justicia").build()
         horarioDePartido = LocalDateTime.of(2021, 9, 12, 16, 0, 0)
-        partido = MatchBuilder().withHome(river).withAway(defe).withMatchStart(horarioDePartido).build()
+        partido = MatchBuilder().withMatchStart(horarioDePartido).build()
         entrada = TicketBuilder().withGame(partido).build()
     }
 

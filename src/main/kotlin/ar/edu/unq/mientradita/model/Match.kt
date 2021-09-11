@@ -3,29 +3,26 @@ package ar.edu.unq.mientradita.model
 import ar.edu.unq.mientradita.model.exception.DifferentGameException
 import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
 import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
-import ar.edu.unq.mientradita.model.exception.TicketsOffException
 import java.time.LocalDateTime
-import javax.persistence.*
-import kotlin.jvm.Transient
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
 
 @Entity
 class Match(
-    @ManyToOne( fetch = FetchType.LAZY)
-    val home: Team,
-    @ManyToOne( fetch = FetchType.LAZY)
-    val away: Team,
+    val home: String,
+    val away: String,
     val matchStartTime: LocalDateTime,
-    var availableTickets: Int) {
+    ) {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
     fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime) {
-        if(availableTickets == 0) throw TicketsOffException()
         val newTicket = Ticket(this, reserveTicketTime)
         spectator.addTicket(newTicket)
-        availableTickets -= 1
     }
 
     fun comeIn(ticket: Ticket, attendDate: LocalDateTime) {
@@ -35,7 +32,7 @@ class Match(
         ticket.markAsPresent()
     }
 
-    fun isEquals(match: Match) = this.home.isEquals(match.home) && this.away.isEquals(match.away)
+    fun isEquals(match: Match) = this.home.equals(match.home, ignoreCase = true) && this.away.equals(match.away, ignoreCase = true)
 
     private fun checkIfIsTheSameMatch(match: Match) {
         if (!this.isEquals(match)) throw DifferentGameException()

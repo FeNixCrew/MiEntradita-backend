@@ -1,7 +1,6 @@
 package ar.edu.unq.mientradita.model.builders
 
 import ar.edu.unq.mientradita.model.Attend
-import ar.edu.unq.mientradita.model.Spectator
 import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Ticket
 import java.time.LocalDateTime

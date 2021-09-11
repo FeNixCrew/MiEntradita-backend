@@ -13,6 +13,7 @@ class Ticket(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+    val attendTime: LocalDateTime? = null
 
     fun markAsPresent() {
         state = Attend.PRESENT

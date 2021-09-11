@@ -11,7 +11,7 @@ class SpectatorBuilder {
     private var dni: Int = 12345678
 
     fun build(): Spectator {
-        return Spectator(name = name, surname = surname, username = username, password = password, email = email, dni = dni)
+        return Spectator(name, surname, username, email, dni, password)
     }
 
     fun withName(name: String): SpectatorBuilder {
