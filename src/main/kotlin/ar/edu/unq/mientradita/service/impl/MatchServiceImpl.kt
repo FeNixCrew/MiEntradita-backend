@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
-class MatchServiceImpl: MatchService {
+class MatchServiceImpl : MatchService {
 
     @Autowired
     private lateinit var matchRepository: MatchRepository
@@ -24,10 +24,6 @@ class MatchServiceImpl: MatchService {
 
     @Autowired
     private lateinit var spectatorRepository: SpectatorRepository
-
-    @Autowired
-    private lateinit var ticketRepository: TicketRepository
-
 
     @Transactional
     override fun createMatch(homeId: Long, awayId: Long, ticketPrice: Double, matchStartTime: LocalDateTime): Match {
@@ -46,16 +42,12 @@ class MatchServiceImpl: MatchService {
     }
 
 
-    override fun comeIn(matchId: Long, ticketId: Long, spectatorId: Long, attendTime: LocalDateTime): Match {
-        val ticket = ticketRepository.findById(ticketId).get()
+    @Transactional
+    override fun comeIn(matchId: Long, spectatorId: Long, attendTime: LocalDateTime) {
         val match = matchRepository.findById(matchId).get()
-        val spectator = spectatorRepository.findById(spectatorId).get()
+        val ticket = spectatorRepository.findById(spectatorId).get().findTicketFrom(match)
 
-        match.comeIn(ticket,attendTime)
-        spectatorRepository.save(spectator)
-        ticketRepository.save(ticket)
-
-        return matchRepository.save(match)
+        match.comeIn(ticket, attendTime)
     }
 
 }

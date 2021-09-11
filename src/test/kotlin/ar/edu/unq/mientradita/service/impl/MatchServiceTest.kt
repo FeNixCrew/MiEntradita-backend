@@ -2,10 +2,12 @@ package ar.edu.unq.mientradita.service.impl
 
 import ar.edu.unq.mientradita.model.Attend
 import ar.edu.unq.mientradita.model.Team
+import ar.edu.unq.mientradita.persistence.MatchRepository
 import ar.edu.unq.mientradita.service.MatchService
 import ar.edu.unq.mientradita.service.SpectatorService
 import ar.edu.unq.mientradita.service.TeamService
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -83,13 +85,10 @@ class MatchServiceTest {
         )
         val match = matchService.createMatch(equipoLocal.id!!, equipoVisitante.id!!, 500.00, horarioPartido)
         spectatorService.reserveTicket(match.id!!,espectador.id!!, horarioPartido.minusDays(4))
-        val ticket = spectatorService.findTicketFrom(espectador.id!!, match.id!!)
 
-        matchService.comeIn(match.id!!,ticket.id!!,espectador.id!!,horarioPartido)
+        matchService.comeIn(match.id!!, espectador.id!!, horarioPartido)
 
         val ticketDespuesDeAsistirAlPartido = spectatorService.findTicketFrom(espectador.id!!, match.id!!)
         assertThat(ticketDespuesDeAsistirAlPartido.state).isEqualTo(Attend.PRESENT)
-
     }
-
 }
