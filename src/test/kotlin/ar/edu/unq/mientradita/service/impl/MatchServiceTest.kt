@@ -2,12 +2,10 @@ package ar.edu.unq.mientradita.service.impl
 
 import ar.edu.unq.mientradita.model.Attend
 import ar.edu.unq.mientradita.model.Team
-import ar.edu.unq.mientradita.persistence.MatchRepository
 import ar.edu.unq.mientradita.service.MatchService
 import ar.edu.unq.mientradita.service.SpectatorService
 import ar.edu.unq.mientradita.service.TeamService
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -48,9 +46,9 @@ class MatchServiceTest {
             -57.3682195
         )
 
-        val match =  matchService.createMatch(equipoLocal.id!!, equipoVisitante.id!!, 500.00, horarioPartido)
+        val partido =  matchService.createMatch(equipoLocal.id!!, equipoVisitante.id!!, 500.00, horarioPartido)
 
-        assertThat(match).usingRecursiveComparison().isEqualTo(matchService.findMatchBy(match.id!!))
+        assertThat(partido).usingRecursiveComparison().isEqualTo(matchService.findMatchBy(partido.id!!))
     }
 
     @Test
@@ -83,12 +81,12 @@ class MatchServiceTest {
                 email = "nico0510@gmail.com",
                 dni = 12345678
         )
-        val match = matchService.createMatch(equipoLocal.id!!, equipoVisitante.id!!, 500.00, horarioPartido)
-        spectatorService.reserveTicket(match.id!!,espectador.id!!, horarioPartido.minusDays(4))
+        val partido = matchService.createMatch(equipoLocal.id!!, equipoVisitante.id!!, 500.00, horarioPartido)
+        spectatorService.reserveTicket(espectador.id!!, partido.id!!,horarioPartido.minusDays(4))
 
-        matchService.comeIn(match.id!!, espectador.id!!, horarioPartido)
+        matchService.comeIn(espectador.id!!, partido.id!!, horarioPartido)
 
-        val ticketDespuesDeAsistirAlPartido = spectatorService.findTicketFrom(espectador.id!!, match.id!!)
+        val ticketDespuesDeAsistirAlPartido = spectatorService.findTicketFrom(espectador.id!!, partido.id!!)
         assertThat(ticketDespuesDeAsistirAlPartido.state).isEqualTo(Attend.PRESENT)
     }
 }

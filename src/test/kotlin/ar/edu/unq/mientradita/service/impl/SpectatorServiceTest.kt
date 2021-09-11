@@ -75,9 +75,9 @@ class SpectatorServiceTest {
                 dni = 12345678
         )
 
-        val match = matchService.createMatch(equipoLocal.id!!, equipoVisitante.id!!, 500.00, horarioPartido)
+        val partido = matchService.createMatch(equipoLocal.id!!, equipoVisitante.id!!, 500.00, horarioPartido)
 
-        val espectadorDespuesDeReservarTicket = spectatorService.reserveTicket(match.id!!, espectadorAntesDeReservarTicket.id!!, LocalDateTime.now())
+        val espectadorDespuesDeReservarTicket = spectatorService.reserveTicket(espectadorAntesDeReservarTicket.id!!, partido.id!!, horarioPartido.minusDays(4))
 
         assertThat(espectadorAntesDeReservarTicket.haveTickets()).isFalse
         assertThat(espectadorDespuesDeReservarTicket.haveTickets()).isTrue

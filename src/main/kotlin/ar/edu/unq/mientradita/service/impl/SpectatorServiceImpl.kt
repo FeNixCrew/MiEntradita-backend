@@ -33,7 +33,7 @@ class SpectatorServiceImpl: SpectatorService {
     }
 
     @Transactional
-    override fun reserveTicket(matchId: Long, spectatorId: Long, reserveTicketTime: LocalDateTime): Spectator {
+    override fun reserveTicket(spectatorId: Long, matchId: Long, reserveTicketTime: LocalDateTime): Spectator {
         val match = matchRepository.findById(matchId).get()
         val spectator = spectatorRepository.findById(spectatorId).get()
 

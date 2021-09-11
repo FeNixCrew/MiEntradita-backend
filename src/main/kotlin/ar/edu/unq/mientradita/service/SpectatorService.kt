@@ -10,7 +10,7 @@ interface SpectatorService {
 
     fun findSpectatorById(id: Long): Spectator
 
-    fun reserveTicket(matchId: Long,spectatorId: Long, reserveTicketTime: LocalDateTime): Spectator
+    fun reserveTicket(spectatorId: Long, matchId: Long, reserveTicketTime: LocalDateTime): Spectator
 
     fun findTicketFrom(spectatorId: Long, matchId: Long): Ticket
 }

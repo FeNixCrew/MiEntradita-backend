@@ -43,7 +43,7 @@ class MatchServiceImpl : MatchService {
 
 
     @Transactional
-    override fun comeIn(matchId: Long, spectatorId: Long, attendTime: LocalDateTime) {
+    override fun comeIn(spectatorId: Long, matchId: Long, attendTime: LocalDateTime) {
         val match = matchRepository.findById(matchId).get()
         val ticket = spectatorRepository.findById(spectatorId).get().findTicketFrom(match)
 
