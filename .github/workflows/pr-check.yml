@@ -1,0 +1,25 @@
+name: PR Build on MiEntradita
+
+on:
+  # Sequence of patterns matched against refs/tags
+  pull_request:
+    types: [opened, labeled, synchronize, reopened]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+ 
+      - name: Run tests
+        run: ./gradlew test -i
