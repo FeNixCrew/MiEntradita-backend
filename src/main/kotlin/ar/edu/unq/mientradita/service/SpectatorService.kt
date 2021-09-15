@@ -24,6 +24,12 @@ class SpectatorService {
     private lateinit var matchRepository: MatchRepository
 
     @Transactional
+    fun createSpectator(name: String, surname: String, username: String, password: String, email: String, dni: Int): Spectator {
+        val spectator = Spectator(name, surname, username, email, dni, password)
+        return spectatorRepository.save(spectator)
+    }
+
+    @Transactional
     fun login(loginRequest: LoginRequest): SpectatorDTO {
         val maybeSpectator = spectatorRepository.findByUsernameAndPassword(loginRequest.username, loginRequest.password)
 
@@ -32,17 +38,6 @@ class SpectatorService {
         } else {
             throw RuntimeException("Las credenciales introducidas son incorrectas, intente de nuevo.")
         }
-    }
-
-    @Transactional
-    fun createSpectator(name: String, surname: String, username: String, password: String, email: String, dni: Int): Spectator {
-        val spectator = Spectator(name, surname, username, email, dni, password)
-        return spectatorRepository.save(spectator)
-    }
-
-    @Transactional
-    fun findSpectatorById(id: Long): Spectator {
-        return spectatorRepository.findById(id).get()
     }
 
     @Transactional
@@ -55,14 +50,6 @@ class SpectatorService {
 
         matchRepository.save(match)
         return spectatorRepository.save(spectator)
-    }
-
-    @Transactional
-    fun findTicketFrom(spectatorId: Long, matchId: Long): Ticket {
-        val spectator = spectatorRepository.findById(spectatorId).get()
-        val match = matchRepository.findById(matchId).get()
-
-        return spectator.findTicketFrom(match)
     }
 }
 

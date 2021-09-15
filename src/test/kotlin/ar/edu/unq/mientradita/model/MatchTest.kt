@@ -33,7 +33,7 @@ class MatchTest {
 
         partido.comeIn(entrada, horaDelPartido.minusHours(3))
 
-        assertThat(entrada.isAttend()).isTrue
+        assertThat(entrada.wasPresent()).isTrue
     }
 
     @Test
@@ -47,7 +47,7 @@ class MatchTest {
 
         partido.comeIn(entrada, horaDelPartido.plusMinutes(90))
 
-        assertThat(entrada.isAttend()).isTrue()
+        assertThat(entrada.wasPresent()).isTrue
     }
 
     @Test

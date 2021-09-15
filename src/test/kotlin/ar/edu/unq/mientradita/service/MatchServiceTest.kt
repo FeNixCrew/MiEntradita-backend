@@ -23,29 +23,10 @@ class MatchServiceTest {
     private val horarioPartido = LocalDateTime.of(2021, 9, 20, 16, 0)
 
     @Test
-    fun `se pueden guardar partidos`() {
+    fun `se pueden crear partidos`() {
         val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
 
-        assertThat(partido).usingRecursiveComparison().isEqualTo(matchService.findMatchBy(partido.id!!))
-    }
-
-    @Test
-    fun `un espectador asiste a un partido`() {
-        val espectador = spectatorService.createSpectator(
-                name = "Nicolas",
-                surname = "Martinez",
-                username = "nico0510",
-                password = "1234",
-                email = "nico0510@gmail.com",
-                dni = 12345678
-        )
-        val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
-        spectatorService.reserveTicket(espectador.id!!, partido.id!!, horarioPartido.minusDays(4))
-
-        matchService.comeIn(espectador.id!!, partido.id!!, horarioPartido)
-
-        val ticketDespuesDeAsistirAlPartido = spectatorService.findTicketFrom(espectador.id!!, partido.id!!)
-        assertThat(ticketDespuesDeAsistirAlPartido.isAttend()).isTrue
+        assertThat(partido).isNotNull
     }
 
     @Test
@@ -99,19 +80,7 @@ class MatchServiceTest {
     }
 
     @Test
-    fun `un espectador intenta asistir a un partido y explota todo asasasasadsdas`() {
-        val espectadorInexistenteId = 9999.toLong()
-        val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
-
-        val exception = assertThrows<SpectatorNotRegistered> {
-            matchService.comeIn(espectadorInexistenteId, partido.id!!, horarioPartido)
-        }
-
-        assertThat(exception.message).isEqualTo("El espectador no esta registrado")
-    }
-
-    @Test
-    fun `un espectador intenta asistir a un partido que no existe y explota todo asasasasadsdas`() {
+    fun `un espectador no puede asister a un partido que no existe`() {
         val espectador = spectatorService.createSpectator(
                 name = "Nicolas",
                 surname = "Martinez",
@@ -127,8 +96,6 @@ class MatchServiceTest {
         }
 
         assertThat(exception.message).isEqualTo("Partido no encontrado")
-
-
     }
 
     @AfterEach

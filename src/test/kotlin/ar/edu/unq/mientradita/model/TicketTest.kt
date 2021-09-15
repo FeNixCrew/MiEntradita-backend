@@ -41,20 +41,21 @@ class TicketTest {
 
     @Test
     fun `una entrada inicialmente no esta entregada`() {
-        assertThat(entrada.isAttend()).isFalse
+        assertThat(entrada.wasPresent()).isFalse
     }
 
     @Test
     fun `cuando una entrada se marca como presente se registra la hora en la que fue marcada`() {
-        val horaDeEntrada = LocalDateTime.now()
+        val horaDeEntrada = horarioDePartido.minusHours(1)
+
         entrada.markAsPresent(horaDeEntrada)
-        assertThat(entrada.attendTime).isEqualTo(horaDeEntrada)
-        assertThat(entrada.isAttend()).isTrue
+
+        assertThat(entrada.presentTime).isEqualTo(horaDeEntrada)
+        assertThat(entrada.wasPresent()).isTrue
     }
 
     @Test
-    fun `una entrada esta ausente cuando el partido ya paso y la entrada no fue entregada`() {
-        assertThat(partido.matchStartTime < LocalDateTime.now()).isTrue
-        assertThat(entrada.isAttend()).isFalse
+    fun `una entrada esta ausente cuando el partido ya paso y no se asistio al mismo`() {
+        assertThat(entrada.wasPresent()).isFalse
     }
 }

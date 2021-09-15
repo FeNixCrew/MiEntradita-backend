@@ -29,10 +29,12 @@ class Match(
         checkIfIsTheSameMatch(ticket.match)
         checkIfCanComeIn(attendDate)
 
-        ticket.markAsPresent()
+        ticket.markAsPresent(attendDate)
     }
 
     fun isEquals(match: Match) = this.home.equals(match.home, ignoreCase = true) && this.away.equals(match.away, ignoreCase = true)
+
+    fun isBeforeMatchEnd(aTime: LocalDateTime) = closingTime() >= aTime
 
     private fun checkIfIsTheSameMatch(match: Match) {
         if (!this.isEquals(match)) throw DifferentGameException()

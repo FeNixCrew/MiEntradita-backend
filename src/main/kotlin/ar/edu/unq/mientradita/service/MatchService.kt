@@ -27,11 +27,6 @@ class MatchService {
         return matchRepository.save(match)
     }
 
-    @Transactional
-    fun findMatchBy(id: Long): Match {
-        return matchRepository.findById(id).get()
-    }
-
 
     @Transactional
     fun comeIn(spectatorId: Long, matchId: Long, attendTime: LocalDateTime = LocalDateTime.now()): String {

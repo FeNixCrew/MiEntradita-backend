@@ -12,17 +12,15 @@ class Ticket(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
-    var attendTime: LocalDateTime? = null
+    var presentTime: LocalDateTime? = null
 
-    fun markAsPresent(attend: LocalDateTime = LocalDateTime.now()): LocalDateTime {
-        attendTime = attend
-        return attend
+    fun markAsPresent(presentTime: LocalDateTime = LocalDateTime.now()): LocalDateTime {
+        this.presentTime = presentTime
+        return presentTime
     }
 
-    fun isAttend(): Boolean{
-        return if(attendTime == null){
-            false
-        }
-        else !(match.matchStartTime < LocalDateTime.now() && attendTime == null)
+    fun wasPresent(): Boolean{
+        return presentTime != null && match.isBeforeMatchEnd(presentTime!!)
     }
 }
+
