@@ -1,9 +1,7 @@
-package ar.edu.unq.mientradita.service.impl
+package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
-import ar.edu.unq.mientradita.service.MatchService
-import ar.edu.unq.mientradita.service.SpectatorService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -135,6 +133,6 @@ class MatchServiceTest {
 
     @AfterEach
     fun tearDown() {
-        ServiceTestHelper().clearDataSet()
+        matchService.clearDataSet()
     }
 }

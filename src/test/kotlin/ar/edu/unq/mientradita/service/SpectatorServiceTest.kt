@@ -1,4 +1,4 @@
-package ar.edu.unq.mientradita.service.impl
+package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.service.MatchService
 import ar.edu.unq.mientradita.service.SpectatorDTO
@@ -87,6 +87,6 @@ class SpectatorServiceTest {
 
     @AfterEach
     fun tearDown() {
-        ServiceTestHelper().clearDataSet()
+        matchService.clearDataSet()
     }
 }
