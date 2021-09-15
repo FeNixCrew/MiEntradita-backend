@@ -31,11 +31,14 @@ class MatchService {
 
 
     @Transactional
-    fun comeIn(spectatorId: Long, matchId: Long, attendTime: LocalDateTime) {
+    fun comeIn(spectatorId: Long, matchId: Long, attendTime: LocalDateTime = LocalDateTime.now()): String {
         val match = matchRepository.findById(matchId).get()
-        val ticket = spectatorRepository.findById(spectatorId).get().findTicketFrom(match)
+        val spectator = spectatorRepository.findById(spectatorId).get()
+        val ticket = spectator.findTicketFrom(match)
 
         match.comeIn(ticket, attendTime)
+
+        return "Bienvenido ${spectator.username} al partido de ${match.home} vs ${match.away}"
     }
 
 }

@@ -30,12 +30,12 @@ class MatchServiceTest {
     @Test
     fun `un espectador asiste a un partido`(){
         val espectador = spectatorService.createSpectator(
-                name = "Nicolas",
-                surname = "Martinez",
-                username = "nico0510",
-                password = "1234",
-                email = "nico0510@gmail.com",
-                dni = 12345678
+            name = "Nicolas",
+            surname = "Martinez",
+            username = "nico0510",
+            password = "1234",
+            email = "nico0510@gmail.com",
+            dni = 12345678
         )
         val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
         spectatorService.reserveTicket(espectador.id!!, partido.id!!,horarioPartido.minusDays(4))
@@ -44,5 +44,22 @@ class MatchServiceTest {
 
         val ticketDespuesDeAsistirAlPartido = spectatorService.findTicketFrom(espectador.id!!, partido.id!!)
         assertThat(ticketDespuesDeAsistirAlPartido.state).isEqualTo(Attend.PRESENT)
+    }
+
+    @Test
+    fun `al asistir a un partido se ve un mensaje de bienvenida`(){
+        val espectador = spectatorService.createSpectator(
+            name = "Nicolas",
+            surname = "Martinez",
+            username = "nico0510",
+            password = "1234",
+            email = "nico0510@gmail.com",
+            dni = 12345678
+        )
+        val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
+        spectatorService.reserveTicket(espectador.id!!, partido.id!!,horarioPartido.minusDays(4))
+
+        assertThat(matchService.comeIn(espectador.id!!, partido.id!!, horarioPartido))
+            .isEqualTo("Bienvenido ${espectador.username} al partido de ${partido.home} vs ${partido.away}")
     }
 }
