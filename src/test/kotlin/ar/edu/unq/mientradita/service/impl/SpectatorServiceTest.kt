@@ -5,6 +5,7 @@ import ar.edu.unq.mientradita.service.SpectatorDTO
 import ar.edu.unq.mientradita.service.SpectatorService
 import ar.edu.unq.mientradita.webservice.LoginRequest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -84,5 +85,8 @@ class SpectatorServiceTest {
         assertThat(espectadorDespuesDeReservarTicket.haveTickets()).isTrue
     }
 
-
+    @AfterEach
+    fun tearDown() {
+        ServiceTestHelper().clearDataSet()
+    }
 }

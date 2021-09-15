@@ -4,6 +4,7 @@ import ar.edu.unq.mientradita.model.Attend
 import ar.edu.unq.mientradita.service.MatchService
 import ar.edu.unq.mientradita.service.SpectatorService
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -61,5 +62,10 @@ class MatchServiceTest {
 
         assertThat(matchService.comeIn(espectador.id!!, partido.id!!, horarioPartido))
             .isEqualTo("Bienvenido ${espectador.username} al partido de ${partido.home} vs ${partido.away}")
+    }
+
+    @AfterEach
+    fun tearDown() {
+        ServiceTestHelper().clearDataSet()
     }
 }
