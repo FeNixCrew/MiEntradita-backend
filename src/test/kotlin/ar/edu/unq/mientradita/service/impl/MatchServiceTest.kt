@@ -5,6 +5,7 @@ import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
 import ar.edu.unq.mientradita.service.MatchService
 import ar.edu.unq.mientradita.service.SpectatorService
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -130,5 +131,10 @@ class MatchServiceTest {
         assertThat(exception.message).isEqualTo("Partido no encontrado")
 
 
+    }
+
+    @AfterEach
+    fun tearDown() {
+        ServiceTestHelper().clearDataSet()
     }
 }
