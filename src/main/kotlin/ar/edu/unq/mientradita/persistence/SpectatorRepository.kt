@@ -5,4 +5,6 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface SpectatorRepository: CrudRepository<Spectator,Long>
+interface SpectatorRepository: CrudRepository<Spectator,Long> {
+    fun findByUsernameAndPassword(username: String, password: String): Spectator?
+}
