@@ -38,20 +38,23 @@ class TicketTest {
         assertThat(entrada.match).isEqualTo(partido)
     }
 
+
     @Test
-    fun `una entrada inicialmente tiene un estado de pendiente`() {
-        assertThat(entrada.state).isEqualTo(Attend.PENDING)
+    fun `una entrada inicialmente no esta entregada`() {
+        assertThat(entrada.isAttend()).isFalse
     }
 
     @Test
-    fun `una entrada se puede marcar como presente`() {
-        entrada.markAsPresent()
-        assertThat(entrada.state).isEqualTo(Attend.PRESENT)
+    fun `cuando una entrada se marca como presente se registra la hora en la que fue marcada`() {
+        val horaDeEntrada = LocalDateTime.now()
+        entrada.markAsPresent(horaDeEntrada)
+        assertThat(entrada.attendTime).isEqualTo(horaDeEntrada)
+        assertThat(entrada.isAttend()).isTrue
     }
 
     @Test
-    fun `una entrada se puede marcar como ausente`() {
-        entrada.markAsAbsent()
-        assertThat(entrada.state).isEqualTo(Attend.ABSENT)
+    fun `una entrada esta ausente cuando el partido ya paso y la entrada no fue entregada`() {
+        assertThat(partido.matchStartTime < LocalDateTime.now()).isTrue
+        assertThat(entrada.isAttend()).isFalse
     }
 }

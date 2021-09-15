@@ -1,7 +1,10 @@
 package ar.edu.unq.mientradita.service
 
+import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Spectator
 import ar.edu.unq.mientradita.model.Ticket
+import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
+import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
 import ar.edu.unq.mientradita.persistence.MatchRepository
 import ar.edu.unq.mientradita.persistence.SpectatorRepository
 import ar.edu.unq.mientradita.webservice.LoginRequest
@@ -9,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.util.NoSuchElementException
 
 @Service
 class SpectatorService {
@@ -43,8 +47,9 @@ class SpectatorService {
 
     @Transactional
     fun reserveTicket(spectatorId: Long, matchId: Long, reserveTicketTime: LocalDateTime): Spectator {
-        val match = matchRepository.findById(matchId).get()
-        val spectator = spectatorRepository.findById(spectatorId).get()
+        val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
+
+        val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
 
         spectator.reserveATicketFor(match, reserveTicketTime)
 
@@ -60,7 +65,6 @@ class SpectatorService {
         return spectator.findTicketFrom(match)
     }
 }
-
 
 data class SpectatorDTO(val id: Long, val username: String, val role: String) {
     companion object {

@@ -8,18 +8,21 @@ class Ticket(
     @ManyToOne(fetch=FetchType.LAZY)
     val match: Match,
     val reservation: LocalDateTime = LocalDateTime.now(),
-    var state: Attend = Attend.PENDING,
     ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
-    val attendTime: LocalDateTime? = null
+    var attendTime: LocalDateTime? = null
 
-    fun markAsPresent() {
-        state = Attend.PRESENT
+    fun markAsPresent(attend: LocalDateTime = LocalDateTime.now()): LocalDateTime {
+        attendTime = attend
+        return attend
     }
 
-    fun markAsAbsent() {
-        state = Attend.ABSENT
+    fun isAttend(): Boolean{
+        return if(attendTime == null){
+            false
+        }
+        else !(match.matchStartTime < LocalDateTime.now() && attendTime == null)
     }
 }
