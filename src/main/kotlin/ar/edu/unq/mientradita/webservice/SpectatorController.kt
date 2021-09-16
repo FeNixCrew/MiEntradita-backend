@@ -18,7 +18,7 @@ class SpectatorController {
         return ResponseEntity.ok(spectatorService.login(loginRequest))
     }
 
-    @RequestMapping(value=["tickets"], method = [RequestMethod.GET])
+    @RequestMapping(value=["/tickets"], method = [RequestMethod.GET])
     fun pendingTicketsFrom(@RequestParam spectatorId: Long): ResponseEntity<List<TicketDTO>> {
         return ResponseEntity.ok(spectatorService.pendingTickets(spectatorId))
     }
