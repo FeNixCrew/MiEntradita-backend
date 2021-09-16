@@ -22,5 +22,9 @@ class Ticket(
     fun wasPresent(): Boolean{
         return presentTime != null && match.isBeforeMatchEnd(presentTime!!)
     }
+
+    fun isPendingAt(aTime: LocalDateTime): Boolean {
+        return presentTime == null && match.isBeforeMatchEnd(aTime)
+    }
 }
 

@@ -1,6 +1,5 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Spectator
 import ar.edu.unq.mientradita.model.Ticket
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
-import java.util.NoSuchElementException
 
 @Service
 class SpectatorService {
@@ -41,7 +39,7 @@ class SpectatorService {
     }
 
     @Transactional
-    fun reserveTicket(spectatorId: Long, matchId: Long, reserveTicketTime: LocalDateTime): Spectator {
+    fun reserveTicket(spectatorId: Long, matchId: Long, reserveTicketTime: LocalDateTime = LocalDateTime.now()): TicketDTO {
         val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
 
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
@@ -49,14 +47,32 @@ class SpectatorService {
         spectator.reserveATicketFor(match, reserveTicketTime)
 
         matchRepository.save(match)
-        return spectatorRepository.save(spectator)
+        val ticket = spectatorRepository.save(spectator).findTicketFrom(match)
+        return TicketDTO.fromModel(ticket)
+    }
+
+    @Transactional
+    fun pendingTickets(spectatorId: Long, aTime: LocalDateTime = LocalDateTime.now()): List<TicketDTO> {
+        val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
+
+        val pendingTickets = spectator.tickets.filter { it.isPendingAt(aTime)}
+
+        return pendingTickets.map { ticket -> TicketDTO.fromModel(ticket) }
     }
 }
 
-data class SpectatorDTO(val id: Long, val username: String, val role: String) {
+data class SpectatorDTO(val id: Long, val username: String) {
     companion object {
         fun fromModel(spectator: Spectator): SpectatorDTO {
-            return SpectatorDTO(spectator.id!!, spectator.username, spectator.role)
+            return SpectatorDTO(spectator.id!!, spectator.username)
+        }
+    }
+}
+
+data class TicketDTO(val id:Long, val matchId: Long, val home: String, val away: String, val matchStartTime: LocalDateTime) {
+    companion object {
+        fun fromModel(ticket: Ticket): TicketDTO {
+            return TicketDTO(ticket.id!!, ticket.match.id!!, ticket.match.home, ticket.match.away, ticket.match.matchStartTime)
         }
     }
 }

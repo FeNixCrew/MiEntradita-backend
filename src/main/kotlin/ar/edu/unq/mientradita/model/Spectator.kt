@@ -18,7 +18,6 @@ class Spectator(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
-    val role: String = "SPECTATOR"
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val tickets = mutableListOf<Ticket>()
 

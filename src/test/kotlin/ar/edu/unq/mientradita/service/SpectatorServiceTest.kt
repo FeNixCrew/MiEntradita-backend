@@ -1,8 +1,6 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.service.MatchService
-import ar.edu.unq.mientradita.service.SpectatorDTO
-import ar.edu.unq.mientradita.service.SpectatorService
+import ar.edu.unq.mientradita.model.builders.SpectatorBuilder
 import ar.edu.unq.mientradita.webservice.LoginRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -10,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import java.lang.RuntimeException
 import java.time.LocalDateTime
 
 @SpringBootTest
@@ -75,10 +72,57 @@ class SpectatorServiceTest {
 
         val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
 
-        val espectadorDespuesDeReservarTicket = spectatorService.reserveTicket(espectadorAntesDeReservarTicket.id!!, partido.id!!, horarioPartido.minusDays(4))
+        val entradaReservada = spectatorService.reserveTicket(espectadorAntesDeReservarTicket.id!!, partido.id!!, horarioPartido.minusDays(4))
 
-        assertThat(espectadorAntesDeReservarTicket.haveTickets()).isFalse
-        assertThat(espectadorDespuesDeReservarTicket.haveTickets()).isTrue
+        assertThat(entradaReservada)
+            .isEqualTo(TicketDTO(entradaReservada.id, partido.id!!, equipoLocal, equipoVisitante, horarioPartido))
+    }
+
+    @Test
+    fun `un espectador comienza sin entradas pendientes`() {
+        var espectador = SpectatorBuilder().build()
+        espectador = spectatorService.createSpectator(
+            espectador.name, espectador.surname, espectador.username,
+            espectador.password, espectador.email, espectador.dni
+        )
+
+        assertThat(spectatorService.pendingTickets(espectador.id!!, horarioPartido)).isEmpty()
+    }
+
+    @Test
+    fun `se puede obtener la informacion de las entradas pendientes de un espectador`() {
+        var espectador = SpectatorBuilder().build()
+        espectador = spectatorService.createSpectator(
+            espectador.name, espectador.surname, espectador.username,
+            espectador.password, espectador.email, espectador.dni
+        )
+        val partido1 = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
+        val partido2 = matchService.createMatch(equipoVisitante, equipoLocal, 500.00, horarioPartido)
+
+        val entrada1 = spectatorService.reserveTicket(espectador.id!!, partido1.id!!)
+        val entrada2 = spectatorService.reserveTicket(espectador.id!!, partido2.id!!)
+
+        assertThat(spectatorService.pendingTickets(espectador.id!!, horarioPartido)).containsExactly(entrada1, entrada2)
+    }
+
+    @Test
+    fun `no aparecen en las entradas pendientes de un espectador una entrada de un partido al que ya asistio`() {
+        var espectador = SpectatorBuilder().build()
+        espectador = spectatorService.createSpectator(
+            espectador.name, espectador.surname, espectador.username,
+            espectador.password, espectador.email, espectador.dni
+        )
+        val partido1 = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
+        val partido2 = matchService.createMatch(equipoVisitante, equipoLocal, 500.00, horarioPartido)
+
+        val entrada1 = spectatorService.reserveTicket(espectador.id!!, partido1.id!!)
+        val entrada2 = spectatorService.reserveTicket(espectador.id!!, partido2.id!!)
+
+        matchService.comeIn(espectador.id!!,partido1.id!!,horarioPartido.minusHours(1))
+
+        assertThat(spectatorService.pendingTickets(espectador.id!!, horarioPartido))
+            .doesNotContain(entrada1)
+            .contains(entrada2)
     }
 
     @AfterEach
