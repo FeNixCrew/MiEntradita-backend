@@ -61,13 +61,15 @@ class FakeDataConfiguration {
         val horaDelPartido2 = LocalDateTime.of(2021,9,18,21,0)
         val horaDelPartido3 = LocalDateTime.of(2021,9,19,16,0)
         val horaDelPartido4 = LocalDateTime.of(2021,9,19,21,0)
+        val horaDelPartido5 = LocalDateTime.now()
 
         val racingIndependiente = matchService.createMatch("Racing", "Independiente", 700.00,horaDelPartido1)
         val riverDefe = matchService.createMatch("River", "Defensa y Justicia", 500.00,horaDelPartido2)
         val colonEstudiantes = matchService.createMatch("Colon de Santa Fe", "Estudiantes de la Plata", 500.00,horaDelPartido3)
         val talleresArsenal = matchService.createMatch("Talleres de Cordoba", "Arsenal de Sarandi", 500.00,horaDelPartido4)
+        val atleticoTucumanGimnasia = matchService.createMatch("Atletico Tucuman", "Gimnasia y Esgrima de la Plata", 400.00,horaDelPartido5)
 
-        return listOf(racingIndependiente,riverDefe,colonEstudiantes,talleresArsenal)
+        return listOf(racingIndependiente,riverDefe,colonEstudiantes,talleresArsenal, atleticoTucumanGimnasia)
     }
 
 
