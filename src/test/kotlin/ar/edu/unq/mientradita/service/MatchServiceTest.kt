@@ -1,5 +1,6 @@
 package ar.edu.unq.mientradita.service
 
+import ar.edu.unq.mientradita.model.exception.AlreadyPresentInGameException
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
 import org.assertj.core.api.Assertions.assertThat
@@ -80,14 +81,14 @@ class MatchServiceTest {
     }
 
     @Test
-    fun `un espectador no puede asister a un partido que no existe`() {
+    fun `un espectador no puede asistir a un partido que no existe`() {
         val espectador = spectatorService.createSpectator(
-                name = "Nicolas",
-                surname = "Martinez",
-                username = "nico0510",
-                password = "1234",
-                email = "nico0510@gmail.com",
-                dni = 12345678
+            name = "Nicolas",
+            surname = "Martinez",
+            username = "nico0510",
+            password = "1234",
+            email = "nico0510@gmail.com",
+            dni = 12345678
         )
         val partidoInexistenteId = 9999.toLong()
 
@@ -96,6 +97,25 @@ class MatchServiceTest {
         }
 
         assertThat(exception.message).isEqualTo("Partido no encontrado")
+    }
+
+    @Test
+    fun `un espectador no puede asistir dos veces a un partido`() {
+        val espectador = spectatorService.createSpectator(
+            name = "Nicolas",
+            surname = "Martinez",
+            username = "nico0510",
+            password = "1234",
+            email = "nico0510@gmail.com",
+            dni = 12345678
+        )
+        val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
+        spectatorService.reserveTicket(espectador.id!!, partido.id!!, horarioPartido.minusDays(4))
+        matchService.comeIn(espectador.id!!, partido.id!!, horarioPartido)
+
+        val exception = assertThrows<AlreadyPresentInGameException> { matchService.comeIn(espectador.id!!, partido.id!!, horarioPartido) }
+
+        assertThat(exception.message).isEqualTo("El espectador ya ha ingresado al partido")
     }
 
     @AfterEach
