@@ -1,5 +1,6 @@
 package ar.edu.unq.mientradita.webservice
 
+import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.service.SpectatorDTO
 import ar.edu.unq.mientradita.service.SpectatorService
 import ar.edu.unq.mientradita.service.TicketDTO
@@ -14,13 +15,21 @@ class SpectatorController {
     private lateinit var spectatorService: SpectatorService
 
     @RequestMapping(value=["/login"], method = [RequestMethod.POST])
-    fun logIn(@RequestBody loginRequest: LoginRequest): ResponseEntity<SpectatorDTO> {
-        return ResponseEntity.ok(spectatorService.login(loginRequest))
+    fun logIn(@RequestBody loginRequest: LoginRequest): ResponseEntity<*> {
+        return try {
+            ResponseEntity.ok(spectatorService.login(loginRequest))
+        } catch (exception: MiEntraditaException){
+            ResponseEntity.badRequest().body(exception.toMap())
+        }
     }
 
     @RequestMapping(value=["/tickets"], method = [RequestMethod.GET])
-    fun pendingTicketsFrom(@RequestParam spectatorId: Long): ResponseEntity<List<TicketDTO>> {
-        return ResponseEntity.ok(spectatorService.pendingTickets(spectatorId))
+    fun pendingTicketsFrom(@RequestParam spectatorId: Long): ResponseEntity<*> {
+        return try {
+            ResponseEntity.ok(spectatorService.pendingTickets(spectatorId))
+        } catch (exception: MiEntraditaException){
+            ResponseEntity.badRequest().body(exception.toMap())
+        }
     }
 }
 

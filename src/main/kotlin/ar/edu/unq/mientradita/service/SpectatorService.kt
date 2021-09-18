@@ -2,6 +2,7 @@ package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.Spectator
 import ar.edu.unq.mientradita.model.Ticket
+import ar.edu.unq.mientradita.model.exception.InvalidCredentialsException
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
 import ar.edu.unq.mientradita.persistence.MatchRepository
@@ -34,7 +35,7 @@ class SpectatorService {
         if (maybeSpectator!=null) {
             return SpectatorDTO.fromModel(maybeSpectator)
         } else {
-            throw RuntimeException("Las credenciales introducidas son incorrectas, intente de nuevo.")
+            throw InvalidCredentialsException()
         }
     }
 

@@ -1,5 +1,6 @@
 package ar.edu.unq.mientradita.webservice
 
+import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.service.MatchService
 import ar.edu.unq.mientradita.service.SpectatorService
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,8 +17,12 @@ class MatchController {
     private lateinit var matchService: MatchService
 
     @RequestMapping(value=["/comeIn"], method = [RequestMethod.POST])
-    fun comeIn(@RequestBody comeInRequest: ComeInRequest): ResponseEntity<String> {
-        return ResponseEntity.ok(matchService.comeIn(comeInRequest.spectatorId, comeInRequest.matchId))
+    fun comeIn(@RequestBody comeInRequest: ComeInRequest): ResponseEntity<*> {
+        return try {
+            ResponseEntity.ok(matchService.comeIn(comeInRequest.spectatorId, comeInRequest.matchId))
+        } catch (exception: MiEntraditaException){
+            ResponseEntity.badRequest().body(exception.toMap())
+        }
     }
 }
 
