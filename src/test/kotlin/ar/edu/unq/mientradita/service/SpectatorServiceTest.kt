@@ -60,7 +60,7 @@ class SpectatorServiceTest {
     }
 
     @Test
-    fun `un espectador puede reservar un ticket`() {
+    fun `un espectador puede reservar una entrada`() {
         val espectador = spectatorService.createSpectator(
                 name = "Nicolas",
                 surname = "Martinez",
