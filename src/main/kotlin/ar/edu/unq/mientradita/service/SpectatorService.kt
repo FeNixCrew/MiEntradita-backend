@@ -48,8 +48,9 @@ class SpectatorService {
         spectator.reserveATicketFor(match, reserveTicketTime)
 
         matchRepository.save(match)
-        val ticket = spectatorRepository.save(spectator).findTicketFrom(match)
-        return TicketDTO.fromModel(ticket)
+        val updatedSpectator = spectatorRepository.save(spectator)
+
+        return TicketDTO.fromModel(spectatorId, updatedSpectator.findTicketFrom(match))
     }
 
     @Transactional
@@ -58,7 +59,7 @@ class SpectatorService {
 
         val pendingTickets = spectator.tickets.filter { it.isPendingAt(aTime)}
 
-        return pendingTickets.map { ticket -> TicketDTO.fromModel(ticket) }
+        return pendingTickets.map { ticket -> TicketDTO.fromModel(spectatorId, ticket) }
     }
 }
 
@@ -70,10 +71,10 @@ data class SpectatorDTO(val id: Long, val username: String) {
     }
 }
 
-data class TicketDTO(val id:Long, val matchId: Long, val home: String, val away: String, val matchStartTime: LocalDateTime) {
+data class TicketDTO(val id:Long, val userId: Long, val matchId: Long, val home: String, val away: String, val matchStartTime: LocalDateTime) {
     companion object {
-        fun fromModel(ticket: Ticket): TicketDTO {
-            return TicketDTO(ticket.id!!, ticket.match.id!!, ticket.match.home, ticket.match.away, ticket.match.matchStartTime)
+        fun fromModel(spectatorId: Long, ticket: Ticket): TicketDTO {
+            return TicketDTO(ticket.id!!, spectatorId, ticket.match.id!!, ticket.match.home, ticket.match.away, ticket.match.matchStartTime)
         }
     }
 }

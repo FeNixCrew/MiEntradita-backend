@@ -56,12 +56,12 @@ class SpectatorServiceTest {
     fun `no se puede obtener informacion de un espectador si se introduce mal sus credenciales`() {
         val exception = assertThrows<RuntimeException> { spectatorService.login(LoginRequest("nico0510", "incorrecto")) }
 
-        assertThat(exception.message).isEqualTo("Las credenciales introducidas son incorrectas, intente de nuevo.")
+        assertThat(exception.message).isEqualTo("Las credenciales introducidas son incorrectas, intente de nuevo")
     }
 
     @Test
     fun `un espectador puede reservar un ticket`() {
-        val espectadorAntesDeReservarTicket = spectatorService.createSpectator(
+        val espectador = spectatorService.createSpectator(
                 name = "Nicolas",
                 surname = "Martinez",
                 username = "nico0510",
@@ -72,10 +72,10 @@ class SpectatorServiceTest {
 
         val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
 
-        val entradaReservada = spectatorService.reserveTicket(espectadorAntesDeReservarTicket.id!!, partido.id!!, horarioPartido.minusDays(4))
+        val entradaReservada = spectatorService.reserveTicket(espectador.id!!, partido.id!!, horarioPartido.minusDays(4))
 
         assertThat(entradaReservada)
-            .isEqualTo(TicketDTO(entradaReservada.id, partido.id!!, equipoLocal, equipoVisitante, horarioPartido))
+            .isEqualTo(TicketDTO(entradaReservada.id, espectador.id!!, partido.id!!, equipoLocal, equipoVisitante, horarioPartido))
     }
 
     @Test

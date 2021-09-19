@@ -22,17 +22,26 @@ class FakeDataConfiguration {
     @Bean
     fun fakeDataInject() =
             CommandLineRunner {
-                createSpectators(spectatorService, matchService)
+                createSpectators()
             }
 
-    private fun createSpectators(spectatorService: SpectatorService, matchService: MatchService) {
-        val matchs = generateMatchs(matchService)
+    private fun createSpectators() {
+        val matchs = generateMatchs()
+
+        spectatorService.createSpectator(
+            "admin",
+            "admin",
+            "admin",
+            "admin",
+            "admin@gmail.com",
+            212837645
+        )
 
         val pepe = spectatorService.createSpectator(
                 "Pepe",
                 "Argento",
-                "pepito1299",
-                "mariaenema1234",
+                "usuario",
+                "usuario",
                 "zapatero_bigote@gmail.com",
                 22334455)
 
@@ -42,7 +51,7 @@ class FakeDataConfiguration {
                 "Moni",
                 "Argento",
                 "holasusana9999",
-                "cafecito0000",
+                "cafecito000",
                 "aguante_el_sillon@gmail.com",
                 224455770)
 
@@ -50,18 +59,17 @@ class FakeDataConfiguration {
     }
 
     private fun generateTicketsFor(spectator: Spectator, matchs: List<Match>, spectatorService: SpectatorService){
-        val horaDeReserva = LocalDateTime.of(2021,9,16,10,0)
         matchs.forEach {
-            spectatorService.reserveTicket(spectator.id!!,it.id!!, horaDeReserva)
+            spectatorService.reserveTicket(spectator.id!!,it.id!!)
         }
     }
 
-    private fun generateMatchs(matchService: MatchService): List<Match>{
+    private fun generateMatchs(): List<Match>{
         val horaDelPartido1 = LocalDateTime.of(2021,9,18,16,0)
-        val horaDelPartido2 = LocalDateTime.of(2021,9,18,21,0)
-        val horaDelPartido3 = LocalDateTime.of(2021,9,19,16,0)
-        val horaDelPartido4 = LocalDateTime.of(2021,9,19,21,0)
-        val horaDelPartido5 = LocalDateTime.now()
+        val horaDelPartido2 = LocalDateTime.of(2021,9,19,21,0)
+        val horaDelPartido3 = LocalDateTime.of(2021,9,20,16,0)
+        val horaDelPartido4 = LocalDateTime.of(2021,9,21,21,0)
+        val horaDelPartido5 = LocalDateTime.now().plusHours(3)
 
         val racingIndependiente = matchService.createMatch("Racing", "Independiente", 700.00,horaDelPartido1)
         val riverDefe = matchService.createMatch("River", "Defensa y Justicia", 500.00,horaDelPartido2)
