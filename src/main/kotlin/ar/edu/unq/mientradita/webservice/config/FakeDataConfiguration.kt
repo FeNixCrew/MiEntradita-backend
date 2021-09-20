@@ -29,11 +29,11 @@ class FakeDataConfiguration {
         val matchs = generateMatchs()
 
         spectatorService.createSpectator(
-            "admin",
-            "admin",
-            "admin",
-            "admin",
-            "admin@gmail.com",
+            "scanner",
+            "scanner",
+            "scanner",
+            "scanner",
+            "scanner@gmail.com",
             212837645
         )
 
