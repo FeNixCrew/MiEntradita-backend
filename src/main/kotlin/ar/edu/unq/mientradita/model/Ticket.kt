@@ -1,5 +1,6 @@
 package ar.edu.unq.mientradita.model
 
+import ar.edu.unq.mientradita.model.exception.AlreadyPresentInGameException
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -8,18 +9,26 @@ class Ticket(
     @ManyToOne(fetch=FetchType.LAZY)
     val match: Match,
     val reservation: LocalDateTime = LocalDateTime.now(),
-    var state: Attend = Attend.PENDING,
     ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
-    val attendTime: LocalDateTime? = null
+    var presentTime: LocalDateTime? = null
 
-    fun markAsPresent() {
-        state = Attend.PRESENT
+    fun markAsPresent(presentTime: LocalDateTime = LocalDateTime.now()): LocalDateTime {
+        if (existPresentTime()) throw AlreadyPresentInGameException()
+        this.presentTime = presentTime
+        return presentTime
     }
 
-    fun markAsAbsent() {
-        state = Attend.ABSENT
+    fun wasPresent(): Boolean{
+        return existPresentTime() && match.isBeforeMatchEnd(presentTime!!)
     }
+
+    fun isPendingAt(aTime: LocalDateTime): Boolean {
+        return !existPresentTime() && match.isBeforeMatchEnd(aTime)
+    }
+
+    private fun existPresentTime() = presentTime != null
 }
+
