@@ -8,6 +8,7 @@ import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
 import ar.edu.unq.mientradita.persistence.MatchRepository
 import ar.edu.unq.mientradita.persistence.SpectatorRepository
 import ar.edu.unq.mientradita.webservice.LoginRequest
+import ar.edu.unq.mientradita.webservice.RegisterRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,9 +24,19 @@ class SpectatorService {
     private lateinit var matchRepository: MatchRepository
 
     @Transactional
-    fun createSpectator(name: String, surname: String, username: String, password: String, email: String, dni: Int): Spectator {
-        val spectator = Spectator(name, surname, username, email, dni, password)
-        return spectatorRepository.save(spectator)
+    fun createSpectator(registerRequest: RegisterRequest): SpectatorDTO {
+        val spectator = Spectator(
+                registerRequest.name,
+                registerRequest.surname,
+                registerRequest.username,
+                registerRequest.email,
+                registerRequest.dni,
+                registerRequest.password
+        )
+
+        spectatorRepository.save(spectator)
+
+        return SpectatorDTO.fromModel(spectator)
     }
 
     @Transactional

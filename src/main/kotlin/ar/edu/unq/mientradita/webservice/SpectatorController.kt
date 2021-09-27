@@ -5,6 +5,7 @@ import ar.edu.unq.mientradita.service.SpectatorDTO
 import ar.edu.unq.mientradita.service.SpectatorService
 import ar.edu.unq.mientradita.service.TicketDTO
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -14,20 +15,26 @@ class SpectatorController {
     @Autowired
     private lateinit var spectatorService: SpectatorService
 
-    @RequestMapping(value=["/login"], method = [RequestMethod.POST])
+    @RequestMapping(value = ["/login"], method = [RequestMethod.POST])
     fun logIn(@RequestBody loginRequest: LoginRequest): ResponseEntity<*> {
         return try {
             ResponseEntity.ok(spectatorService.login(loginRequest))
-        } catch (exception: MiEntraditaException){
+        } catch (exception: MiEntraditaException) {
             ResponseEntity.badRequest().body(exception.toMap())
         }
     }
 
-    @RequestMapping(value=["/tickets"], method = [RequestMethod.GET])
+    @RequestMapping(value = ["/register"], method = [RequestMethod.POST])
+    fun register(@RequestBody registerRequest: RegisterRequest): ResponseEntity<*> {
+        val spectatorDTO = spectatorService.createSpectator(registerRequest)
+        return ResponseEntity.ok(spectatorDTO)
+    }
+
+    @RequestMapping(value = ["/tickets"], method = [RequestMethod.GET])
     fun pendingTicketsFrom(@RequestParam spectatorId: Long): ResponseEntity<*> {
         return try {
             ResponseEntity.ok(spectatorService.pendingTickets(spectatorId))
-        } catch (exception: MiEntraditaException){
+        } catch (exception: MiEntraditaException) {
             ResponseEntity.badRequest().body(exception.toMap())
         }
     }
@@ -35,3 +42,11 @@ class SpectatorController {
 
 
 data class LoginRequest(val username: String, val password: String)
+
+data class RegisterRequest(val name: String,
+                           val surname: String,
+                           val username: String,
+                           val password: String,
+                           val dni: Int,
+                           val email: String
+                           )
