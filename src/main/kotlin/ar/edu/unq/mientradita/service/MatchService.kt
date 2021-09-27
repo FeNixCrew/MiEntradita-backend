@@ -5,6 +5,7 @@ import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
 import ar.edu.unq.mientradita.persistence.MatchRepository
 import ar.edu.unq.mientradita.persistence.SpectatorRepository
+import ar.edu.unq.mientradita.webservice.CreateMatchRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -20,10 +21,11 @@ class MatchService {
     private lateinit var spectatorRepository: SpectatorRepository
 
     @Transactional
-    fun createMatch(home: String, away: String, ticketPrice: Double, matchStartTime: LocalDateTime): Match {
-        val match = Match(home, away, matchStartTime)
+    fun createMatch(createMatchRequest: CreateMatchRequest): MatchDTO {
+        val match = createMatchRequest.toModel()
+        matchRepository.save(match)
 
-        return matchRepository.save(match)
+        return MatchDTO.fromModel(match, createMatchRequest.ticketPrice)
     }
 
 
@@ -44,4 +46,18 @@ class MatchService {
         matchRepository.deleteAll()
     }
 
+}
+
+data class MatchDTO(
+        val id: Long,
+        val home: String,
+        val away: String,
+        val ticketPrice: Double,
+        val matchStartTime: LocalDateTime
+) {
+    companion object {
+        fun fromModel(match: Match, ticketPrice: Double): MatchDTO {
+            return MatchDTO(match.id!!,match.home, match.away, ticketPrice, match.matchStartTime)
+        }
+    }
 }

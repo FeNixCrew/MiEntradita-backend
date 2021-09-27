@@ -1,6 +1,7 @@
 package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.builders.SpectatorBuilder
+import ar.edu.unq.mientradita.webservice.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.LoginRequest
 import ar.edu.unq.mientradita.webservice.RegisterRequest
 import org.assertj.core.api.Assertions.assertThat
@@ -42,7 +43,18 @@ class SpectatorServiceTest {
 
     @Test
     fun `se puede crear un nuevo espectador`() {
-        assertThat(espectador.id).isNotNull
+        val nuevoEspectador = spectatorService.createSpectator(
+                RegisterRequest(
+                        name = "Fede",
+                        surname = "Sandoval",
+                        username = "fede1234",
+                        password = "9999",
+                        email = "fede1234@gmail.com",
+                        dni = 45456784
+                )
+        )
+
+        assertThat(nuevoEspectador.id).isNotNull
     }
 
     @Test
@@ -61,12 +73,11 @@ class SpectatorServiceTest {
 
     @Test
     fun `un espectador puede reservar una entrada`() {
-        val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
-
-        val entradaReservada = spectatorService.reserveTicket(espectador.id, partido.id!!, horarioPartido.minusDays(4))
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
+        val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
         assertThat(entradaReservada)
-                .isEqualTo(TicketDTO(entradaReservada.id, espectador.id, partido.id!!, equipoLocal, equipoVisitante, horarioPartido))
+                .isEqualTo(TicketDTO(entradaReservada.id, espectador.id, partidoDTO.id, equipoLocal, equipoVisitante, horarioPartido))
     }
 
     @Test
@@ -90,11 +101,11 @@ class SpectatorServiceTest {
                         espectador.name, espectador.surname, espectador.username,
                         espectador.password, espectador.dni, espectador.email)
         )
-        val partido1 = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
-        val partido2 = matchService.createMatch(equipoVisitante, equipoLocal, 500.00, horarioPartido)
+        val partido1 = matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
+        val partido2 = matchService.createMatch(CreateMatchRequest(equipoVisitante, equipoLocal, 500.00, horarioPartido))
 
-        val entrada1 = spectatorService.reserveTicket(espectadorDTO.id, partido1.id!!)
-        val entrada2 = spectatorService.reserveTicket(espectadorDTO.id, partido2.id!!)
+        val entrada1 = spectatorService.reserveTicket(espectadorDTO.id, partido1.id)
+        val entrada2 = spectatorService.reserveTicket(espectadorDTO.id, partido2.id)
 
         assertThat(spectatorService.pendingTickets(espectadorDTO.id, horarioPartido)).containsExactly(entrada1, entrada2)
     }
@@ -107,13 +118,13 @@ class SpectatorServiceTest {
                         espectador.name, espectador.surname, espectador.username,
                         espectador.password, espectador.dni, espectador.email)
         )
-        val partido1 = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
-        val partido2 = matchService.createMatch(equipoVisitante, equipoLocal, 500.00, horarioPartido)
+        val partido1 = matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
+        val partido2 = matchService.createMatch(CreateMatchRequest(equipoVisitante, equipoLocal, 500.00, horarioPartido))
 
-        val entrada1 = spectatorService.reserveTicket(espectadorDTO.id, partido1.id!!)
-        val entrada2 = spectatorService.reserveTicket(espectadorDTO.id, partido2.id!!)
+        val entrada1 = spectatorService.reserveTicket(espectadorDTO.id, partido1.id)
+        val entrada2 = spectatorService.reserveTicket(espectadorDTO.id, partido2.id)
 
-        matchService.comeIn(espectadorDTO.id, partido1.id!!, horarioPartido.minusHours(1))
+        matchService.comeIn(espectadorDTO.id, partido1.id, horarioPartido.minusHours(1))
 
         assertThat(spectatorService.pendingTickets(espectadorDTO.id, horarioPartido))
                 .doesNotContain(entrada1)

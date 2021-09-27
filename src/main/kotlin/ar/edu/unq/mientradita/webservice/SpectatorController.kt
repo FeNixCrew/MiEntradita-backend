@@ -1,5 +1,6 @@
 package ar.edu.unq.mientradita.webservice
 
+import ar.edu.unq.mientradita.model.Spectator
 import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.service.SpectatorDTO
 import ar.edu.unq.mientradita.service.SpectatorService
@@ -49,4 +50,6 @@ data class RegisterRequest(val name: String,
                            val password: String,
                            val dni: Int,
                            val email: String
-                           )
+) {
+    fun toModel() = Spectator(name, surname, username, email, dni, password)
+}

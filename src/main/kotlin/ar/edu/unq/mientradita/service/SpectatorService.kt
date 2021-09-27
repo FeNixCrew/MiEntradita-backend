@@ -10,8 +10,10 @@ import ar.edu.unq.mientradita.persistence.SpectatorRepository
 import ar.edu.unq.mientradita.webservice.LoginRequest
 import ar.edu.unq.mientradita.webservice.RegisterRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.lang.RuntimeException
 import java.time.LocalDateTime
 
 @Service
@@ -25,15 +27,7 @@ class SpectatorService {
 
     @Transactional
     fun createSpectator(registerRequest: RegisterRequest): SpectatorDTO {
-        val spectator = Spectator(
-                registerRequest.name,
-                registerRequest.surname,
-                registerRequest.username,
-                registerRequest.email,
-                registerRequest.dni,
-                registerRequest.password
-        )
-
+        val spectator  = registerRequest.toModel()
         spectatorRepository.save(spectator)
 
         return SpectatorDTO.fromModel(spectator)

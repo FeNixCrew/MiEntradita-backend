@@ -3,6 +3,7 @@ package ar.edu.unq.mientradita.service
 import ar.edu.unq.mientradita.model.exception.AlreadyPresentInGameException
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
+import ar.edu.unq.mientradita.webservice.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.RegisterRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -43,18 +44,18 @@ class MatchServiceTest {
 
     @Test
     fun `se pueden crear partidos`() {
-        val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
 
-        assertThat(partido).isNotNull
+        assertThat(partidoDTO).isNotNull
     }
 
     @Test
     fun `al asistir a un partido se ve un mensaje de bienvenida`() {
-        val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
-        spectatorService.reserveTicket(espectador.id, partido.id!!, horarioPartido.minusDays(4))
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
+        spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
-        assertThat(matchService.comeIn(espectador.id, partido.id!!, horarioPartido))
-                .isEqualTo("Bienvenido ${espectador.username} al partido de ${partido.home} vs ${partido.away}")
+        assertThat(matchService.comeIn(espectador.id, partidoDTO.id, horarioPartido))
+                .isEqualTo("Bienvenido ${espectador.username} al partido de ${partidoDTO.home} vs ${partidoDTO.away}")
     }
 
     @Test
@@ -71,11 +72,11 @@ class MatchServiceTest {
     @Test
     fun `un espectador que no esta registrado intenta reservar un ticket para un partido y es rechazado`() {
         val espectadorInexistenteId = 9999.toLong()
-        val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
 
 
         val exception = assertThrows<SpectatorNotRegistered> {
-            spectatorService.reserveTicket(espectadorInexistenteId, partido.id!!, horarioPartido.minusDays(2))
+            spectatorService.reserveTicket(espectadorInexistenteId, partidoDTO.id, horarioPartido.minusDays(2))
         }
 
         assertThat(exception.message).isEqualTo("El espectador no esta registrado")
@@ -95,11 +96,11 @@ class MatchServiceTest {
 
     @Test
     fun `un espectador no puede asistir dos veces a un partido`() {
-        val partido = matchService.createMatch(equipoLocal, equipoVisitante, 500.00, horarioPartido)
-        spectatorService.reserveTicket(espectador.id, partido.id!!, horarioPartido.minusDays(4))
-        matchService.comeIn(espectador.id, partido.id!!, horarioPartido)
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
+        spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
+        matchService.comeIn(espectador.id, partidoDTO.id, horarioPartido)
 
-        val exception = assertThrows<AlreadyPresentInGameException> { matchService.comeIn(espectador.id, partido.id!!, horarioPartido) }
+        val exception = assertThrows<AlreadyPresentInGameException> { matchService.comeIn(espectador.id, partidoDTO.id, horarioPartido) }
 
         assertThat(exception.message).isEqualTo("El espectador ya ha ingresado al partido")
     }
