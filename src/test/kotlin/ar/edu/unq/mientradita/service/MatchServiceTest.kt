@@ -22,6 +22,9 @@ class MatchServiceTest {
     @Autowired
     private lateinit var spectatorService: SpectatorService
 
+    @Autowired
+    private lateinit var authUserService: AuthUserService
+
     private val equipoLocal = "river"
     private val equipoVisitante = "racing"
     private val horarioPartido = LocalDateTime.of(2021, 9, 20, 16, 0)
@@ -30,7 +33,7 @@ class MatchServiceTest {
 
     @BeforeEach
     fun setUp() {
-        espectador = spectatorService.createSpectator(
+        espectador = authUserService.createSpectator(
                 RegisterRequest(
                         name = "Nicolas",
                         surname = "Martinez",

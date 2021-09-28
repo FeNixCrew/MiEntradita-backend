@@ -1,7 +1,6 @@
 package ar.edu.unq.mientradita.webservice.config
 
-import ar.edu.unq.mientradita.model.Match
-import ar.edu.unq.mientradita.model.Spectator
+import ar.edu.unq.mientradita.service.AuthUserService
 import ar.edu.unq.mientradita.service.MatchDTO
 import ar.edu.unq.mientradita.service.MatchService
 import ar.edu.unq.mientradita.service.SpectatorService
@@ -22,6 +21,9 @@ class FakeDataConfiguration {
     @Autowired
     private lateinit var spectatorService: SpectatorService
 
+    @Autowired
+    private lateinit var authUserService: AuthUserService
+
     @Bean
     fun fakeDataInject() =
             CommandLineRunner {
@@ -31,7 +33,7 @@ class FakeDataConfiguration {
     private fun createSpectators() {
         val matchs = generateMatchs()
 
-        spectatorService.createSpectator(
+        authUserService.createSpectator(
                 RegisterRequest(
                         "scanner",
                         "scanner",
@@ -42,7 +44,7 @@ class FakeDataConfiguration {
                 )
         )
 
-        val pepe = spectatorService.createSpectator(
+        val pepe = authUserService.createSpectator(
                 RegisterRequest(
                         "Pepe",
                         "Argento",
@@ -54,7 +56,7 @@ class FakeDataConfiguration {
 
         generateTicketsFor(pepe.id, matchs, spectatorService)
 
-        val moniFutbolera = spectatorService.createSpectator(
+        val moniFutbolera = authUserService.createSpectator(
                 RegisterRequest(
                         "Moni",
                         "Argento",

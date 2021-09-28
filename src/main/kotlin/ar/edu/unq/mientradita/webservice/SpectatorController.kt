@@ -1,12 +1,10 @@
 package ar.edu.unq.mientradita.webservice
 
-import ar.edu.unq.mientradita.model.Spectator
+import ar.edu.unq.mientradita.model.user.Spectator
 import ar.edu.unq.mientradita.model.exception.MiEntraditaException
-import ar.edu.unq.mientradita.service.SpectatorDTO
+import ar.edu.unq.mientradita.service.AuthUserService
 import ar.edu.unq.mientradita.service.SpectatorService
-import ar.edu.unq.mientradita.service.TicketDTO
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -14,12 +12,15 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/spectator")
 class SpectatorController {
     @Autowired
+    private lateinit var authUserService: AuthUserService
+
+    @Autowired
     private lateinit var spectatorService: SpectatorService
 
     @RequestMapping(value = ["/login"], method = [RequestMethod.POST])
     fun logIn(@RequestBody loginRequest: LoginRequest): ResponseEntity<*> {
         return try {
-            ResponseEntity.ok(spectatorService.login(loginRequest))
+            ResponseEntity.ok(authUserService.login(loginRequest))
         } catch (exception: MiEntraditaException) {
             ResponseEntity.badRequest().body(exception.toMap())
         }
@@ -27,7 +28,7 @@ class SpectatorController {
 
     @RequestMapping(value = ["/register"], method = [RequestMethod.POST])
     fun register(@RequestBody registerRequest: RegisterRequest): ResponseEntity<*> {
-        val spectatorDTO = spectatorService.createSpectator(registerRequest)
+        val spectatorDTO = authUserService.createSpectator(registerRequest)
         return ResponseEntity.ok(spectatorDTO)
     }
 

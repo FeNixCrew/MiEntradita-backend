@@ -1,27 +1,24 @@
-package ar.edu.unq.mientradita.model
+package ar.edu.unq.mientradita.model.user
 
+import ar.edu.unq.mientradita.model.Match
+import ar.edu.unq.mientradita.model.Ticket
 import ar.edu.unq.mientradita.model.exception.TicketFromMatchNotFoundException
 import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
+@PrimaryKeyJoinColumn(name="id")
 class Spectator(
     val name: String,
     val surname: String,
-    val username: String,
-    val email: String,
+    username: String,
+    email: String,
     val dni: Int,
-    val password: String
-) {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    password: String
+): User(username, password, email, Role.USER) {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val tickets = mutableListOf<Ticket>()
-
-    fun haveTickets(): Boolean = tickets.isNotEmpty()
 
     fun reserveATicketFor(match: Match, reserveTime: LocalDateTime = LocalDateTime.now()) {
         match.reserveTicket(this, reserveTime)

@@ -1,6 +1,6 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.model.Spectator
+import ar.edu.unq.mientradita.model.user.Spectator
 import ar.edu.unq.mientradita.model.Ticket
 import ar.edu.unq.mientradita.model.exception.InvalidCredentialsException
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
@@ -10,10 +10,8 @@ import ar.edu.unq.mientradita.persistence.SpectatorRepository
 import ar.edu.unq.mientradita.webservice.LoginRequest
 import ar.edu.unq.mientradita.webservice.RegisterRequest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.lang.RuntimeException
 import java.time.LocalDateTime
 
 @Service
@@ -24,25 +22,6 @@ class SpectatorService {
 
     @Autowired
     private lateinit var matchRepository: MatchRepository
-
-    @Transactional
-    fun createSpectator(registerRequest: RegisterRequest): SpectatorDTO {
-        val spectator  = registerRequest.toModel()
-        spectatorRepository.save(spectator)
-
-        return SpectatorDTO.fromModel(spectator)
-    }
-
-    @Transactional
-    fun login(loginRequest: LoginRequest): SpectatorDTO {
-        val maybeSpectator = spectatorRepository.findByUsernameAndPassword(loginRequest.username, loginRequest.password)
-
-        if (maybeSpectator!=null) {
-            return SpectatorDTO.fromModel(maybeSpectator)
-        } else {
-            throw InvalidCredentialsException()
-        }
-    }
 
     @Transactional
     fun reserveTicket(spectatorId: Long, matchId: Long, reserveTicketTime: LocalDateTime = LocalDateTime.now()): TicketDTO {
@@ -65,14 +44,6 @@ class SpectatorService {
         val pendingTickets = spectator.tickets.filter { it.isPendingAt(aTime)}
 
         return pendingTickets.map { ticket -> TicketDTO.fromModel(spectatorId, ticket) }
-    }
-}
-
-data class SpectatorDTO(val id: Long, val username: String) {
-    companion object {
-        fun fromModel(spectator: Spectator): SpectatorDTO {
-            return SpectatorDTO(spectator.id!!, spectator.username)
-        }
     }
 }
 

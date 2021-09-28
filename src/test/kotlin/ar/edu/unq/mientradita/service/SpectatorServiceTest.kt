@@ -22,6 +22,9 @@ class SpectatorServiceTest {
     @Autowired
     private lateinit var matchService: MatchService
 
+    @Autowired
+    private lateinit var authUserService: AuthUserService
+
     private val horarioPartido = LocalDateTime.of(2021, 10, 20, 16, 0)
     private var equipoVisitante = "river"
     private var equipoLocal = "racing"
@@ -29,7 +32,7 @@ class SpectatorServiceTest {
 
     @BeforeEach
     fun setUp() {
-        espectador = spectatorService.createSpectator(
+        espectador = authUserService.createSpectator(
                 RegisterRequest(
                         name = "Nicolas",
                         surname = "Martinez",
@@ -43,7 +46,7 @@ class SpectatorServiceTest {
 
     @Test
     fun `se puede crear un nuevo espectador`() {
-        val nuevoEspectador = spectatorService.createSpectator(
+        val nuevoEspectador = authUserService.createSpectator(
                 RegisterRequest(
                         name = "Fede",
                         surname = "Sandoval",
@@ -59,14 +62,14 @@ class SpectatorServiceTest {
 
     @Test
     fun `se puede obtener informacion de un espectador al introducir correctamente sus credenciales`() {
-        val espectadorEncontrado = spectatorService.login(LoginRequest("nico0510", "1234"))
+        val espectadorEncontrado = authUserService.login(LoginRequest("nico0510", "1234"))
 
         assertThat(espectador).usingRecursiveComparison().isEqualTo(espectadorEncontrado)
     }
 
     @Test
     fun `no se puede obtener informacion de un espectador si se introduce mal sus credenciales`() {
-        val exception = assertThrows<RuntimeException> { spectatorService.login(LoginRequest("nico0510", "incorrecto")) }
+        val exception = assertThrows<RuntimeException> { authUserService.login(LoginRequest("nico0510", "incorrecto")) }
 
         assertThat(exception.message).isEqualTo("Las credenciales introducidas son incorrectas, intente de nuevo")
     }
@@ -83,7 +86,7 @@ class SpectatorServiceTest {
     @Test
     fun `un espectador comienza sin entradas pendientes`() {
         val espectador = SpectatorBuilder().build()
-        val espectadorDTO = spectatorService.createSpectator(
+        val espectadorDTO = authUserService.createSpectator(
                 RegisterRequest(
                         espectador.name, espectador.surname, espectador.username,
                         espectador.password, espectador.dni, espectador.email
@@ -96,7 +99,7 @@ class SpectatorServiceTest {
     @Test
     fun `se puede obtener la informacion de las entradas pendientes de un espectador`() {
         val espectador = SpectatorBuilder().build()
-        val espectadorDTO = spectatorService.createSpectator(
+        val espectadorDTO = authUserService.createSpectator(
                 RegisterRequest(
                         espectador.name, espectador.surname, espectador.username,
                         espectador.password, espectador.dni, espectador.email)
@@ -113,7 +116,7 @@ class SpectatorServiceTest {
     @Test
     fun `no aparecen en las entradas pendientes de un espectador una entrada de un partido al que ya asistio`() {
         val espectador = SpectatorBuilder().build()
-        val espectadorDTO = spectatorService.createSpectator(
+        val espectadorDTO = authUserService.createSpectator(
                 RegisterRequest(
                         espectador.name, espectador.surname, espectador.username,
                         espectador.password, espectador.dni, espectador.email)

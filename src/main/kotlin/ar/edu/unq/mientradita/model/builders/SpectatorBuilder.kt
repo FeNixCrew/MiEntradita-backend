@@ -1,6 +1,6 @@
 package ar.edu.unq.mientradita.model.builders
 
-import ar.edu.unq.mientradita.model.Spectator
+import ar.edu.unq.mientradita.model.user.Spectator
 
 class SpectatorBuilder {
     private var name: String = ""
