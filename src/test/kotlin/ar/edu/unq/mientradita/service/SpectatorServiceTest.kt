@@ -61,6 +61,19 @@ class SpectatorServiceTest {
     }
 
     @Test
+    fun `no se puede crear un usuario con un nombre de usuario que ya existe`() {
+        authUserService.createSpectator(
+                RegisterRequest("Fede", "Sandoval", "fede1234", "9999", 45456784, "fede1234@gmail.com"))
+
+        val exception = assertThrows<RuntimeException> { authUserService.createSpectator(
+                RegisterRequest("Fede", "Sandoval", "fede1234", "9999", 45456784, "fede1234@gmail.com"))
+        }
+
+        assertThat(exception.message).isEqualTo("Nombre de usuario ya registrado")
+
+    }
+
+    @Test
     fun `se puede obtener informacion de un espectador al introducir correctamente sus credenciales`() {
         val espectadorEncontrado = authUserService.login(LoginRequest("nico0510", "1234"))
 

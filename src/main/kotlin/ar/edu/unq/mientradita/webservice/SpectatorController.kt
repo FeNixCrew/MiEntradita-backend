@@ -29,7 +29,11 @@ class SpectatorController {
 
     @RequestMapping(value = ["/register"], method = [RequestMethod.POST])
     fun register(@RequestBody registerRequest: RegisterRequest): ResponseEntity<*> {
-        return ResponseEntity(authUserService.createSpectator(registerRequest), HttpStatus.CREATED)
+        return try {
+            ResponseEntity(authUserService.createSpectator(registerRequest), HttpStatus.CREATED)
+        } catch (exception: MiEntraditaException) {
+            ResponseEntity.badRequest().body(exception.toMap())
+        }
     }
 
     @RequestMapping(value = ["/tickets"], method = [RequestMethod.GET])

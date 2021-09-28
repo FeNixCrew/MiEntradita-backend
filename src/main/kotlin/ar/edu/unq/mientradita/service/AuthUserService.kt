@@ -1,6 +1,7 @@
 package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.exception.InvalidCredentialsException
+import ar.edu.unq.mientradita.model.exception.UsernameAlreadyRegistered
 import ar.edu.unq.mientradita.model.user.Spectator
 import ar.edu.unq.mientradita.persistence.SpectatorRepository
 import ar.edu.unq.mientradita.webservice.LoginRequest
@@ -17,7 +18,11 @@ class AuthUserService {
 
     @Transactional
     fun createSpectator(registerRequest: RegisterRequest): SpectatorDTO {
-        val spectator  = registerRequest.toModel()
+        val maybeSpectator = spectatorRepository.findByUsername(registerRequest.username)
+        if (maybeSpectator != null) {
+            throw UsernameAlreadyRegistered()
+        }
+        val spectator = registerRequest.toModel()
         spectatorRepository.save(spectator)
 
         return SpectatorDTO.fromModel(spectator)
@@ -27,7 +32,7 @@ class AuthUserService {
     fun login(loginRequest: LoginRequest): SpectatorDTO {
         val maybeSpectator = spectatorRepository.findByUsernameAndPassword(loginRequest.username, loginRequest.password)
 
-        if (maybeSpectator!=null) {
+        if (maybeSpectator != null) {
             return SpectatorDTO.fromModel(maybeSpectator)
         } else {
             throw InvalidCredentialsException()
