@@ -28,7 +28,7 @@ class SpectatorServiceTest {
     private val horarioPartido = LocalDateTime.of(2021, 10, 20, 16, 0)
     private var equipoVisitante = "river"
     private var equipoLocal = "racing"
-    private lateinit var espectador: SpectatorDTO
+    private lateinit var espectador: UserDTO
 
     @BeforeEach
     fun setUp() {

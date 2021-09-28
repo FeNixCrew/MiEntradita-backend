@@ -1,5 +1,8 @@
 package ar.edu.unq.mientradita.webservice.config
 
+import ar.edu.unq.mientradita.model.user.Admin
+import ar.edu.unq.mientradita.model.user.Scanner
+import ar.edu.unq.mientradita.persistence.UserRepository
 import ar.edu.unq.mientradita.service.AuthUserService
 import ar.edu.unq.mientradita.service.MatchDTO
 import ar.edu.unq.mientradita.service.MatchService
@@ -24,6 +27,9 @@ class FakeDataConfiguration {
     @Autowired
     private lateinit var authUserService: AuthUserService
 
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
     @Bean
     fun fakeDataInject() =
             CommandLineRunner {
@@ -33,16 +39,8 @@ class FakeDataConfiguration {
     private fun createSpectators() {
         val matchs = generateMatchs()
 
-        authUserService.createSpectator(
-                RegisterRequest(
-                        "scanner",
-                        "scanner",
-                        "scanner",
-                        "scanner",
-                        212837645,
-                        "scanner@gmail.com",
-                )
-        )
+        userRepository.save(Admin("admin", "admin", "admin.mientradita2021@gmail.com"))
+        userRepository.save(Scanner("scanner", "scanner", "scanner.mientradita2021@gmail.com"))
 
         val pepe = authUserService.createSpectator(
                 RegisterRequest(

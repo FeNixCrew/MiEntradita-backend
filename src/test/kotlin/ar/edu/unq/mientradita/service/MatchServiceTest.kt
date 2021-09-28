@@ -29,7 +29,7 @@ class MatchServiceTest {
     private val equipoVisitante = "racing"
     private val horarioPartido = LocalDateTime.of(2021, 9, 20, 16, 0)
 
-    private lateinit var espectador: SpectatorDTO
+    private lateinit var espectador: UserDTO
 
     @BeforeEach
     fun setUp() {
