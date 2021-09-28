@@ -5,6 +5,7 @@ import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.service.AuthUserService
 import ar.edu.unq.mientradita.service.SpectatorService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -28,8 +29,7 @@ class SpectatorController {
 
     @RequestMapping(value = ["/register"], method = [RequestMethod.POST])
     fun register(@RequestBody registerRequest: RegisterRequest): ResponseEntity<*> {
-        val spectatorDTO = authUserService.createSpectator(registerRequest)
-        return ResponseEntity.ok(spectatorDTO)
+        return ResponseEntity(authUserService.createSpectator(registerRequest), HttpStatus.CREATED)
     }
 
     @RequestMapping(value = ["/tickets"], method = [RequestMethod.GET])

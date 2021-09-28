@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -34,7 +35,7 @@ class MatchController {
 
     @RequestMapping(value = ["/create"], method = [RequestMethod.POST])
     fun createMatch(@RequestBody createMatchRequest: CreateMatchRequest): ResponseEntity<*>{
-        return ResponseEntity.ok(matchService.createMatch(createMatchRequest))
+        return ResponseEntity(matchService.createMatch(createMatchRequest), HttpStatus.CREATED)
     }
 
 }
