@@ -6,6 +6,7 @@ import ar.edu.unq.mientradita.model.user.User
 import ar.edu.unq.mientradita.persistence.UserRepository
 import ar.edu.unq.mientradita.webservice.LoginRequest
 import ar.edu.unq.mientradita.webservice.RegisterRequest
+import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -15,6 +16,9 @@ class AuthUserService {
 
     @Autowired
     private lateinit var userRepository: UserRepository
+
+    @Autowired
+    private lateinit var jwtUtil: JWTUtil
 
     @Transactional
     fun createSpectator(registerRequest: RegisterRequest): UserDTO {
@@ -30,13 +34,13 @@ class AuthUserService {
     }
 
     @Transactional
-    fun login(loginRequest: LoginRequest): UserDTO {
+    fun login(loginRequest: LoginRequest): Pair<String, UserDTO> {
         val maybeSpectator = userRepository.findByUsernameAndPassword(loginRequest.username, loginRequest.password)
         if (!maybeSpectator.isPresent) {
             throw InvalidCredentialsException()
         }
 
-        return UserDTO.fromModel(maybeSpectator.get())
+        return Pair(jwtUtil.generateToken(maybeSpectator.get()),UserDTO.fromModel(maybeSpectator.get()))
     }
 }
 

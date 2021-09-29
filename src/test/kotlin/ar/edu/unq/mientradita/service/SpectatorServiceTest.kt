@@ -4,6 +4,7 @@ import ar.edu.unq.mientradita.model.builders.SpectatorBuilder
 import ar.edu.unq.mientradita.webservice.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.LoginRequest
 import ar.edu.unq.mientradita.webservice.RegisterRequest
+import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -24,6 +25,9 @@ class SpectatorServiceTest {
 
     @Autowired
     private lateinit var authUserService: AuthUserService
+
+    @Autowired
+    private lateinit var jwtUtil: JWTUtil
 
     private val horarioPartido = LocalDateTime.of(2021, 10, 20, 16, 0)
     private var equipoVisitante = "river"
@@ -75,9 +79,9 @@ class SpectatorServiceTest {
 
     @Test
     fun `se puede obtener informacion de un espectador al introducir correctamente sus credenciales`() {
-        val espectadorEncontrado = authUserService.login(LoginRequest("nico0510", "1234"))
+        val parTokenEspectador = authUserService.login(LoginRequest("nico0510", "1234"))
 
-        assertThat(espectador).usingRecursiveComparison().isEqualTo(espectadorEncontrado)
+        assertThat(espectador).usingRecursiveComparison().isEqualTo(parTokenEspectador.second)
     }
 
     @Test

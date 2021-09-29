@@ -15,7 +15,7 @@ class Spectator(
     email: String,
     val dni: Int,
     password: String
-): User(username, password, email, Role.USER) {
+): User(username, password, email, Role.ROLE_USER) {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val tickets = mutableListOf<Ticket>()

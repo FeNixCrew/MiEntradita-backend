@@ -6,4 +6,4 @@ import javax.persistence.PrimaryKeyJoinColumn
 @Entity
 @PrimaryKeyJoinColumn(name="id")
 class Admin(username: String, password: String, email: String):
-    User(username, password, email, Role.ADMIN)
+    User(username, password, email, Role.ROLE_ADMIN)

@@ -4,6 +4,7 @@ import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.model.user.Spectator
 import ar.edu.unq.mientradita.service.AuthUserService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
@@ -20,7 +21,12 @@ class AuthController {
     @RequestMapping(value = ["/login"], method = [RequestMethod.POST])
     fun logIn(@RequestBody loginRequest: LoginRequest): ResponseEntity<*> {
         return try {
-            ResponseEntity.ok(authUserService.login(loginRequest))
+            val responseHeaders = HttpHeaders()
+            val pairTokenUser = authUserService.login(loginRequest)
+            responseHeaders.set("Authorization", pairTokenUser.first)
+
+            ResponseEntity.status(HttpStatus.OK).headers(responseHeaders).body(pairTokenUser.second)
+
         } catch (exception: MiEntraditaException) {
             ResponseEntity.badRequest().body(exception.toMap())
         }
