@@ -115,10 +115,21 @@ class MatchServiceTest {
         partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipo, equipoVisitante, 500.00, horarioPartido)))
         partidosCreados.add(matchService.createMatch(CreateMatchRequest(equipoLocal, nombreEquipo, 500.00, horarioPartido.plusDays(7))))
 
-        val partidos = matchService.searchNextMatchsByPartialName("vel")
+        val partidos = matchService.searchNextMatchsByPartialName("vel", horarioPartido)
 
-        assertThat(partidos.size).isEqualTo(2)
         assertThat(partidos).containsExactly(partidosCreados[0], partidosCreados[1])
+    }
+
+    @Test
+    fun `se pueden buscar partidos luego de una fecha determinada`() {
+        val nombreEquipo = "velez"
+        val partidosCreados = mutableListOf<MatchDTO>()
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipo, equipoVisitante, 500.00, horarioPartido)))
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(equipoLocal, nombreEquipo, 500.00, horarioPartido.plusDays(7))))
+
+        val partidos = matchService.searchNextMatchsByPartialName("", horarioPartido.plusDays(1))
+
+        assertThat(partidos).doesNotContain(partidosCreados[0]).containsExactly(partidosCreados[1])
     }
 
     @Test
@@ -128,7 +139,7 @@ class MatchServiceTest {
 
         val partidoCreado = matchService.createMatch(CreateMatchRequest(nombreEquipo, nombreEquipo2, 500.00, horarioPartido))
 
-        val partidos = matchService.searchNextMatchsByPartialName("ele")
+        val partidos = matchService.searchNextMatchsByPartialName("ele", horarioPartido)
 
         assertThat(partidos.size).isEqualTo(1)
         assertThat(partidos).containsExactly(partidoCreado)

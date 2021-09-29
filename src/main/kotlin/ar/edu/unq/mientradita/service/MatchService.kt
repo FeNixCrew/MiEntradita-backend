@@ -41,8 +41,8 @@ class MatchService {
     }
 
     @Transactional
-    fun searchNextMatchsByPartialName(partialTeamName: String): List<MatchDTO> {
-        return matchRepository.searchNextMatchsBy(partialTeamName).map{ MatchDTO.fromModel(it) }
+    fun searchNextMatchsByPartialName(partialTeamName: String, aDate: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
+        return matchRepository.searchNextMatchsBy(partialTeamName, aDate).map{ MatchDTO.fromModel(it) }
     }
 
     @Transactional
