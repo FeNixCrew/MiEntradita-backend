@@ -15,6 +15,7 @@ class Match(
     val home: String,
     val away: String,
     val matchStartTime: LocalDateTime,
+    val ticketPrice: Double,
     ) {
 
     @Id
@@ -22,7 +23,7 @@ class Match(
     var id: Long? = null
 
     fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime) {
-        val newTicket = Ticket(this, reserveTicketTime)
+        val newTicket = Ticket(this, reserveTicketTime, ticketPrice)
         spectator.addTicket(newTicket)
     }
 

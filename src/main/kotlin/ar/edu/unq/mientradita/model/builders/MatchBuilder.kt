@@ -8,9 +8,10 @@ class MatchBuilder {
     private var home: String = "a"
     private var away: String = "b"
     private var matchStartTime: LocalDateTime = LocalDateTime.now()
+    private var ticketPrice: Double = 0.0
 
     fun build(): Match {
-        return Match(home, away, matchStartTime)
+        return Match(home, away, matchStartTime, ticketPrice)
     }
 
     fun withHome(home: String): MatchBuilder {
@@ -25,6 +26,11 @@ class MatchBuilder {
 
     fun withMatchStart(matchStartTime: LocalDateTime): MatchBuilder {
         this.matchStartTime = matchStartTime
+        return this
+    }
+
+    fun withPrice(aPrice: Double): MatchBuilder {
+        this.ticketPrice = aPrice
         return this
     }
 }
