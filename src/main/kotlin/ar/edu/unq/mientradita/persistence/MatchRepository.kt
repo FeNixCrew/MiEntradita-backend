@@ -5,4 +5,4 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface MatchRepository: CrudRepository<Match, Long>
+interface MatchRepository: MatchRepositoryCustom, CrudRepository<Match, Long>

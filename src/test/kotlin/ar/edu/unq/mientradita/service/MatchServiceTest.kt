@@ -108,6 +108,32 @@ class MatchServiceTest {
         assertThat(exception.message).isEqualTo("El espectador ya ha ingresado al partido")
     }
 
+    @Test
+    fun `se pueden buscar partidos proximos por matcheo de nombre de un equipo`() {
+        val nombreEquipo = "velez"
+        val partidosCreados = mutableListOf<MatchDTO>()
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipo, equipoVisitante, 500.00, horarioPartido)))
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(equipoLocal, nombreEquipo, 500.00, horarioPartido.plusDays(7))))
+
+        val partidos = matchService.findNextMatchsByPartialName("vel")
+
+        assertThat(partidos.size).isEqualTo(2)
+        assertThat(partidos).containsExactly(partidosCreados[0], partidosCreados[1])
+    }
+
+    @Test
+    fun `no se repiten los partidos en una busqueda si ambos equipos matchean con el nombre parcial buscado`() {
+        val nombreEquipo = "velez"
+        val nombreEquipo2 = "fieles"
+
+        val partidoCreado = matchService.createMatch(CreateMatchRequest(nombreEquipo, nombreEquipo2, 500.00, horarioPartido))
+
+        val partidos = matchService.findNextMatchsByPartialName("ele")
+
+        assertThat(partidos.size).isEqualTo(1)
+        assertThat(partidos).containsExactly(partidoCreado)
+    }
+
     @AfterEach
     fun tearDown() {
         matchService.clearDataSet()

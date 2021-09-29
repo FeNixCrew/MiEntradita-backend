@@ -25,7 +25,7 @@ class MatchService {
         val match = createMatchRequest.toModel()
         matchRepository.save(match)
 
-        return MatchDTO.fromModel(match, createMatchRequest.ticketPrice)
+        return MatchDTO.fromModel(match)
     }
 
 
@@ -38,6 +38,11 @@ class MatchService {
         match.comeIn(ticket, attendTime)
 
         return "Bienvenido ${spectator.username} al partido de ${match.home} vs ${match.away}"
+    }
+
+    @Transactional
+    fun findNextMatchsByPartialName(teamName: String): List<MatchDTO> {
+        return matchRepository.findNextMatchsFrom(teamName).map{ MatchDTO.fromModel(it) }
     }
 
     @Transactional
@@ -56,8 +61,8 @@ data class MatchDTO(
         val matchStartTime: LocalDateTime
 ) {
     companion object {
-        fun fromModel(match: Match, ticketPrice: Double): MatchDTO {
-            return MatchDTO(match.id!!,match.home, match.away, ticketPrice, match.matchStartTime)
+        fun fromModel(match: Match): MatchDTO {
+            return MatchDTO(match.id!!,match.home, match.away, match.ticketPrice, match.matchStartTime)
         }
     }
 }

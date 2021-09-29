@@ -3,12 +3,6 @@ package ar.edu.unq.mientradita.webservice
 import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.service.MatchService
-import ar.edu.unq.mientradita.service.SpectatorService
-import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -48,5 +42,5 @@ data class CreateMatchRequest(
         val ticketPrice: Double,
         val matchStartTime: LocalDateTime
 ) {
-    fun toModel() = Match(home, away, matchStartTime)
+    fun toModel() = Match(home, away, matchStartTime, ticketPrice)
 }
