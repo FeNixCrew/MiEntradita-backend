@@ -13,13 +13,13 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
     @Autowired
     private lateinit var em: EntityManager
 
-    override fun findNextMatchsFrom(teamName: String): List<Match> {
+    override fun searchNextMatchsBy(partialTeamName: String): List<Match> {
         val cb = em.criteriaBuilder
         val cq: CriteriaQuery<Match> = cb.createQuery(Match::class.java)
         val match: Root<Match> = cq.from(Match::class.java)
 
-        val matchWithHomeTeam = cb.like(cb.upper(match.get("home")), "%${teamName.toUpperCase()}%")
-        val matchWithAwayTeam = cb.like(cb.upper(match.get("away")), "%${teamName.toUpperCase()}%")
+        val matchWithHomeTeam = cb.like(cb.upper(match.get("home")), "%${partialTeamName.toUpperCase()}%")
+        val matchWithAwayTeam = cb.like(cb.upper(match.get("away")), "%${partialTeamName.toUpperCase()}%")
 
         cq.where(cb.or(matchWithHomeTeam, matchWithAwayTeam))
 
