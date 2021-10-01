@@ -6,6 +6,7 @@ import ar.edu.unq.mientradita.service.MatchService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
@@ -15,6 +16,7 @@ class MatchController {
     @Autowired
     private lateinit var matchService: MatchService
 
+    @PreAuthorize("hasRole('SCANNER')")
     @RequestMapping(value=["/comeIn"], method = [RequestMethod.POST])
     fun comeIn(@RequestBody comeInRequest: ComeInRequest): ResponseEntity<*> {
         return try {
@@ -24,6 +26,7 @@ class MatchController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = ["/create"], method = [RequestMethod.POST])
     fun createMatch(@RequestBody createMatchRequest: CreateMatchRequest): ResponseEntity<*>{
         return ResponseEntity(matchService.createMatch(createMatchRequest), HttpStatus.CREATED)

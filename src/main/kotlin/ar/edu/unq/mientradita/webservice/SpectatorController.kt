@@ -4,6 +4,7 @@ import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.service.SpectatorService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
@@ -15,6 +16,7 @@ class SpectatorController {
     @Autowired
     private lateinit var spectatorService: SpectatorService
 
+    @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = ["/tickets"], method = [RequestMethod.GET])
     fun pendingTicketsFrom(@RequestParam spectatorId: Long): ResponseEntity<*> {
         return try {
