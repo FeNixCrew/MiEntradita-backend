@@ -48,7 +48,7 @@ class FakeDataConfiguration {
                         "Argento",
                         "usuario",
                         "usuario",
-                        22334455,
+                        "22334455",
                         "zapatero_bigote@gmail.com")
         )
 
@@ -60,7 +60,7 @@ class FakeDataConfiguration {
                         "Argento",
                         "holasusana9999",
                         "cafecito000",
-                        224455770,
+                        "224455770",
                         "aguante_el_sillon@gmail.com")
         )
 

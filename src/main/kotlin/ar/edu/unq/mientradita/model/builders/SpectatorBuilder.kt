@@ -8,7 +8,7 @@ class SpectatorBuilder {
     private var username: String = ""
     private var password: String = ""
     private var email: String = ""
-    private var dni: Int = 12345678
+    private var dni: String = "12345678"
 
     fun build(): Spectator {
         return Spectator(name, surname, username, email, dni, password)
@@ -39,7 +39,7 @@ class SpectatorBuilder {
         return this
     }
 
-    fun withDni(dni: Int): SpectatorBuilder {
+    fun withDni(dni: String): SpectatorBuilder {
         this.dni = dni
         return this
     }

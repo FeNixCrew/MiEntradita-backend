@@ -1,6 +1,7 @@
 package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.Match
+import ar.edu.unq.mientradita.model.exception.MatchAlredyExists
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
 import ar.edu.unq.mientradita.persistence.MatchRepository
@@ -22,6 +23,10 @@ class MatchService {
 
     @Transactional
     fun createMatch(createMatchRequest: CreateMatchRequest): MatchDTO {
+        val maybeMatch = matchRepository.findByHomeAndAwayAndMatchStartTime(createMatchRequest.home, createMatchRequest.away, createMatchRequest.matchStartTime)
+        if(maybeMatch.isPresent){
+            throw MatchAlredyExists()
+        }
         val match = createMatchRequest.toModel()
         matchRepository.save(match)
 
@@ -42,7 +47,7 @@ class MatchService {
 
     @Transactional
     fun searchNextMatchsByPartialName(partialTeamName: String, aDate: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
-        return matchRepository.searchNextMatchsBy(partialTeamName, aDate).map{ MatchDTO.fromModel(it) }
+        return matchRepository.searchNextMatchsBy(partialTeamName, aDate).map { MatchDTO.fromModel(it) }
     }
 
     @Transactional
@@ -62,7 +67,7 @@ data class MatchDTO(
 ) {
     companion object {
         fun fromModel(match: Match): MatchDTO {
-            return MatchDTO(match.id!!,match.home, match.away, match.ticketPrice, match.matchStartTime)
+            return MatchDTO(match.id!!, match.home, match.away, match.ticketPrice, match.matchStartTime)
         }
     }
 }

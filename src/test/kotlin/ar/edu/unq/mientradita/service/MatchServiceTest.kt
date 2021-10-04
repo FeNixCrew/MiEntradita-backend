@@ -40,7 +40,7 @@ class MatchServiceTest {
                         username = "nico0510",
                         password = "1234",
                         email = "nico0510@gmail.com",
-                        dni = 12345678
+                        dni = "12345678"
                 )
         )
     }

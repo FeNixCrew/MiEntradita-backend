@@ -7,7 +7,7 @@ class UserTest {
 
     @Test
     fun `un espectador tiene rol de usuario`() {
-        val espectador = Spectator("", "", "", "", 99999, "")
+        val espectador = Spectator("", "", "", "", "99999", "")
 
         assertThat(espectador.role).isEqualTo(Role.ROLE_USER)
     }

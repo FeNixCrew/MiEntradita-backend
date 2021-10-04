@@ -29,6 +29,9 @@ dependencies {
 	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("commons-validator:commons-validator:1.4.1")
+
 }
 
 tasks.withType<KotlinCompile> {

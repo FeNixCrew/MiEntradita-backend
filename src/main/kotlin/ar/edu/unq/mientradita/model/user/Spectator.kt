@@ -7,15 +7,15 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
-@PrimaryKeyJoinColumn(name="id")
+@PrimaryKeyJoinColumn(name = "id")
 class Spectator(
-    val name: String,
-    val surname: String,
-    username: String,
-    email: String,
-    val dni: Int,
-    password: String
-): User(username, password, email, Role.ROLE_USER) {
+        val name: String,
+        val surname: String,
+        username: String,
+        email: String,
+        val dni: String,
+        password: String
+) : User(username, password, email, Role.ROLE_USER) {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val tickets = mutableListOf<Ticket>()
@@ -29,7 +29,8 @@ class Spectator(
     }
 
     fun findTicketFrom(match: Match) =
-        tickets.find { ticket -> ticket.match.isEquals(match)} ?: throw TicketFromMatchNotFoundException(this, match)
+            tickets.find { ticket -> ticket.match.isEquals(match) }
+                    ?: throw TicketFromMatchNotFoundException(this, match)
 
     fun fullname() = "$name $surname"
 }
