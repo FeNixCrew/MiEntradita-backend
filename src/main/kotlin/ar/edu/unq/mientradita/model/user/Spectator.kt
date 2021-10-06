@@ -13,6 +13,7 @@ class Spectator(
         val surname: String,
         username: String,
         email: String,
+        @Column(unique = true)
         val dni: Int,
         password: String
 ) : User(username, password, email, Role.ROLE_USER) {
