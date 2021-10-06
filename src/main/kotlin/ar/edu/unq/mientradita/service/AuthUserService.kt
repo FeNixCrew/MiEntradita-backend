@@ -1,8 +1,11 @@
 package ar.edu.unq.mientradita.service
 
+import ar.edu.unq.mientradita.model.exception.DniAlreadyRegistered
+import ar.edu.unq.mientradita.model.exception.EmailAlreadyRegistered
 import ar.edu.unq.mientradita.model.exception.InvalidCredentialsException
 import ar.edu.unq.mientradita.model.exception.UsernameAlreadyRegistered
 import ar.edu.unq.mientradita.model.user.User
+import ar.edu.unq.mientradita.persistence.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.UserRepository
 import ar.edu.unq.mientradita.webservice.LoginRequest
 import ar.edu.unq.mientradita.webservice.RegisterRequest
@@ -18,13 +21,23 @@ class AuthUserService {
     private lateinit var userRepository: UserRepository
 
     @Autowired
+    private lateinit var spectatorRepository: SpectatorRepository
+
+    @Autowired
     private lateinit var jwtUtil: JWTUtil
 
     @Transactional
     fun createSpectator(registerRequest: RegisterRequest): UserDTO {
-        val maybeSpectator = userRepository.findByUsername(registerRequest.username)
-        if (maybeSpectator.isPresent) {
+        if (userRepository.findByUsernameIgnoreCase(registerRequest.username).isPresent) {
             throw UsernameAlreadyRegistered()
+        }
+
+        if(userRepository.findByEmailIgnoreCase(registerRequest.email).isPresent) {
+            throw EmailAlreadyRegistered()
+        }
+
+        if(spectatorRepository.findByDni(registerRequest.dni).isPresent) {
+            throw DniAlreadyRegistered()
         }
 
         val spectator = registerRequest.toModel()

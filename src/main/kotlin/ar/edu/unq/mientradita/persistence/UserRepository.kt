@@ -7,4 +7,6 @@ import java.util.*
 interface UserRepository: CrudRepository<User, Long> {
     fun findByUsernameAndPassword(username: String, password: String): Optional<User>
     fun findByUsername(username: String): Optional<User>
+    fun findByUsernameIgnoreCase(username: String): Optional<User>
+    fun findByEmailIgnoreCase(username: String): Optional<User>
 }

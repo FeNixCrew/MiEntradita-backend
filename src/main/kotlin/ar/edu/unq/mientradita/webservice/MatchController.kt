@@ -74,9 +74,9 @@ class MatchController {
 data class ComeInRequest(val spectatorId: Long, val matchId: Long)
 
 data class CreateMatchRequest(
-        @field:NotBlank(message = "The field home cannot be empty")
+        @field:NotBlank(message = "El equipo local es requerido")
         val home: String,
-        @field:NotBlank(message = "The field away cannot be empty")
+        @field:NotBlank(message = "El equipo visitante es requerido")
         val away: String,
         val ticketPrice: Double,
         @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

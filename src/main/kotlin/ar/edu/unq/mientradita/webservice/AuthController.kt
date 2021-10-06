@@ -3,6 +3,7 @@ package ar.edu.unq.mientradita.webservice
 import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.model.user.Spectator
 import ar.edu.unq.mientradita.service.AuthUserService
+import org.hibernate.validator.constraints.Range
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpHeaders
@@ -57,30 +58,30 @@ class AuthController {
 }
 
 data class LoginRequest(
-        @field:NotBlank(message = "The username field cannot be empty")
+        @field:NotBlank(message = "El usuario es requerido")
         val username: String,
-        @field:NotBlank(message = "The password field cannot be empty ")
+        @field:NotBlank(message = "La contrasenia es requerida")
         val password: String)
 
 data class RegisterRequest(
-        @field:NotBlank(message = "The field name cannot be empty")
-        @field:Pattern(regexp = "^[a-zA-Z]*$", message = "The name can only be made up of letters")
+        @field:NotBlank(message = "El nombre es requerido")
+        @field:Pattern(regexp = "^[a-zA-Z]*$", message = "El nombre solo puede contener letras")
         val name: String,
-        @field:NotBlank(message = "The field surname cannot be empty")
-        @field:Pattern(regexp = "^[a-zA-Z]*$", message = "The surname can only be made up of letters")
+        @field:NotBlank(message = "El apellido es requerido")
+        @field:Pattern(regexp = "^[a-zA-Z]*$", message = "El apellido solo puede contener letras")
         val surname: String,
-        @field:NotBlank(message = "The username field cannot be empty")
-        @field:Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username cannot contain spaces")
+        @field:NotBlank(message = "El nombre de usuario es requerido")
+        @field:Pattern(regexp = "^[a-zA-Z0-9]*$", message = "El nombre de usuario solo puede contener caracteres alfanumericos y sin espacios")
         val username: String,
-        @field:NotBlank(message = "The field password cannot be empty")
-        @field:Min(value = 6, message = "The password must be more than 6 characters")
+        @field:NotBlank(message = "La contrasenia es requerida")
+        @field:Pattern(regexp = "^.{6,}\$", message = "La contrasenia debe poseer al menos 6 caracteres")
         val password: String,
-        @field:NotBlank(message = "The dni field cannot be empty")
-        @field:Pattern(regexp = "^[0-9]{8}$", message = "The dni cannot contain letters")
-        val dni: String,
-        @field:NotBlank(message = "The email field cannot be empty")
-        @field:Email
-        @field:Pattern(regexp = "^[^@]+@[^@]+\\.[a-zA-Z]{2,}\$", message = "The email must be of the style 'user1234@gmail.com' ")
+        @field:NotNull(message = "El dni es requerido")
+        @field:Range(min= 1000000, max = 99999999, message = "El dni ingresado no es valido. Debe contener entre 7 y 8 digitos")
+        val dni: Int,
+        @field:NotBlank(message = "El correo es requerido")
+        @field:Email(message = "Correo invalido. Por favor intente nuevamente.")
+        @field:Pattern(regexp = "^[^@]+@[^@]+\\.[a-zA-Z]{2,}\$", message = "El correo ingresado debe poseer el siguiente formato 'usuario@ejemplo.com'")
         val email: String
 ) {
     fun toModel() = Spectator(name, surname, username, email, dni, password)

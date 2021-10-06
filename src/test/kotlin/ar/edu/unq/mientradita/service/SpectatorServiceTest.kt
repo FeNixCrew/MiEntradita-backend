@@ -26,9 +26,6 @@ class SpectatorServiceTest {
     @Autowired
     private lateinit var authUserService: AuthUserService
 
-    @Autowired
-    private lateinit var jwtUtil: JWTUtil
-
     private val horarioPartido = LocalDateTime.of(2021, 10, 20, 16, 0)
     private var equipoVisitante = "river"
     private var equipoLocal = "racing"
@@ -43,7 +40,7 @@ class SpectatorServiceTest {
                         username = "nico0510",
                         password = "1234",
                         email = "nico0510@gmail.com",
-                        dni = "12345678"
+                        dni = 42579865
                 )
         )
     }
@@ -57,7 +54,7 @@ class SpectatorServiceTest {
                         username = "fede1234",
                         password = "9999",
                         email = "fede1234@gmail.com",
-                        dni = "45456784"
+                        dni = 45456784
                 )
         )
 
@@ -67,10 +64,10 @@ class SpectatorServiceTest {
     @Test
     fun `no se puede crear un usuario con un nombre de usuario que ya existe`() {
         authUserService.createSpectator(
-                RegisterRequest("Fede", "Sandoval", "fede1234", "9999", "45456784", "fede1234@gmail.com"))
+                RegisterRequest("Fede", "Sandoval", "fede1234", "9999", 45456784, "fede1234@gmail.com"))
 
         val exception = assertThrows<RuntimeException> { authUserService.createSpectator(
-                RegisterRequest("Fede", "Sandoval", "fede1234", "9999", "45456784", "fede1234@gmail.com"))
+                RegisterRequest("Fede", "Sandoval", "fede1234", "9999", 45456784, "fede1234@gmail.com"))
         }
 
         assertThat(exception.message).isEqualTo("Nombre de usuario ya registrado")

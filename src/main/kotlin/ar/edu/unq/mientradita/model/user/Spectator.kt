@@ -13,7 +13,7 @@ class Spectator(
         val surname: String,
         username: String,
         email: String,
-        val dni: String,
+        val dni: Int,
         password: String
 ) : User(username, password, email, Role.ROLE_USER) {
 
