@@ -1,10 +1,7 @@
 package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.Match
-import ar.edu.unq.mientradita.model.exception.MatchAlreadyExists
-import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
-import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
-import ar.edu.unq.mientradita.model.exception.TeamNearlyPlayException
+import ar.edu.unq.mientradita.model.exception.*
 import ar.edu.unq.mientradita.persistence.MatchRepository
 import ar.edu.unq.mientradita.persistence.SpectatorRepository
 import ar.edu.unq.mientradita.webservice.CreateMatchRequest
@@ -23,7 +20,8 @@ class MatchService {
     private lateinit var spectatorRepository: SpectatorRepository
 
     @Transactional
-    fun createMatch(createMatchRequest: CreateMatchRequest): MatchDTO {
+    fun createMatch(createMatchRequest: CreateMatchRequest, actualTime: LocalDateTime = LocalDateTime.now()): MatchDTO {
+        checkValidTime(createMatchRequest.matchStartTime, actualTime)
         checkIfCanPlay(createMatchRequest)
 
         val match = createMatchRequest.toModel()
@@ -31,7 +29,6 @@ class MatchService {
 
         return MatchDTO.fromModel(match)
     }
-
 
     @Transactional
     fun comeIn(spectatorId: Long, matchId: Long, attendTime: LocalDateTime = LocalDateTime.now()): String {
@@ -43,6 +40,7 @@ class MatchService {
 
         return "Bienvenido ${spectator.username} al partido de ${match.home} vs ${match.away}"
     }
+
 
     @Transactional
     fun searchNextMatchsByPartialName(partialTeamName: String, aDate: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
@@ -76,6 +74,12 @@ class MatchService {
     private fun checkIfWasPlayed(createMatchRequest: CreateMatchRequest) {
         if(matchRepository.findByHomeAndAway(createMatchRequest.home, createMatchRequest.away).isPresent){
             throw MatchAlreadyExists(createMatchRequest.home, createMatchRequest.away)
+        }
+    }
+
+    private fun checkValidTime(matchStartTime: LocalDateTime, actualTime: LocalDateTime) {
+        if(!matchStartTime.isAfter(actualTime.plusDays(7))) {
+            throw InvalidStartTimeException()
         }
     }
 }

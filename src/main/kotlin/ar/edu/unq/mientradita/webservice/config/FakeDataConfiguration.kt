@@ -74,18 +74,19 @@ class FakeDataConfiguration {
     }
 
     private fun generateMatchs(): List<MatchDTO> {
-        val ahora = LocalDateTime.now()
-        val horaDelPartido1 = ahora.plusHours(1)
-        val horaDelPartido2 = ahora.plusHours(3)
-        val horaDelPartido3 = ahora.plusDays(5)
-        val horaDelPartido4 = ahora.plusMonths(1)
-        val horaDelPartido5 = ahora.minusDays(5)
+        val fechaDeAhora = LocalDateTime.now()
+        val horaDelPartido1 = fechaDeAhora.plusHours(1)
+        val horaDelPartido2 = fechaDeAhora.plusHours(3)
+        val horaDelPartido3 = fechaDeAhora.plusDays(5)
+        val horaDelPartido4 = fechaDeAhora.plusMonths(1)
+        val horaDelPartido5 = fechaDeAhora.minusDays(5)
+        val fechaCargaDePartido = fechaDeAhora.minusMonths(1)
 
-        val racingIndependiente = matchService.createMatch(CreateMatchRequest("Racing", "Independiente", 700.00, horaDelPartido1))
-        val riverDefe = matchService.createMatch(CreateMatchRequest("River", "Defensa y Justicia", 500.00, horaDelPartido2))
-        val colonEstudiantes = matchService.createMatch(CreateMatchRequest("Colon de Santa Fe", "Estudiantes de la Plata", 500.00, horaDelPartido3))
-        val talleresArsenal = matchService.createMatch(CreateMatchRequest("Talleres de Cordoba", "Arsenal de Sarandi", 500.00, horaDelPartido4))
-        val atleticoTucumanGimnasia = matchService.createMatch(CreateMatchRequest("Atletico Tucuman", "Gimnasia y Esgrima de la Plata", 400.00, horaDelPartido5))
+        val racingIndependiente = matchService.createMatch(CreateMatchRequest("Racing", "Independiente", 700.00, horaDelPartido1), fechaCargaDePartido)
+        val riverDefe = matchService.createMatch(CreateMatchRequest("River", "Defensa y Justicia", 500.00, horaDelPartido2), fechaCargaDePartido)
+        val colonEstudiantes = matchService.createMatch(CreateMatchRequest("Colon de Santa Fe", "Estudiantes de la Plata", 500.00, horaDelPartido3), fechaCargaDePartido)
+        val talleresArsenal = matchService.createMatch(CreateMatchRequest("Talleres de Cordoba", "Arsenal de Sarandi", 500.00, horaDelPartido4), fechaCargaDePartido)
+        val atleticoTucumanGimnasia = matchService.createMatch(CreateMatchRequest("Atletico Tucuman", "Gimnasia y Esgrima de la Plata", 400.00, horaDelPartido5), fechaCargaDePartido)
 
         return listOf(racingIndependiente, riverDefe, colonEstudiantes, talleresArsenal, atleticoTucumanGimnasia)
     }
