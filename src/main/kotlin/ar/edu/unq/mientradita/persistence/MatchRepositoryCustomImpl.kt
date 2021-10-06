@@ -29,6 +29,7 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
         val condition = cb.and(isntPlayed, matchWithAnyTeam)
 
         cq.where(condition)
+        cq.orderBy(cb.asc(match.get<LocalDateTime>("matchStartTime")))
 
         return em.createQuery(cq).resultList
     }

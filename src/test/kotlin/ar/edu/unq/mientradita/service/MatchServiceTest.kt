@@ -133,6 +133,18 @@ class MatchServiceTest {
     }
 
     @Test
+    fun `al buscar partidos, se encuentran ordenados por la fecha mas proxima`() {
+        val nombreEquipo = "velez"
+        val partido1 = matchService.createMatch(CreateMatchRequest(nombreEquipo, equipoVisitante, 500.00, horarioPartido.plusDays(7)))
+        val partido2 = matchService.createMatch(CreateMatchRequest(equipoLocal, nombreEquipo, 500.00, horarioPartido))
+
+        val partidos = matchService.searchNextMatchsByPartialName("", horarioPartido.minusDays(5))
+
+        assertThat(partidos[0]).isEqualTo(partido2)
+        assertThat(partidos[1]).isEqualTo(partido1)
+    }
+
+    @Test
     fun `no se repiten los partidos en una busqueda si ambos equipos matchean con el nombre parcial buscado`() {
         val nombreEquipo = "velez"
         val nombreEquipo2 = "fieles"
