@@ -61,6 +61,7 @@ class MatchService {
     }
 
     private fun checkIfCanPlay(createMatchRequest: CreateMatchRequest) {
+        checkIfWasPlayed(createMatchRequest)
         checkIfCanPlay(createMatchRequest.home, createMatchRequest)
         checkIfCanPlay(createMatchRequest.away, createMatchRequest)
     }
@@ -72,6 +73,11 @@ class MatchService {
         }
     }
 
+    private fun checkIfWasPlayed(createMatchRequest: CreateMatchRequest) {
+        if(matchRepository.findByHomeAndAway(createMatchRequest.home, createMatchRequest.away).isPresent){
+            throw MatchAlreadyExists(createMatchRequest.home, createMatchRequest.away)
+        }
+    }
 }
 
 data class MatchDTO(

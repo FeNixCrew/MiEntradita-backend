@@ -193,7 +193,17 @@ class MatchServiceTest {
                     "tiene un partido el dia 20/9/2021 a las 16:15hs")
     }
 
+    @Test
+    fun `dos equipos no pueden jugar un partido con la misma condicion de local y visitante`(){
+        matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
 
+        val excepcion = assertThrows<MatchAlreadyExists> {
+            matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido.plusMonths(3)))
+        }
+
+        assertThat(excepcion.message)
+            .isEqualTo("Ya se ha disputado un partido entre $equipoLocal como local y $equipoVisitante como visitante")
+    }
 
     @AfterEach
     fun tearDown() {
