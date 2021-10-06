@@ -119,7 +119,7 @@ class SpectatorServiceTest {
                         espectador.password, espectador.dni, espectador.email)
         )
         val partido1 = matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
-        val partido2 = matchService.createMatch(CreateMatchRequest(equipoVisitante, equipoLocal, 500.00, horarioPartido))
+        val partido2 = matchService.createMatch(CreateMatchRequest(equipoVisitante, equipoLocal, 500.00, horarioPartido.plusDays(5)))
 
         val entrada1 = spectatorService.reserveTicket(espectadorDTO.id, partido1.id)
         val entrada2 = spectatorService.reserveTicket(espectadorDTO.id, partido2.id)
@@ -136,7 +136,7 @@ class SpectatorServiceTest {
                         espectador.password, espectador.dni, espectador.email)
         )
         val partido1 = matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
-        val partido2 = matchService.createMatch(CreateMatchRequest(equipoVisitante, equipoLocal, 500.00, horarioPartido))
+        val partido2 = matchService.createMatch(CreateMatchRequest(equipoVisitante, equipoLocal, 500.00, horarioPartido.plusDays(5)))
 
         val entrada1 = spectatorService.reserveTicket(espectadorDTO.id, partido1.id)
         val entrada2 = spectatorService.reserveTicket(espectadorDTO.id, partido2.id)

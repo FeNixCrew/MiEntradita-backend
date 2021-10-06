@@ -1,9 +1,10 @@
 package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.Match
-import ar.edu.unq.mientradita.model.exception.MatchAlredyExists
+import ar.edu.unq.mientradita.model.exception.MatchAlreadyExists
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
+import ar.edu.unq.mientradita.model.exception.TeamNearlyPlayException
 import ar.edu.unq.mientradita.persistence.MatchRepository
 import ar.edu.unq.mientradita.persistence.SpectatorRepository
 import ar.edu.unq.mientradita.webservice.CreateMatchRequest
@@ -23,10 +24,8 @@ class MatchService {
 
     @Transactional
     fun createMatch(createMatchRequest: CreateMatchRequest): MatchDTO {
-        val maybeMatch = matchRepository.findByHomeAndAwayAndMatchStartTime(createMatchRequest.home, createMatchRequest.away, createMatchRequest.matchStartTime)
-        if(maybeMatch.isPresent){
-            throw MatchAlredyExists()
-        }
+        checkIfCanPlay(createMatchRequest)
+
         val match = createMatchRequest.toModel()
         matchRepository.save(match)
 
@@ -59,6 +58,18 @@ class MatchService {
     @Transactional
     fun getTeams(): List<TeamDTO> {
         return matchRepository.findAll().flatMap{ match -> listOf(TeamDTO(match.home), TeamDTO(match.away))}.toSet().toList()
+    }
+
+    private fun checkIfCanPlay(createMatchRequest: CreateMatchRequest) {
+        checkIfCanPlay(createMatchRequest.home, createMatchRequest)
+        checkIfCanPlay(createMatchRequest.away, createMatchRequest)
+    }
+
+    private fun checkIfCanPlay(team:String, createMatchRequest: CreateMatchRequest) {
+        val maybeMatch = matchRepository.matchFromTeamBetweenDate(team, createMatchRequest.matchStartTime)
+        if(maybeMatch.isPresent) {
+            throw TeamNearlyPlayException(team, createMatchRequest.matchStartTime, maybeMatch.get().matchStartTime)
+        }
     }
 
 }

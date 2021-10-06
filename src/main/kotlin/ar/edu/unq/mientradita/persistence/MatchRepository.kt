@@ -8,5 +8,5 @@ import java.util.*
 
 @Repository
 interface MatchRepository : MatchRepositoryCustom, CrudRepository<Match, Long> {
-    fun findByHomeAndAwayAndMatchStartTime(home: String, away: String, matchStartTime: LocalDateTime): Optional<Match>
+    fun findByHomeAndAway(home: String, away: String): Optional<Match>
 }

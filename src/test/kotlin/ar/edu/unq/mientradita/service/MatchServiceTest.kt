@@ -1,8 +1,6 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.model.exception.AlreadyPresentInGameException
-import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
-import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
+import ar.edu.unq.mientradita.model.exception.*
 import ar.edu.unq.mientradita.webservice.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.RegisterRequest
 import org.assertj.core.api.Assertions.assertThat
@@ -27,7 +25,7 @@ class MatchServiceTest {
 
     private val equipoLocal = "river"
     private val equipoVisitante = "racing"
-    private val horarioPartido = LocalDateTime.of(2021, 9, 20, 16, 0)
+    private val horarioPartido = LocalDateTime.of(2021, 9, 20, 16, 15)
 
     private lateinit var espectador: UserDTO
 
@@ -161,11 +159,41 @@ class MatchServiceTest {
     fun `se pueden obtener todos los equipos`(){
         val otroEquipo = "talleres"
         matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
-        matchService.createMatch(CreateMatchRequest(otroEquipo, equipoVisitante, 500.00, horarioPartido))
+        matchService.createMatch(CreateMatchRequest(otroEquipo, equipoVisitante, 500.00, horarioPartido.plusDays(5)))
 
         val equiposEsperados = listOf(equipoLocal, equipoVisitante, otroEquipo).map { TeamDTO(it) }
         assertThat(matchService.getTeams()).usingRecursiveComparison().isEqualTo(equiposEsperados)
     }
+
+    @Test
+    fun `un equipo no puede jugar un partido si tiene un partido programado dentro de las setenta y dos horas anteriores`(){
+        val otroEquipo = "talleres"
+        matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
+
+        val excepcion = assertThrows<TeamNearlyPlayException> {
+            matchService.createMatch(CreateMatchRequest(equipoLocal, otroEquipo, 500.00, horarioPartido.plusDays(3)))
+        }
+
+        assertThat(excepcion.message)
+            .isEqualTo("$equipoLocal no puede jugar el 23/9/2021 a las 16:15hs porque " +
+                    "tiene un partido el dia 20/9/2021 a las 16:15hs")
+    }
+
+    @Test
+    fun `un equipo no puede jugar un partido si tiene un partido programado dentro de las setenta y dos horas posteriores`(){
+        val otroEquipo = "talleres"
+        matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
+
+        val excepcion = assertThrows<TeamNearlyPlayException> {
+            matchService.createMatch(CreateMatchRequest(otroEquipo, equipoVisitante, 500.00, horarioPartido.minusDays(3)))
+        }
+
+        assertThat(excepcion.message)
+            .isEqualTo("$equipoVisitante no puede jugar el 17/9/2021 a las 16:15hs porque " +
+                    "tiene un partido el dia 20/9/2021 a las 16:15hs")
+    }
+
+
 
     @AfterEach
     fun tearDown() {
