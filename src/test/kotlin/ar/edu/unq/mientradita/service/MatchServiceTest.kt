@@ -207,7 +207,15 @@ class MatchServiceTest {
 
     @Test
     fun `se pueden pedir los datos de un partido`() {
+        val partido = matchService.createMatch(CreateMatchRequest("River", "Boca", 500.00, horarioPartido, "Estadio Santiago Vespucio Liberti"))
 
+        val datosDePartido = matchService.getMatchDetails(partido.id)
+
+        assertThat(datosDePartido.home).isEqualTo(partido.home)
+        assertThat(datosDePartido.away).isEqualTo(partido.away)
+        assertThat(datosDePartido.matchStartTime).isEqualTo(partido.matchStartTime)
+        assertThat(datosDePartido.ticketPrice).isEqualTo(partido.ticketPrice)
+        assertThat(datosDePartido.stadium).isEqualTo(partido.stadium)
     }
 
     @AfterEach

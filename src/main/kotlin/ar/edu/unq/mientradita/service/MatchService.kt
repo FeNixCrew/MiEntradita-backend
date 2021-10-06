@@ -49,10 +49,11 @@ class MatchService {
         return matchRepository.searchNextMatchsBy(partialTeamName, aDate).map { MatchDTO.fromModel(it) }
     }
 
-//    @Transactional
-//    fun getMatchDetails(matchId: Long): MatchDetailsResponse {
-//
-//    }
+    @Transactional
+    fun getMatchDetails(matchId: Long): MatchDTO {
+        val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
+        return MatchDTO.fromModel(match)
+    }
 
     @Transactional
     fun clearDataSet() {
@@ -62,7 +63,7 @@ class MatchService {
 
     @Transactional
     fun getTeams(): List<TeamDTO> {
-        return matchRepository.findAll().flatMap{ match -> listOf(TeamDTO(match.home), TeamDTO(match.away))}.toSet().toList()
+        return matchRepository.findAll().flatMap { match -> listOf(TeamDTO(match.home), TeamDTO(match.away)) }.toSet().toList()
     }
 
     private fun checkIfCanPlay(createMatchRequest: CreateMatchRequest) {
@@ -71,15 +72,15 @@ class MatchService {
         checkIfCanPlay(createMatchRequest.away, createMatchRequest)
     }
 
-    private fun checkIfCanPlay(team:String, createMatchRequest: CreateMatchRequest) {
+    private fun checkIfCanPlay(team: String, createMatchRequest: CreateMatchRequest) {
         val maybeMatch = matchRepository.matchFromTeamBetweenDate(team, createMatchRequest.matchStartTime)
-        if(maybeMatch.isPresent) {
+        if (maybeMatch.isPresent) {
             throw TeamNearlyPlayException(team, createMatchRequest.matchStartTime, maybeMatch.get().matchStartTime)
         }
     }
 
     private fun checkIfWasPlayed(createMatchRequest: CreateMatchRequest) {
-        if(matchRepository.findByHomeAndAway(createMatchRequest.home, createMatchRequest.away).isPresent){
+        if (matchRepository.findByHomeAndAway(createMatchRequest.home, createMatchRequest.away).isPresent) {
             throw MatchAlreadyExists(createMatchRequest.home, createMatchRequest.away)
         }
     }
@@ -90,11 +91,12 @@ data class MatchDTO(
         val home: String,
         val away: String,
         val ticketPrice: Double,
-        val matchStartTime: LocalDateTime
+        val matchStartTime: LocalDateTime,
+        val stadium: String
 ) {
     companion object {
         fun fromModel(match: Match): MatchDTO {
-            return MatchDTO(match.id!!, match.home, match.away, match.ticketPrice, match.matchStartTime)
+            return MatchDTO(match.id!!, match.home, match.away, match.ticketPrice, match.matchStartTime, match.stadium)
         }
     }
 }

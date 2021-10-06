@@ -51,6 +51,15 @@ class MatchController {
         }
     }
 
+    @RequestMapping(value = ["/details"], method = [RequestMethod.GET])
+    fun getMatchDetails(@RequestParam matchId: Long): ResponseEntity<*> {
+        return try {
+            ResponseEntity.ok(matchService.getMatchDetails(matchId))
+        } catch (exception: MiEntraditaException) {
+            ResponseEntity.badRequest().body(exception.toMap())
+        }
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = ["/teams"], method = [RequestMethod.GET])
     fun teams(): ResponseEntity<*>{
