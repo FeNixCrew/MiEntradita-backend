@@ -49,6 +49,11 @@ class MatchService {
         return matchRepository.searchNextMatchsBy(partialTeamName, aDate).map { MatchDTO.fromModel(it) }
     }
 
+//    @Transactional
+//    fun getMatchDetails(matchId: Long): MatchDetailsResponse {
+//
+//    }
+
     @Transactional
     fun clearDataSet() {
         spectatorRepository.deleteAll()
@@ -96,3 +101,11 @@ data class MatchDTO(
 
 
 data class TeamDTO(val name: String)
+
+data class MatchDetailsResponse(
+        val price: Double,
+        val matchStartTime: LocalDateTime,
+        val home: String,
+        val away: String,
+        val stadium: String
+)

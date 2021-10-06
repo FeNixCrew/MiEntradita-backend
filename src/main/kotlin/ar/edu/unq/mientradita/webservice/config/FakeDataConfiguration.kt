@@ -80,11 +80,11 @@ class FakeDataConfiguration {
         val horaDelPartido4 = LocalDateTime.now().plusHours(1)
         val horaDelPartido5 = LocalDateTime.now().plusHours(3)
 
-        val racingIndependiente = matchService.createMatch(CreateMatchRequest("Racing", "Independiente", 700.00, horaDelPartido1))
-        val riverDefe = matchService.createMatch(CreateMatchRequest("River", "Defensa y Justicia", 500.00, horaDelPartido2))
-        val colonEstudiantes = matchService.createMatch(CreateMatchRequest("Colon de Santa Fe", "Estudiantes de la Plata", 500.00, horaDelPartido3))
-        val talleresArsenal = matchService.createMatch(CreateMatchRequest("Talleres de Cordoba", "Arsenal de Sarandi", 500.00, horaDelPartido4))
-        val atleticoTucumanGimnasia = matchService.createMatch(CreateMatchRequest("Atletico Tucuman", "Gimnasia y Esgrima de la Plata", 400.00, horaDelPartido5))
+        val racingIndependiente = matchService.createMatch(CreateMatchRequest("Racing", "Independiente", 700.00, horaDelPartido1, "El Cilindro"))
+        val riverDefe = matchService.createMatch(CreateMatchRequest("River", "Defensa y Justicia", 500.00, horaDelPartido2, "Estadio Antonio Vespucio Liberti"))
+        val colonEstudiantes = matchService.createMatch(CreateMatchRequest("Colon de Santa Fe", "Estudiantes de la Plata", 500.00, horaDelPartido3, "Estadio Brigadier General Estanislao López"))
+        val talleresArsenal = matchService.createMatch(CreateMatchRequest("Talleres de Cordoba", "Arsenal de Sarandi", 500.00, horaDelPartido4, "Estadio Mario Alberto Kempes"))
+        val atleticoTucumanGimnasia = matchService.createMatch(CreateMatchRequest("Atletico Tucuman", "Gimnasia y Esgrima de la Plata", 400.00, horaDelPartido5, "Estadio Monumental José Fierro"))
 
         return listOf(racingIndependiente, riverDefe, colonEstudiantes, talleresArsenal, atleticoTucumanGimnasia)
     }

@@ -95,4 +95,12 @@ class MatchTest {
 
         assertThat(exception.message).isEqualTo("Ya no se puede ingresar al partido")
     }
+
+    @Test
+    fun `un partido sabe en que estadio se va a jugar`(){
+        val estadio = "Santiago Bernabeu"
+        val partido = MatchBuilder().withStadium(estadio).build()
+
+        assertThat(partido.stadium).isEqualTo(estadio)
+    }
 }

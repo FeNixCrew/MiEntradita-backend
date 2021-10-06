@@ -16,6 +16,7 @@ class Match(
     val away: String,
     val matchStartTime: LocalDateTime,
     val ticketPrice: Double,
+    val stadium: String,
     ) {
 
     @Id
