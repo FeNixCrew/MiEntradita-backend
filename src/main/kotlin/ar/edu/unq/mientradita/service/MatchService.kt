@@ -56,6 +56,11 @@ class MatchService {
         matchRepository.deleteAll()
     }
 
+    @Transactional
+    fun getTeams(): List<TeamDTO> {
+        return matchRepository.findAll().flatMap{ match -> listOf(TeamDTO(match.home), TeamDTO(match.away))}.toSet().toList()
+    }
+
 }
 
 data class MatchDTO(
@@ -71,3 +76,6 @@ data class MatchDTO(
         }
     }
 }
+
+
+data class TeamDTO(val name: String)

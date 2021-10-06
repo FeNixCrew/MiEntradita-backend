@@ -145,6 +145,16 @@ class MatchServiceTest {
         assertThat(partidos).containsExactly(partidoCreado)
     }
 
+    @Test
+    fun `se pueden obtener todos los equipos`(){
+        val otroEquipo = "talleres"
+        matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido))
+        matchService.createMatch(CreateMatchRequest(otroEquipo, equipoVisitante, 500.00, horarioPartido))
+
+        val equiposEsperados = listOf(equipoLocal, equipoVisitante, otroEquipo).map { TeamDTO(it) }
+        assertThat(matchService.getTeams()).usingRecursiveComparison().isEqualTo(equiposEsperados)
+    }
+
     @AfterEach
     fun tearDown() {
         matchService.clearDataSet()
