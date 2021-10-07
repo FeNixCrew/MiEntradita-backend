@@ -107,11 +107,3 @@ data class MatchDTO(
 
 
 data class TeamDTO(val name: String)
-
-data class MatchDetailsResponse(
-        val price: Double,
-        val matchStartTime: LocalDateTime,
-        val home: String,
-        val away: String,
-        val stadium: String
-)
