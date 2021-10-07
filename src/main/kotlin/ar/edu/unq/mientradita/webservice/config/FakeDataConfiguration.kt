@@ -74,11 +74,13 @@ class FakeDataConfiguration {
     }
 
     private fun generateMatchs(): List<MatchDTO> {
-        val horaDelPartido1 = LocalDateTime.of(2021, 10, 26, 16, 0)
-        val horaDelPartido2 = LocalDateTime.of(2021, 10, 25, 21, 0)
-        val horaDelPartido3 = LocalDateTime.of(2021, 10, 23, 16, 0)
-        val horaDelPartido4 = LocalDateTime.now().plusHours(1)
-        val horaDelPartido5 = LocalDateTime.now().plusHours(3)
+        val fechaDeAhora = LocalDateTime.now()
+        val horaDelPartido1 = fechaDeAhora.plusHours(1)
+        val horaDelPartido2 = fechaDeAhora.plusHours(3)
+        val horaDelPartido3 = fechaDeAhora.plusDays(5)
+        val horaDelPartido4 = fechaDeAhora.plusMonths(1)
+        val horaDelPartido5 = fechaDeAhora.minusDays(5)
+        val fechaCargaDePartido = fechaDeAhora.minusMonths(1)
 
         val racingIndependiente = matchService.createMatch(CreateMatchRequest("Racing", "Independiente", 700.00, horaDelPartido1, "El Cilindro"))
         val riverDefe = matchService.createMatch(CreateMatchRequest("River", "Defensa y Justicia", 500.00, horaDelPartido2, "Estadio Antonio Vespucio Liberti"))
