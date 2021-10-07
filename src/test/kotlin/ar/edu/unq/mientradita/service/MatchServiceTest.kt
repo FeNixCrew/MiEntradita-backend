@@ -175,8 +175,7 @@ class MatchServiceTest {
         }
 
         assertThat(excepcion.message)
-                .isEqualTo("$equipoLocal no puede jugar el 23/9/2021 a las 16:15hs porque " +
-                        "tiene un partido el dia 20/9/2021 a las 16:15hs")
+                .isEqualTo("$equipoLocal no puede jugar el 23/9/2021 porque tiene un partido el dia 20/9/2021")
     }
 
     @Test
@@ -189,8 +188,7 @@ class MatchServiceTest {
         }
 
         assertThat(excepcion.message)
-                .isEqualTo("$equipoVisitante no puede jugar el 17/9/2021 a las 16:15hs porque " +
-                        "tiene un partido el dia 20/9/2021 a las 16:15hs")
+                .isEqualTo("$equipoVisitante no puede jugar el 17/9/2021 porque tiene un partido el dia 20/9/2021")
     }
 
     @Test
@@ -221,7 +219,7 @@ class MatchServiceTest {
     @Test
     fun `los partidos deben crearse con al menos siete dias de anticipacion`(){
         val excepcion = assertThrows<InvalidStartTimeException> {
-            matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido, "Estadio 1"), horarioPartido.minusDays(7))
+            matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido, "Estadio 1"), horarioPartido.minusDays(6))
         }
 
         assertThat(excepcion.message).isEqualTo("Los partidos tienen que crearse con al menos siete dias de anticipacion")

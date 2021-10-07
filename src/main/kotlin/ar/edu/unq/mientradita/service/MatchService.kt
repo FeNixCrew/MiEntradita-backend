@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Service
 class MatchService {
@@ -21,6 +22,7 @@ class MatchService {
 
     @Transactional
     fun createMatch(createMatchRequest: CreateMatchRequest, actualTime: LocalDateTime = LocalDateTime.now()): MatchDTO {
+        checkIsntSameTeam(createMatchRequest)
         checkValidTime(createMatchRequest.matchStartTime, actualTime)
         checkIfCanPlay(createMatchRequest)
 
@@ -64,6 +66,12 @@ class MatchService {
         return matchRepository.findAll().flatMap { match -> listOf(TeamDTO(match.home), TeamDTO(match.away)) }.toSet().toList()
     }
 
+    private fun checkIsntSameTeam(createMatchRequest: CreateMatchRequest) {
+        if (createMatchRequest.home == createMatchRequest.away) {
+            throw TeamCannotPlayAgainstHimselfException()
+        }
+    }
+
     private fun checkIfCanPlay(createMatchRequest: CreateMatchRequest) {
         checkIfWasPlayed(createMatchRequest)
         checkIfCanPlay(createMatchRequest.home, createMatchRequest)
@@ -84,9 +92,16 @@ class MatchService {
     }
 
     private fun checkValidTime(matchStartTime: LocalDateTime, actualTime: LocalDateTime) {
-        if(!matchStartTime.isAfter(actualTime.plusDays(7))) {
+        val comparingStartTime = withoutTime(matchStartTime)
+        val comparingActualTime = withoutTime(actualTime)
+
+        if(comparingStartTime <= comparingActualTime.plusDays(6)) {
             throw InvalidStartTimeException()
         }
+    }
+
+    private fun withoutTime(aTime: LocalDateTime): LocalDateTime {
+        return aTime.withHour(0).withMinute(0).withSecond(0).withNano(0)
     }
 }
 

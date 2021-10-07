@@ -7,7 +7,4 @@ class TeamNearlyPlayException(teamName:String, expectedDate: LocalDateTime, regi
         " porque tiene un partido el dia " + format(registeredMatchDate))
 
 
-fun format(time: LocalDateTime): String {
-    return "${time.dayOfMonth}/${time.monthValue}/${time.year} a las " +
-            "${time.hour}:${time.minute}hs"
-}
+fun format(time: LocalDateTime)= "${time.dayOfMonth}/${time.monthValue}/${time.year}"
