@@ -90,6 +90,7 @@ data class CreateMatchRequest(
         val ticketPrice: Double,
         @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         val matchStartTime: LocalDateTime,
+        @field:NotBlank(message = "El estadio local es requerido")
         val stadium: String
 ) {
     fun toModel() = Match(home, away, matchStartTime, ticketPrice, stadium)
