@@ -3,6 +3,7 @@ package ar.edu.unq.mientradita.model
 import ar.edu.unq.mientradita.model.exception.DifferentGameException
 import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
 import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
+import ar.edu.unq.mientradita.model.user.Spectator
 import java.time.LocalDateTime
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -14,6 +15,8 @@ class Match(
     val home: String,
     val away: String,
     val matchStartTime: LocalDateTime,
+    val ticketPrice: Double,
+    val stadium: String,
     ) {
 
     @Id
@@ -21,7 +24,7 @@ class Match(
     var id: Long? = null
 
     fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime) {
-        val newTicket = Ticket(this, reserveTicketTime)
+        val newTicket = Ticket(this, reserveTicketTime, ticketPrice)
         spectator.addTicket(newTicket)
     }
 
