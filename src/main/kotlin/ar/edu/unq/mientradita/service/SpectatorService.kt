@@ -1,14 +1,10 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.model.user.Spectator
 import ar.edu.unq.mientradita.model.Ticket
-import ar.edu.unq.mientradita.model.exception.InvalidCredentialsException
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
 import ar.edu.unq.mientradita.persistence.MatchRepository
 import ar.edu.unq.mientradita.persistence.SpectatorRepository
-import ar.edu.unq.mientradita.webservice.LoginRequest
-import ar.edu.unq.mientradita.webservice.RegisterRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -50,7 +46,7 @@ class SpectatorService {
 data class TicketDTO(val id:Long, val userId: Long, val matchId: Long, val home: String, val away: String, val matchStartTime: LocalDateTime) {
     companion object {
         fun fromModel(spectatorId: Long, ticket: Ticket): TicketDTO {
-            return TicketDTO(ticket.id!!, spectatorId, ticket.match.id!!, ticket.match.home, ticket.match.away, ticket.match.matchStartTime)
+            return TicketDTO(ticket.id!!, spectatorId, ticket.match.id!!, ticket.match.home.name, ticket.match.away.name, ticket.match.matchStartTime)
         }
     }
 }

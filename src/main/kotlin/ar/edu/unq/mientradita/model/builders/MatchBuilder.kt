@@ -1,12 +1,13 @@
 package ar.edu.unq.mientradita.model.builders
 
 import ar.edu.unq.mientradita.model.Match
+import ar.edu.unq.mientradita.model.Team
 import java.time.LocalDateTime
 
 class MatchBuilder {
 
-    private var home: String = "a"
-    private var away: String = "b"
+    private var home: Team = TeamBuilder().build()
+    private var away: Team = TeamBuilder().build()
     private var matchStartTime: LocalDateTime = LocalDateTime.now()
     private var ticketPrice: Double = 0.0
     private var stadium: String = "c"
@@ -15,12 +16,12 @@ class MatchBuilder {
         return Match(home, away, matchStartTime, ticketPrice, stadium)
     }
 
-    fun withHome(home: String): MatchBuilder {
+    fun withHome(home: Team): MatchBuilder {
         this.home = home
         return this
     }
 
-    fun withAway(away: String): MatchBuilder {
+    fun withAway(away: Team): MatchBuilder {
         this.away = away
         return this
     }

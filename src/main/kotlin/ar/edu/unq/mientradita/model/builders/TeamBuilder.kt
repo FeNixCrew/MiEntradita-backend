@@ -1,8 +1,6 @@
 package ar.edu.unq.mientradita.model.builders
 
-import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
-import java.time.LocalDateTime
 
 class TeamBuilder {
 

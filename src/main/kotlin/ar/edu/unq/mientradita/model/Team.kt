@@ -15,4 +15,5 @@ class Team(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
+    fun isEquals(team: Team) = this.name == team.name
 }

@@ -4,7 +4,6 @@ import ar.edu.unq.mientradita.model.builders.SpectatorBuilder
 import ar.edu.unq.mientradita.webservice.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.LoginRequest
 import ar.edu.unq.mientradita.webservice.RegisterRequest
-import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -26,10 +25,13 @@ class SpectatorServiceTest {
     @Autowired
     private lateinit var authUserService: AuthUserService
 
+    @Autowired
+    private lateinit var teamService: TeamService
+
     private val horarioPartido = LocalDateTime.of(2021, 10, 20, 16, 0)
     private val cargaDePartido = horarioPartido.minusMonths(1)
-    private var equipoVisitante = "river"
-    private var equipoLocal = "racing"
+    private var nombreEquipoVisitante = "river"
+    private var nombreEquipoLocal = "racing"
     private lateinit var espectador: UserDTO
 
     @BeforeEach
@@ -44,6 +46,9 @@ class SpectatorServiceTest {
                         dni = 42579865
                 )
         )
+        teamService.registerTeam(CreateTeamRequest(nombreEquipoLocal, "un apodo", "un estadio"))
+        teamService.registerTeam(CreateTeamRequest(nombreEquipoVisitante, "un apodo", "un estadio"))
+
     }
 
     @Test
@@ -91,11 +96,11 @@ class SpectatorServiceTest {
 
     @Test
     fun `un espectador puede reservar una entrada`() {
-        val partidoDTO = matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
         val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
         assertThat(entradaReservada)
-                .isEqualTo(TicketDTO(entradaReservada.id, espectador.id, partidoDTO.id, equipoLocal, equipoVisitante, horarioPartido))
+                .isEqualTo(TicketDTO(entradaReservada.id, espectador.id, partidoDTO.id, nombreEquipoLocal, nombreEquipoVisitante, horarioPartido))
     }
 
     @Test
@@ -119,8 +124,8 @@ class SpectatorServiceTest {
                         espectador.name, espectador.surname, espectador.username,
                         espectador.password, espectador.dni, espectador.email)
         )
-        val partido1 = matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
-        val partido2 = matchService.createMatch(CreateMatchRequest(equipoVisitante, equipoLocal, 500.00, horarioPartido.plusDays(5), "Estadio 1"), cargaDePartido)
+        val partido1 = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
+        val partido2 = matchService.createMatch(CreateMatchRequest(nombreEquipoVisitante, nombreEquipoLocal, 500.00, horarioPartido.plusDays(5), "Estadio 1"), cargaDePartido)
 
         val entrada1 = spectatorService.reserveTicket(espectadorDTO.id, partido1.id)
         val entrada2 = spectatorService.reserveTicket(espectadorDTO.id, partido2.id)
@@ -136,8 +141,8 @@ class SpectatorServiceTest {
                         espectador.name, espectador.surname, espectador.username,
                         espectador.password, espectador.dni, espectador.email)
         )
-        val partido1 = matchService.createMatch(CreateMatchRequest(equipoLocal, equipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
-        val partido2 = matchService.createMatch(CreateMatchRequest(equipoVisitante, equipoLocal, 500.00, horarioPartido.plusDays(5), "Estadio 1"), cargaDePartido)
+        val partido1 = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
+        val partido2 = matchService.createMatch(CreateMatchRequest(nombreEquipoVisitante, nombreEquipoLocal, 500.00, horarioPartido.plusDays(5), "Estadio 1"), cargaDePartido)
 
         val entrada1 = spectatorService.reserveTicket(espectadorDTO.id, partido1.id)
         val entrada2 = spectatorService.reserveTicket(espectadorDTO.id, partido2.id)

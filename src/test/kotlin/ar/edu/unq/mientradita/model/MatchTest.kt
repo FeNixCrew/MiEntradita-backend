@@ -1,6 +1,7 @@
 package ar.edu.unq.mientradita.model
 
 import ar.edu.unq.mientradita.model.builders.MatchBuilder
+import ar.edu.unq.mientradita.model.builders.TeamBuilder
 import ar.edu.unq.mientradita.model.builders.TicketBuilder
 import ar.edu.unq.mientradita.model.exception.DifferentGameException
 import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
@@ -52,7 +53,7 @@ class MatchTest {
 
     @Test
     fun `no se puede entrar a un partido con una entrada que pertenece a otro juego`(){
-        partido = MatchBuilder().withHome("river").build()
+        partido = MatchBuilder().withHome(TeamBuilder().withName("river").build()).build()
         entrada = TicketBuilder().build()
 
         val exception = assertThrows<DifferentGameException> {

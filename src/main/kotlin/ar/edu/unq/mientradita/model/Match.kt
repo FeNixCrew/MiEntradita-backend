@@ -5,15 +5,14 @@ import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
 import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
 import ar.edu.unq.mientradita.model.user.Spectator
 import java.time.LocalDateTime
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 class Match(
-    val home: String,
-    val away: String,
+    @ManyToOne(fetch= FetchType.LAZY)
+    val home: Team,
+    @ManyToOne(fetch=FetchType.LAZY)
+    val away: Team,
     val matchStartTime: LocalDateTime,
     val ticketPrice: Double,
     val stadium: String,
@@ -24,7 +23,7 @@ class Match(
     var id: Long? = null
 
     fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime) {
-        val newTicket = Ticket(this, reserveTicketTime, ticketPrice)
+        val newTicket = Ticket(this, reserveTicketTime)
         spectator.addTicket(newTicket)
     }
 
@@ -35,7 +34,7 @@ class Match(
         ticket.markAsPresent(attendDate)
     }
 
-    fun isEquals(match: Match) = this.home.equals(match.home, ignoreCase = true) && this.away.equals(match.away, ignoreCase = true)
+    fun isEquals(match: Match) = this.home.isEquals(match.home) && this.away.isEquals(match.away)
 
     fun isBeforeMatchEnd(aTime: LocalDateTime) = closingTime() >= aTime
 

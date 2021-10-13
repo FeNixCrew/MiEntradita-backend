@@ -1,6 +1,7 @@
 package ar.edu.unq.mientradita.persistence
 
 import ar.edu.unq.mientradita.model.Match
+import ar.edu.unq.mientradita.model.Team
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
@@ -21,8 +22,8 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
         val cq: CriteriaQuery<Match> = cb.createQuery(Match::class.java)
         val match: Root<Match> = cq.from(Match::class.java)
 
-        val matchWithHomeTeam = cb.like(cb.upper(match.get("home")), "%${partialTeamName.toUpperCase()}%")
-        val matchWithAwayTeam = cb.like(cb.upper(match.get("away")), "%${partialTeamName.toUpperCase()}%")
+        val matchWithHomeTeam = cb.like(cb.upper(match.get<Team>("home").get("name")), "%${partialTeamName.toUpperCase()}%")
+        val matchWithAwayTeam = cb.like(cb.upper(match.get<Team>("away").get("name")), "%${partialTeamName.toUpperCase()}%")
 
         val isntPlayed = cb.greaterThanOrEqualTo(match.get("matchStartTime"), aDate)
         val matchWithAnyTeam = cb.or(matchWithHomeTeam, matchWithAwayTeam)
@@ -40,8 +41,8 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
         val cq: CriteriaQuery<Match> = cb.createQuery(Match::class.java)
         val match: Root<Match> = cq.from(Match::class.java)
 
-        val matchWithHomeTeam = cb.like(cb.upper(match.get("home")), team.toUpperCase())
-        val matchWithAwayTeam = cb.like(cb.upper(match.get("away")), team.toUpperCase())
+        val matchWithHomeTeam = cb.like(cb.upper(match.get<Team>("home").get("name")), team.toUpperCase())
+        val matchWithAwayTeam = cb.like(cb.upper(match.get<Team>("away").get("name")), team.toUpperCase())
 
         val playBefore = cb.between(match.get("matchStartTime"), wantedStartTime.minusHours(72), wantedStartTime.plusHours(72))
         val matchWithAnyTeam = cb.or(matchWithHomeTeam, matchWithAwayTeam)
