@@ -1,9 +1,18 @@
 package ar.edu.unq.mientradita.model
 
-@Deprecated("sobrediseniado")
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+
+@Entity
 class Team(
     val name: String,
-    val stadium: Stadium) {
+    val knowName: String,
+    val stadium: String) {
 
-    fun isEquals(team: Team) = team.name.equals(this.name, ignoreCase = true)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null
+
 }
