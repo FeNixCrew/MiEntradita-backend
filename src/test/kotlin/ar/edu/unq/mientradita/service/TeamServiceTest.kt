@@ -1,10 +1,8 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.TeamAlredyRegisteredException
-import ar.edu.unq.mientradita.webservice.CreateMatchRequest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,18 +17,22 @@ class TeamServiceTest {
     @Autowired
     private lateinit var matchService: MatchService
 
-    @Test
-    fun `se pueden registrar equipos`() {
-        val equipoDTO = teamService.registerTeam(CreateTeamRequest("River Plate", "El Millo", "El Monumental"))
+    private lateinit var equipo: TeamDTO
 
-        assertThat(equipoDTO).isNotNull
+    @BeforeEach
+    fun setUp() {
+        equipo = teamService.registerTeam(CreateTeamRequest("River", "El Millo", "El Monumental"))
     }
 
     @Test
-    fun `no se pueden registrar dos veces a un equipo`() {
-        teamService.registerTeam(CreateTeamRequest("River Plate", "El Millo", "El Monumental"))
+    fun `se pueden registrar equipos`() {
+        assertThat(equipo.id).isNotNull
+    }
+
+    @Test
+    fun `no se pueden registrar a un equipo con un nombre ya existente`() {
         val exception = assertThrows<TeamAlredyRegisteredException> {
-            teamService.registerTeam(CreateTeamRequest("River Plate", "El Millo", "El Monumental"))
+            teamService.registerTeam(CreateTeamRequest("River", "El Millo", "El Monumental"))
         }
 
         assertThat(exception.message).isEqualTo("El equipo ya fue registrado")
@@ -38,16 +40,14 @@ class TeamServiceTest {
 
     @Test
     fun `se pueden obtener todos los equipos`() {
-        val river = teamService.registerTeam(CreateTeamRequest("River Plate", "El Millo", "El Monumental"))
-        val racing = teamService.registerTeam(CreateTeamRequest("Racing Club", "La Academia", "El Cilindro"))
+        val racing = teamService.registerTeam(CreateTeamRequest("Racing", "La Academia", "El Cilindro"))
 
-        val equiposEsperados = listOf(river.name, racing.name).map { TeamDTO(it) }
+        val equiposEsperados = listOf(equipo, racing).map { TeamDTO(it.id, it.name ) }
         assertThat(teamService.getTeams()).usingRecursiveComparison().isEqualTo(equiposEsperados)
     }
 
-    @AfterEach
+    @BeforeEach
     fun tearDown() {
-        teamService.clearDataSet()
+        matchService.clearDataSet()
     }
-
 }

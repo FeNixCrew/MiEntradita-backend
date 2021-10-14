@@ -127,12 +127,3 @@ data class MatchDTO(
         }
     }
 }
-
-
-data class TeamDTO(val name: String){
-    companion object {
-        fun fromModel(team: Team): TeamDTO {
-            return TeamDTO(team.name)
-        }
-    }
-}
