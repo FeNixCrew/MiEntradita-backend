@@ -63,6 +63,11 @@ class MatchService {
     }
 
     @Transactional
+    fun todayMatchs(actualTime: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
+        return matchRepository.matchsOf(actualTime).map { MatchDTO.fromModel(it) }
+    }
+
+    @Transactional
     fun clearDataSet() {
         spectatorRepository.deleteAll()
         matchRepository.deleteAll()

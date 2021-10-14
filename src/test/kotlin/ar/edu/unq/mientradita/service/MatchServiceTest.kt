@@ -218,6 +218,14 @@ class MatchServiceTest {
         assertThat(excepcion.message).isEqualTo("Los partidos tienen que crearse con al menos siete dias de anticipacion")
     }
 
+    @Test
+    fun `se pueden obtener los partidos de hoy`(){
+        val unHorario = LocalDateTime.of(2021, 9, 20, 23, 59, 59)
+        val partido = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, unHorario, "Estadio Santiago Vespucio Liberti"), cargaDePartido)
+
+        assertThat(matchService.todayMatchs(horarioPartido)).isEqualTo(listOf(partido))
+    }
+
     @AfterEach
     fun tearDown() {
         matchService.clearDataSet()
