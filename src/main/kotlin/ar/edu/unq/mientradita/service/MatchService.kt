@@ -63,15 +63,20 @@ class MatchService {
     }
 
     @Transactional
-    fun clearDataSet() {
-        spectatorRepository.deleteAll()
-        matchRepository.deleteAll()
-        teamRepository.deleteAll()
+    fun todayMatchs(actualTime: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
+        return matchRepository.matchsOf(actualTime).map { MatchDTO.fromModel(it) }
     }
 
     @Transactional
     fun getTeams(): List<TeamDTO> {
         return teamRepository.findAll().map { team -> TeamDTO(team.name) }
+    }
+
+    @Transactional
+    fun clearDataSet() {
+        spectatorRepository.deleteAll()
+        matchRepository.deleteAll()
+        teamRepository.deleteAll()
     }
 
     private fun checkIsntSameTeam(createMatchRequest: CreateMatchRequest) {

@@ -59,5 +59,20 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
         }
     }
 
+    override fun matchsOf(actualTime: LocalDateTime): List<Match> {
+        val cb = em.criteriaBuilder
+        val cq: CriteriaQuery<Match> = cb.createQuery(Match::class.java)
+        val match: Root<Match> = cq.from(Match::class.java)
+
+        val playAfter = cb.greaterThanOrEqualTo(match.get("matchStartTime"), actualTime)
+        val playBefore = cb.lessThan(match.get("matchStartTime"), actualTime.plusDays(1))
+
+        val condition = cb.and(playAfter, playBefore)
+        cq.where(condition)
+        cq.orderBy(cb.asc(match.get<LocalDateTime>("matchStartTime")))
+
+        return em.createQuery(cq).resultList
+    }
+
 
 }
