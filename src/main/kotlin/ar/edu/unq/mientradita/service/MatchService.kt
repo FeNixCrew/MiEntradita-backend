@@ -69,11 +69,6 @@ class MatchService {
         teamRepository.deleteAll()
     }
 
-    @Transactional
-    fun getTeams(): List<TeamDTO> {
-        return teamRepository.findAll().map { team -> TeamDTO(team.name) }
-    }
-
     private fun checkIsntSameTeam(createMatchRequest: CreateMatchRequest) {
         if (createMatchRequest.home == createMatchRequest.away) {
             throw TeamCannotPlayAgainstHimselfException()
@@ -129,4 +124,10 @@ data class MatchDTO(
 }
 
 
-data class TeamDTO(val name: String)
+data class TeamDTO(val name: String){
+    companion object {
+        fun fromModel(team: Team): TeamDTO {
+            return TeamDTO(team.name)
+        }
+    }
+}

@@ -1,12 +1,10 @@
 package ar.edu.unq.mientradita.model
 
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 class Team(
+    @Column(unique = true)
     val name: String,
     val knowName: String,
     val stadium: String) {

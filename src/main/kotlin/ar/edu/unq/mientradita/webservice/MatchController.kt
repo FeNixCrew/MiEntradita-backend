@@ -60,16 +60,6 @@ class MatchController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = ["/teams"], method = [RequestMethod.GET])
-    fun teams(): ResponseEntity<*>{
-        return try{
-            ResponseEntity(matchService.getTeams(), HttpStatus.OK)
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
-    }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleMethodArgumentNotValid(ex: MethodArgumentNotValidException): Map<String, String?>? {

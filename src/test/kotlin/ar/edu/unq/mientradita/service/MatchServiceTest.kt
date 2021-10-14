@@ -161,15 +161,6 @@ class MatchServiceTest {
     }
 
     @Test
-    fun `se pueden obtener todos los equipos`() {
-        matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
-        matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido.plusDays(5), "Estadio 1"), cargaDePartido)
-
-        val equiposEsperados = listOf(nombreEquipoLocal, nombreEquipoVisitante, nombreOtroEquipo).map { TeamDTO(it) }
-        assertThat(matchService.getTeams()).usingRecursiveComparison().isEqualTo(equiposEsperados)
-    }
-
-    @Test
     fun `un equipo no puede jugar un partido si tiene un partido programado dentro de las setenta y dos horas anteriores`() {
         matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
 
