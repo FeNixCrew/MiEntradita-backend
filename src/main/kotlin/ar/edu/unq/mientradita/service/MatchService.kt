@@ -33,7 +33,7 @@ class MatchService {
         checkValidTime(createMatchRequest.matchStartTime, actualTime)
         checkIfCanPlay(home, away, createMatchRequest)
 
-        val match = Match(home, away, createMatchRequest.matchStartTime, createMatchRequest.ticketPrice, createMatchRequest.stadium)
+        val match = Match(home, away, createMatchRequest.matchStartTime, createMatchRequest.ticketPrice)
         matchRepository.save(match)
 
         return MatchDTO.fromModel(match)
@@ -123,7 +123,7 @@ data class MatchDTO(
 ) {
     companion object {
         fun fromModel(match: Match): MatchDTO {
-            return MatchDTO(match.id!!, match.home.name, match.away.name, match.ticketPrice, match.matchStartTime, match.stadium)
+            return MatchDTO(match.id!!, match.home.name, match.away.name, match.ticketPrice, match.matchStartTime, match.stadium())
         }
     }
 }

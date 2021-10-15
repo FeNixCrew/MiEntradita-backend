@@ -88,7 +88,5 @@ data class CreateMatchRequest(
         val away: String,
         val ticketPrice: Double,
         @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        val matchStartTime: LocalDateTime,
-        @field:NotBlank(message = "El estadio local es requerido")
-        val stadium: String
+        val matchStartTime: LocalDateTime
 )

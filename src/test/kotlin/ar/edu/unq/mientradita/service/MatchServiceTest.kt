@@ -53,14 +53,14 @@ class MatchServiceTest {
 
     @Test
     fun `se pueden crear partidos`() {
-        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido)
 
         assertThat(partidoDTO).isNotNull
     }
 
     @Test
     fun `al asistir a un partido se ve un mensaje de bienvenida`() {
-        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido)
         spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
         assertThat(matchService.comeIn(espectador.id, partidoDTO.id, horarioPartido))
@@ -81,7 +81,7 @@ class MatchServiceTest {
     @Test
     fun `un espectador que no esta registrado intenta reservar un ticket para un partido y es rechazado`() {
         val espectadorInexistenteId = 9999.toLong()
-        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido)
 
 
         val exception = assertThrows<SpectatorNotRegistered> {
@@ -105,7 +105,7 @@ class MatchServiceTest {
 
     @Test
     fun `un espectador no puede asistir dos veces a un partido`() {
-        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido)
         spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
         matchService.comeIn(espectador.id, partidoDTO.id, horarioPartido)
 
@@ -117,8 +117,8 @@ class MatchServiceTest {
     @Test
     fun `se pueden buscar partidos proximos por matcheo de nombre de un equipo`() {
         val partidosCreados = mutableListOf<MatchDTO>()
-        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido))
-        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido.plusDays(7), "Estadio 1"), cargaDePartido))
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido))
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido.plusDays(7)), cargaDePartido))
 
         val partidos = matchService.searchNextMatchsByPartialName("vel", horarioPartido)
 
@@ -128,8 +128,8 @@ class MatchServiceTest {
     @Test
     fun `se pueden buscar partidos luego de una fecha determinada`() {
         val partidosCreados = mutableListOf<MatchDTO>()
-        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido))
-        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido.plusDays(7), "Estadio 1"), cargaDePartido))
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido))
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido.plusDays(7)), cargaDePartido))
 
         val partidos = matchService.searchNextMatchsByPartialName("", horarioPartido.plusDays(1))
 
@@ -138,8 +138,8 @@ class MatchServiceTest {
 
     @Test
     fun `al buscar partidos, se encuentran ordenados por la fecha mas proxima`() {
-        val partido1 = matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido.plusDays(7), "Estadio 1"), cargaDePartido)
-        val partido2 = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
+        val partido1 = matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido.plusDays(7)), cargaDePartido)
+        val partido2 = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido), cargaDePartido)
 
         val partidos = matchService.searchNextMatchsByPartialName("", horarioPartido.minusDays(5))
 
@@ -152,7 +152,7 @@ class MatchServiceTest {
         val nombreDeUnEquipo = "fieles"
         teamService.registerTeam(CreateTeamRequest(nombreDeUnEquipo, "un apodo", "un estadio"))
 
-        val partidoCreado = matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreDeUnEquipo, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
+        val partidoCreado = matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreDeUnEquipo, 500.00, horarioPartido), cargaDePartido)
 
         val partidos = matchService.searchNextMatchsByPartialName("ele", horarioPartido)
 
@@ -162,10 +162,10 @@ class MatchServiceTest {
 
     @Test
     fun `un equipo no puede jugar un partido si tiene un partido programado dentro de las setenta y dos horas anteriores`() {
-        matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
+        matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido)
 
         val excepcion = assertThrows<TeamNearlyPlayException> {
-            matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido.plusDays(3), "Estadio 1"), cargaDePartido)
+            matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido.plusDays(3)), cargaDePartido)
         }
 
         assertThat(excepcion.message)
@@ -174,10 +174,10 @@ class MatchServiceTest {
 
     @Test
     fun `un equipo no puede jugar un partido si tiene un partido programado dentro de las setenta y dos horas posteriores`() {
-        matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
+        matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido)
 
         val excepcion = assertThrows<TeamNearlyPlayException> {
-            matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido.minusDays(3), "Estadio 1"), cargaDePartido)
+            matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido.minusDays(3)), cargaDePartido)
         }
 
         assertThat(excepcion.message)
@@ -186,10 +186,10 @@ class MatchServiceTest {
 
     @Test
     fun `dos equipos no pueden jugar un partido con la misma condicion de local y visitante`() {
-        matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), cargaDePartido)
+        matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido)
 
         val excepcion = assertThrows<MatchAlreadyExists> {
-            matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido.plusMonths(3), "Estadio 1"), cargaDePartido)
+            matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido.plusMonths(3)), cargaDePartido)
         }
 
         assertThat(excepcion.message)
@@ -198,7 +198,7 @@ class MatchServiceTest {
 
     @Test
     fun `se pueden pedir los datos de un partido`() {
-        val partido = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio Santiago Vespucio Liberti"), cargaDePartido)
+        val partido = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido)
 
         val datosDePartido = matchService.getMatchDetails(partido.id)
 
@@ -212,7 +212,7 @@ class MatchServiceTest {
     @Test
     fun `los partidos deben crearse con al menos siete dias de anticipacion`(){
         val excepcion = assertThrows<InvalidStartTimeException> {
-            matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, "Estadio 1"), horarioPartido.minusDays(6))
+            matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), horarioPartido.minusDays(6))
         }
 
         assertThat(excepcion.message).isEqualTo("Los partidos tienen que crearse con al menos siete dias de anticipacion")
@@ -221,7 +221,7 @@ class MatchServiceTest {
     @Test
     fun `se pueden obtener los partidos de hoy`(){
         val unHorario = LocalDateTime.of(2021, 9, 20, 23, 59, 59)
-        val partido = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, unHorario, "Estadio Santiago Vespucio Liberti"), cargaDePartido)
+        val partido = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, unHorario), cargaDePartido)
 
         assertThat(matchService.todayMatchs(horarioPartido)).isEqualTo(listOf(partido))
     }
