@@ -60,11 +60,10 @@ class MatchController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = ["/teams"], method = [RequestMethod.GET])
-    fun teams(): ResponseEntity<*>{
+    @RequestMapping(value = ["/today-matchs"], method = [RequestMethod.GET])
+    fun todayMatchs(): ResponseEntity<*>{
         return try{
-            ResponseEntity(matchService.getTeams(), HttpStatus.OK)
+            ResponseEntity(matchService.todayMatchs(), HttpStatus.OK)
         } catch (exception: MiEntraditaException) {
             ResponseEntity.badRequest().body(exception.toMap())
         }
@@ -92,6 +91,4 @@ data class CreateMatchRequest(
         val matchStartTime: LocalDateTime,
         @field:NotBlank(message = "El estadio local es requerido")
         val stadium: String
-) {
-    fun toModel() = Match(home, away, matchStartTime, ticketPrice, stadium)
-}
+)

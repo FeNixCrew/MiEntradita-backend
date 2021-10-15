@@ -9,7 +9,6 @@ class Ticket(
     @ManyToOne(fetch=FetchType.LAZY)
     val match: Match,
     val reservation: LocalDateTime = LocalDateTime.now(),
-    val price: Double
     ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

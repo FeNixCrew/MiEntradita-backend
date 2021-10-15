@@ -3,10 +3,7 @@ package ar.edu.unq.mientradita.webservice.config
 import ar.edu.unq.mientradita.model.user.Admin
 import ar.edu.unq.mientradita.model.user.Scanner
 import ar.edu.unq.mientradita.persistence.UserRepository
-import ar.edu.unq.mientradita.service.AuthUserService
-import ar.edu.unq.mientradita.service.MatchDTO
-import ar.edu.unq.mientradita.service.MatchService
-import ar.edu.unq.mientradita.service.SpectatorService
+import ar.edu.unq.mientradita.service.*
 import ar.edu.unq.mientradita.webservice.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.RegisterRequest
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,6 +23,9 @@ class FakeDataConfiguration {
 
     @Autowired
     private lateinit var authUserService: AuthUserService
+
+    @Autowired
+    private lateinit var teamService: TeamService
 
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -82,11 +82,22 @@ class FakeDataConfiguration {
         val horaDelPartido5 = fechaDeAhora.minusDays(5)
         val fechaCargaDePartido = fechaDeAhora.minusMonths(1)
 
-        val racingIndependiente = matchService.createMatch(CreateMatchRequest("Racing", "Independiente", 700.00, horaDelPartido1, "El Cilindro"), actualTime = fechaCargaDePartido)
-        val riverDefe = matchService.createMatch(CreateMatchRequest("River", "Defensa y Justicia", 500.00, horaDelPartido2, "Estadio Antonio Vespucio Liberti"), actualTime = fechaCargaDePartido)
-        val colonEstudiantes = matchService.createMatch(CreateMatchRequest("Colon de Santa Fe", "Estudiantes de la Plata", 500.00, horaDelPartido3, "Estadio Brigadier General Estanislao López"), actualTime = fechaCargaDePartido)
-        val talleresArsenal = matchService.createMatch(CreateMatchRequest("Talleres de Cordoba", "Arsenal de Sarandi", 500.00, horaDelPartido4, "Estadio Mario Alberto Kempes"), actualTime = fechaCargaDePartido)
-        val atleticoTucumanGimnasia = matchService.createMatch(CreateMatchRequest("Atletico Tucuman", "Gimnasia y Esgrima de la Plata", 400.00, horaDelPartido5, "Estadio Monumental José Fierro"), actualTime = fechaCargaDePartido)
+        val racing = teamService.registerTeam(CreateTeamRequest("Racing", "la Academia", "El Cilindro"))
+        val independiente = teamService.registerTeam(CreateTeamRequest("Independiente", "el Rojo", "Estadio Libertadores de América"))
+        val river = teamService.registerTeam(CreateTeamRequest("River", "el Millonario", "Estadio Antonio Vespucio Liberti"))
+        val dyj = teamService.registerTeam(CreateTeamRequest("Defensa y Justicia", "el Halcon de Varela", "Estadio Norberto Tito Tomaghello"))
+        val colon = teamService.registerTeam(CreateTeamRequest("Colon de Santa Fe", "el Sabalero", "Estadio Brigadier General Estanislao López"))
+        val estudiantes = teamService.registerTeam(CreateTeamRequest("Estudiantes de la Plata", "el Pincharrata", "Estadio Unico de la Plata"))
+        val talleres = teamService.registerTeam(CreateTeamRequest("Talleres de Cordoba", "el Matador", "Estadio Mario Alberto Kempes"))
+        val arsenal = teamService.registerTeam(CreateTeamRequest("Arsenal de Sarandi", "el Arse", "Estadio Julio Humberto Grondona"))
+        val atlTucuman = teamService.registerTeam(CreateTeamRequest("Atletico Tucuman", "el Decano", "Estadio Monumental José Fierro"))
+        val gimnasiaLP = teamService.registerTeam(CreateTeamRequest("Gimnasia y Esgrima de la Plata", "el Lobo Tripero", "Estadio Juan Carmelo Zerillo"))
+
+        val racingIndependiente = matchService.createMatch(CreateMatchRequest(racing.name, independiente.name, 700.00, horaDelPartido1, "El Cilindro"), actualTime = fechaCargaDePartido)
+        val riverDefe = matchService.createMatch(CreateMatchRequest(river.name, dyj.name, 500.00, horaDelPartido2, "Estadio Antonio Vespucio Liberti"), actualTime = fechaCargaDePartido)
+        val colonEstudiantes = matchService.createMatch(CreateMatchRequest(colon.name, estudiantes.name, 500.00, horaDelPartido3, "Estadio Brigadier General Estanislao López"), actualTime = fechaCargaDePartido)
+        val talleresArsenal = matchService.createMatch(CreateMatchRequest(talleres.name, arsenal.name, 500.00, horaDelPartido4, "Estadio Mario Alberto Kempes"), actualTime = fechaCargaDePartido)
+        val atleticoTucumanGimnasia = matchService.createMatch(CreateMatchRequest(atlTucuman.name, gimnasiaLP.name, 400.00, horaDelPartido5, "Estadio Monumental José Fierro"), actualTime = fechaCargaDePartido)
 
         return listOf(racingIndependiente, riverDefe, colonEstudiantes, talleresArsenal, atleticoTucumanGimnasia)
     }

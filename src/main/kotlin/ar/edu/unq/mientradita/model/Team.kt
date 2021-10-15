@@ -1,9 +1,17 @@
 package ar.edu.unq.mientradita.model
 
-@Deprecated("sobrediseniado")
-class Team(
-    val name: String,
-    val stadium: Stadium) {
+import javax.persistence.*
 
-    fun isEquals(team: Team) = team.name.equals(this.name, ignoreCase = true)
+@Entity
+class Team(
+    @Column(unique = true)
+    val name: String,
+    val knowName: String,
+    val stadium: String) {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null
+
+    fun isEquals(team: Team) = this.name == team.name
 }
