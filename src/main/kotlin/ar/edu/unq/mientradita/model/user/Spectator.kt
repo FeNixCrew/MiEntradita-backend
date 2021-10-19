@@ -3,6 +3,7 @@ package ar.edu.unq.mientradita.model.user
 import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Ticket
 import ar.edu.unq.mientradita.model.exception.TicketFromMatchNotFoundException
+import ar.edu.unq.mientradita.model.exception.UserAlreadyHaveATicket
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -22,6 +23,7 @@ class Spectator(
     val tickets = mutableListOf<Ticket>()
 
     fun reserveATicketFor(match: Match, reserveTime: LocalDateTime = LocalDateTime.now()) {
+        if(tickets.any{ it.match.isEquals(match) }) throw UserAlreadyHaveATicket()
         match.reserveTicket(this, reserveTime)
     }
 
