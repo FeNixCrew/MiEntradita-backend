@@ -69,6 +69,15 @@ class MatchController {
         }
     }
 
+    @RequestMapping(value = ["/matchs"], method = [RequestMethod.GET])
+    fun matchs(): ResponseEntity<*> {
+        return try{
+            ResponseEntity(matchService.matchs(), HttpStatus.OK)
+        } catch (exception: MiEntraditaException) {
+            ResponseEntity.badRequest().body(exception.toMap())
+        }
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleMethodArgumentNotValid(ex: MethodArgumentNotValidException): Map<String, String?>? {

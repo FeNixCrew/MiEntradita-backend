@@ -68,6 +68,11 @@ class MatchService {
     }
 
     @Transactional
+    fun matchs(): List<MatchDTO> {
+        return matchRepository.findAll().map { MatchDTO.fromModel(it) }
+    }
+
+    @Transactional
     fun clearDataSet() {
         spectatorRepository.deleteAll()
         matchRepository.deleteAll()
