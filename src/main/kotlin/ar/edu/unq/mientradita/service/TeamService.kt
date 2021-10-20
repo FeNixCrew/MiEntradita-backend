@@ -2,6 +2,7 @@ package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.exception.TeamAlredyRegisteredException
+import ar.edu.unq.mientradita.model.exception.TeamNotFoundException
 import ar.edu.unq.mientradita.persistence.TeamRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -23,7 +24,13 @@ class TeamService {
 
     @Transactional
     fun getTeams(): List<TeamDTO> {
-        return teamRepository.findAll().map { team -> TeamDTO(team.id!!, team.name) }
+        return teamRepository.findAll().map { team -> TeamDTO(team.id!!, team.name, team.knowName, team.stadium) }
+    }
+
+    @Transactional
+    fun getTeamDetails(teamName: String): TeamDTO {
+        val team = teamRepository.findByName(teamName).orElseThrow { throw TeamNotFoundException(teamName) }
+        return TeamDTO.fromModel(team)
     }
 }
 
@@ -37,10 +44,14 @@ class CreateTeamRequest(
     fun toModel() = Team(this.name, this.knowName, this.stadium)
 }
 
-data class TeamDTO(val id: Long, val name: String){
+data class TeamDTO(
+        val id: Long,
+        val name: String,
+        val knowName: String,
+        val stadium: String){
     companion object {
         fun fromModel(team: Team): TeamDTO {
-            return TeamDTO(team.id!!, team.name)
+            return TeamDTO(team.id!!, team.name, team.knowName, team.stadium)
         }
     }
 }
