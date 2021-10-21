@@ -120,7 +120,7 @@ class MatchServiceTest {
         partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido))
         partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido.plusDays(7)), cargaDePartido))
 
-        val partidos = matchService.searchNextMatchsByPartialName("vel", horarioPartido)
+        val partidos = matchService.searchNextMatchsByPartialName("vel", null, horarioPartido)
 
         assertThat(partidos).containsExactly(partidosCreados[0], partidosCreados[1])
     }
@@ -131,7 +131,7 @@ class MatchServiceTest {
         partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido))
         partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido.plusDays(7)), cargaDePartido))
 
-        val partidos = matchService.searchNextMatchsByPartialName("", horarioPartido.plusDays(1))
+        val partidos = matchService.searchNextMatchsByPartialName("", null, horarioPartido.plusDays(1))
 
         assertThat(partidos).doesNotContain(partidosCreados[0]).containsExactly(partidosCreados[1])
     }
@@ -141,7 +141,7 @@ class MatchServiceTest {
         val partido1 = matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido.plusDays(7)), cargaDePartido)
         val partido2 = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido), cargaDePartido)
 
-        val partidos = matchService.searchNextMatchsByPartialName("", horarioPartido.minusDays(5))
+        val partidos = matchService.searchNextMatchsByPartialName("", null, horarioPartido.minusDays(5))
 
         assertThat(partidos[0]).isEqualTo(partido2)
         assertThat(partidos[1]).isEqualTo(partido1)
@@ -154,7 +154,7 @@ class MatchServiceTest {
 
         val partidoCreado = matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreDeUnEquipo, 500.00, horarioPartido), cargaDePartido)
 
-        val partidos = matchService.searchNextMatchsByPartialName("ele", horarioPartido)
+        val partidos = matchService.searchNextMatchsByPartialName("ele", null, horarioPartido)
 
         assertThat(partidos.size).isEqualTo(1)
         assertThat(partidos).containsExactly(partidoCreado)

@@ -43,9 +43,9 @@ class MatchController {
     }
 
     @RequestMapping(value = ["search"], method = [RequestMethod.GET])
-    fun searchByPartialName(@RequestParam partialName: String): ResponseEntity<*> {
+    fun searchByPartialName(@RequestParam partialName: String, @RequestHeader("Authorization") token: String): ResponseEntity<*> {
         return try {
-            ResponseEntity.ok(matchService.searchNextMatchsByPartialName(partialName))
+            ResponseEntity.ok(matchService.searchNextMatchsByPartialName(partialName, token))
         } catch (exception: MiEntraditaException) {
             ResponseEntity.badRequest().body(exception.toMap())
         }

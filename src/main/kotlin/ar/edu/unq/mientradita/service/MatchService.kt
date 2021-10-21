@@ -6,7 +6,9 @@ import ar.edu.unq.mientradita.model.exception.*
 import ar.edu.unq.mientradita.persistence.MatchRepository
 import ar.edu.unq.mientradita.persistence.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
+import ar.edu.unq.mientradita.persistence.UserRepository
 import ar.edu.unq.mientradita.webservice.CreateMatchRequest
+import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,6 +25,9 @@ class MatchService {
 
     @Autowired
     private lateinit var teamRepository: TeamRepository
+
+    @Autowired
+    private lateinit var jwtUtil: JWTUtil
 
     @Transactional
     fun createMatch(createMatchRequest: CreateMatchRequest, actualTime: LocalDateTime = LocalDateTime.now()): MatchDTO {
@@ -52,8 +57,17 @@ class MatchService {
 
 
     @Transactional
-    fun searchNextMatchsByPartialName(partialTeamName: String, aDate: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
-        return matchRepository.searchNextMatchsBy(partialTeamName, aDate).map { MatchDTO.fromModel(it) }
+    fun searchNextMatchsByPartialName(
+        partialTeamName: String,
+        token: String? = null,
+        aDate: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
+        val matchs = matchRepository.searchNextMatchsBy(partialTeamName, aDate)
+
+        return if (isAnUser(token)) {
+            matchsByUser(token!!, matchs)
+        } else {
+            matchs.map { MatchDTO.fromModel(it) }
+        }
     }
 
     @Transactional
@@ -77,6 +91,14 @@ class MatchService {
         spectatorRepository.deleteAll()
         matchRepository.deleteAll()
         teamRepository.deleteAll()
+    }
+
+    private fun matchsByUser(token: String, matchs: List<Match>): List<MatchDTO> {
+        val spectator = spectatorRepository
+            .findByUsername(jwtUtil.getUsername(token))
+            .orElseThrow { SpectatorNotRegistered() }
+
+        return matchs.map{ MatchDTO.fromModel(it, spectator.wasReserved(it)) }
     }
 
     private fun checkIsntSameTeam(createMatchRequest: CreateMatchRequest) {
@@ -116,6 +138,8 @@ class MatchService {
     private fun withoutTime(aTime: LocalDateTime): LocalDateTime {
         return aTime.withHour(0).withMinute(0).withSecond(0).withNano(0)
     }
+
+    private fun isAnUser(token: String?) = token != null && jwtUtil.isRoleUser(token)
 }
 
 data class MatchDTO(
@@ -124,11 +148,12 @@ data class MatchDTO(
         val away: String,
         val ticketPrice: Double,
         val matchStartTime: LocalDateTime,
-        val stadium: String
+        val stadium: String,
+        val isReserved: Boolean?
 ) {
     companion object {
-        fun fromModel(match: Match): MatchDTO {
-            return MatchDTO(match.id!!, match.home.name, match.away.name, match.ticketPrice, match.matchStartTime, match.stadium())
+        fun fromModel(match: Match, isReserved: Boolean? = null): MatchDTO {
+            return MatchDTO(match.id!!, match.home.name, match.away.name, match.ticketPrice, match.matchStartTime, match.stadium(), isReserved)
         }
     }
 }

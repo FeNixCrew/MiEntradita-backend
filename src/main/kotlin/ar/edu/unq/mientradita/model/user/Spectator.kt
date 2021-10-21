@@ -36,4 +36,5 @@ class Spectator(
                     ?: throw TicketFromMatchNotFoundException(this, match)
 
     fun fullname() = "$name $surname"
+    fun wasReserved(aMatch: Match) = tickets.any { ticket -> ticket.isFrom(aMatch) }
 }

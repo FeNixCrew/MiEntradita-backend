@@ -9,4 +9,5 @@ import java.util.*
 @Repository
 interface SpectatorRepository: CrudRepository<Spectator,Long> {
     fun findByDni(dni: Int): Optional<Spectator>
+    fun findByUsername(username: String): Optional<Spectator>
 }
