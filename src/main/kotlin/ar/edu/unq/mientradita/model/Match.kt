@@ -9,9 +9,9 @@ import javax.persistence.*
 
 @Entity
 class Match(
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch= FetchType.EAGER)
     val home: Team,
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     val away: Team,
     val matchStartTime: LocalDateTime,
     val ticketPrice: Double

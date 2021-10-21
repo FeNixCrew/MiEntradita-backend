@@ -6,7 +6,7 @@ import javax.persistence.*
 
 @Entity
 class Ticket(
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     val match: Match,
     val reservation: LocalDateTime = LocalDateTime.now(),
     ) {
@@ -28,6 +28,8 @@ class Ticket(
     fun isPendingAt(aTime: LocalDateTime): Boolean {
         return !existPresentTime() && match.isBeforeMatchEnd(aTime)
     }
+
+    fun isFrom(aMatch: Match) = match.isEquals(aMatch)
 
     private fun existPresentTime() = presentTime != null
 }
