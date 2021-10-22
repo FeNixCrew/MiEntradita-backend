@@ -9,13 +9,12 @@ import javax.persistence.*
 
 @Entity
 class Match(
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch= FetchType.EAGER)
     val home: Team,
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     val away: Team,
     val matchStartTime: LocalDateTime,
-    val ticketPrice: Double,
-    val stadium: String,
+    val ticketPrice: Double
     ) {
 
     @Id
@@ -35,6 +34,8 @@ class Match(
     }
 
     fun isEquals(match: Match) = this.home.isEquals(match.home) && this.away.isEquals(match.away)
+
+    fun stadium() = home.stadium
 
     fun isBeforeMatchEnd(aTime: LocalDateTime) = closingTime() >= aTime
 

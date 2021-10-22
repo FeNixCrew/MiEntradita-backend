@@ -99,9 +99,9 @@ class MatchTest {
 
     @Test
     fun `un partido sabe en que estadio se va a jugar`(){
-        val estadio = "Santiago Bernabeu"
-        val partido = MatchBuilder().withStadium(estadio).build()
+        val team = TeamBuilder().withStadium("Santiago Bernabeu").build()
+        val partido = MatchBuilder().withHome(team).build()
 
-        assertThat(partido.stadium).isEqualTo(estadio)
+        assertThat(partido.stadium()).isEqualTo(team.stadium)
     }
 }

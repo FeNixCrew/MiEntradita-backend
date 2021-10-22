@@ -43,9 +43,9 @@ class MatchController {
     }
 
     @RequestMapping(value = ["search"], method = [RequestMethod.GET])
-    fun searchByPartialName(@RequestParam partialName: String): ResponseEntity<*> {
+    fun searchByPartialName(@RequestParam partialName: String, @RequestHeader("Authorization") token: String): ResponseEntity<*> {
         return try {
-            ResponseEntity.ok(matchService.searchNextMatchsByPartialName(partialName))
+            ResponseEntity.ok(matchService.searchNextMatchsByPartialName(partialName, token))
         } catch (exception: MiEntraditaException) {
             ResponseEntity.badRequest().body(exception.toMap())
         }
@@ -64,6 +64,15 @@ class MatchController {
     fun todayMatchs(): ResponseEntity<*>{
         return try{
             ResponseEntity(matchService.todayMatchs(), HttpStatus.OK)
+        } catch (exception: MiEntraditaException) {
+            ResponseEntity.badRequest().body(exception.toMap())
+        }
+    }
+
+    @RequestMapping(value = ["/matchs"], method = [RequestMethod.GET])
+    fun matchs(): ResponseEntity<*> {
+        return try{
+            ResponseEntity(matchService.matchs(), HttpStatus.OK)
         } catch (exception: MiEntraditaException) {
             ResponseEntity.badRequest().body(exception.toMap())
         }
@@ -88,7 +97,5 @@ data class CreateMatchRequest(
         val away: String,
         val ticketPrice: Double,
         @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        val matchStartTime: LocalDateTime,
-        @field:NotBlank(message = "El estadio local es requerido")
-        val stadium: String
+        val matchStartTime: LocalDateTime
 )

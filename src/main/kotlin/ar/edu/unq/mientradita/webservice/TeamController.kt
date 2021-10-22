@@ -20,6 +20,15 @@ class TeamController {
     @Autowired
     private lateinit var teamService: TeamService
 
+    @RequestMapping(value = ["/details"], method = [RequestMethod.GET])
+    fun getTeamDetails(@RequestParam teamName: String): ResponseEntity<*> {
+        return try{
+            ResponseEntity(teamService.getTeamDetails(teamName), HttpStatus.OK)
+        } catch (exception: MiEntraditaException) {
+            ResponseEntity.badRequest().body(exception.toMap())
+        }
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = ["/create"], method = [RequestMethod.POST])
     fun createTeam(@RequestBody @Valid createTeamRequest: CreateTeamRequest): ResponseEntity<*> {
