@@ -3,8 +3,10 @@ package ar.edu.unq.mientradita.service
 import ar.edu.unq.mientradita.model.Ticket
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
+import ar.edu.unq.mientradita.model.exception.TeamNotRegisteredException
 import ar.edu.unq.mientradita.persistence.MatchRepository
 import ar.edu.unq.mientradita.persistence.SpectatorRepository
+import ar.edu.unq.mientradita.persistence.TeamRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,6 +20,9 @@ class SpectatorService {
 
     @Autowired
     private lateinit var matchRepository: MatchRepository
+
+    @Autowired
+    private lateinit var teamRepository: TeamRepository
 
     @Transactional
     fun reserveTicket(spectatorId: Long, matchId: Long, reserveTicketTime: LocalDateTime = LocalDateTime.now()): TicketDTO {
@@ -41,6 +46,28 @@ class SpectatorService {
 
         return pendingTickets.map { ticket -> TicketDTO.fromModel(spectatorId, ticket) }
     }
+
+    @Transactional
+    fun favouriteTeamFor(spectatorId: Long): TeamDTO? {
+        val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
+
+        return if (spectator.hasFavouriteTeam()) {
+            TeamDTO.fromModel(spectator.favouriteTeam!!)
+        } else {
+            null
+        }
+    }
+
+    @Transactional
+    fun markAsFavourite(spectatorId: Long, teamId: Long) {
+        val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
+        val team = teamRepository.findById(teamId).orElseThrow { TeamNotRegisteredException() }
+
+        spectator.markAsFavourite(team)
+
+        spectatorRepository.save(spectator)
+    }
+
 }
 
 data class TicketDTO(val id:Long, val userId: Long, val matchId: Long, val home: String, val away: String, val matchStartTime: LocalDateTime) {

@@ -4,6 +4,11 @@ import ar.edu.unq.mientradita.model.builders.SpectatorBuilder
 import ar.edu.unq.mientradita.webservice.controllers.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.controllers.LoginRequest
 import ar.edu.unq.mientradita.webservice.controllers.RegisterRequest
+import ar.edu.unq.mientradita.model.exception.InvalidCredentialsException
+import ar.edu.unq.mientradita.model.exception.TeamNotRegisteredException
+import ar.edu.unq.mientradita.model.exception.UserAlreadyHasTicket
+import ar.edu.unq.mientradita.model.exception.UsernameAlreadyRegistered
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -74,7 +79,7 @@ class SpectatorServiceTest {
         authUserService.createSpectator(
                 RegisterRequest("Fede", "Sandoval", "fede1234", "9999", 45456784, "fede1234@gmail.com"))
 
-        val exception = assertThrows<RuntimeException> { authUserService.createSpectator(
+        val exception = assertThrows<UsernameAlreadyRegistered> { authUserService.createSpectator(
                 RegisterRequest("Fede", "Sandoval", "fede1234", "9999", 45456784, "fede1234@gmail.com"))
         }
 
@@ -91,7 +96,7 @@ class SpectatorServiceTest {
 
     @Test
     fun `no se puede obtener informacion de un espectador si se introduce mal sus credenciales`() {
-        val exception = assertThrows<RuntimeException> { authUserService.login(LoginRequest("nico0510", "incorrecto")) }
+        val exception = assertThrows<InvalidCredentialsException> { authUserService.login(LoginRequest("nico0510", "incorrecto")) }
 
         assertThat(exception.message).isEqualTo("Las credenciales introducidas son incorrectas, intente de nuevo")
     }
@@ -110,7 +115,7 @@ class SpectatorServiceTest {
         val partidoDTO = matchService.createMatch(CreateMatchRequest("Boca", "Velez", 500.00, horarioPartido), cargaDePartido)
         spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
-        val exception = assertThrows<RuntimeException> { spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(2)) }
+        val exception = assertThrows<UserAlreadyHasTicket> { spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(2)) }
 
         assertThat(exception.message).isEqualTo("Ya tienes una entrada para este partido")
     }
@@ -165,6 +170,42 @@ class SpectatorServiceTest {
                 .doesNotContain(entrada1)
                 .contains(entrada2)
     }
+
+    @Test
+    fun `un espectador comienza sin tener un equipo favorito`() {
+        assertThat(spectatorService.favouriteTeamFor(espectador.id)).isNull()
+    }
+
+    @Test
+    fun `un espectador puede marcar como favorito un equipo`() {
+        val team = teamService.getTeamDetails(nombreEquipoLocal)
+
+        spectatorService.markAsFavourite(espectador.id, team.id)
+
+        assertThat(spectatorService.favouriteTeamFor(espectador.id)).isEqualTo(team)
+    }
+
+    @Test
+    fun `un espectador NO puede marcar como favorito un equipo inexistente`() {
+        val exception = assertThrows<TeamNotRegisteredException> {
+            spectatorService.markAsFavourite(espectador.id, 999999)
+        }
+
+        assertThat(exception.message).isEqualTo("Equipo no registrado")
+    }
+
+    @Test
+    fun `un espectador puede cambiar de equipo favorito`() {
+        val teamA = teamService.getTeamDetails(nombreEquipoLocal)
+        val teamB = teamService.getTeamDetails(nombreEquipoVisitante)
+        spectatorService.markAsFavourite(espectador.id, teamA.id)
+
+        spectatorService.markAsFavourite(espectador.id, teamB.id)
+
+        assertThat(spectatorService.favouriteTeamFor(espectador.id)).isEqualTo(teamB)
+    }
+
+
 
     @AfterEach
     fun tearDown() {
