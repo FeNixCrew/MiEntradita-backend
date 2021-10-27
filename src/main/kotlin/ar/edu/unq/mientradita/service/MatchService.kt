@@ -3,10 +3,9 @@ package ar.edu.unq.mientradita.service
 import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.exception.*
-import ar.edu.unq.mientradita.persistence.MatchRepository
-import ar.edu.unq.mientradita.persistence.SpectatorRepository
+import ar.edu.unq.mientradita.persistence.match.MatchRepository
+import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
-import ar.edu.unq.mientradita.persistence.UserRepository
 import ar.edu.unq.mientradita.webservice.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.springframework.beans.factory.annotation.Autowired

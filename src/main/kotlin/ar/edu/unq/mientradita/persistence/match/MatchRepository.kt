@@ -1,10 +1,9 @@
-package ar.edu.unq.mientradita.persistence
+package ar.edu.unq.mientradita.persistence.match
 
 import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
 import java.util.*
 
 @Repository

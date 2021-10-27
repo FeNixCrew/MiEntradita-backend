@@ -1,4 +1,4 @@
-package ar.edu.unq.mientradita.persistence
+package ar.edu.unq.mientradita.persistence.match
 
 import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
@@ -8,7 +8,6 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.EntityManager
 import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Predicate
 import javax.persistence.criteria.Root
 
 @Repository

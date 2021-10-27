@@ -1,7 +1,7 @@
 package ar.edu.unq.mientradita.webservice
 
-import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.exception.MiEntraditaException
+import ar.edu.unq.mientradita.service.MailSenderService
 import ar.edu.unq.mientradita.service.MatchService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
@@ -22,6 +22,9 @@ class MatchController {
     @Autowired
     private lateinit var matchService: MatchService
 
+    @Autowired
+    private lateinit var mailSenderService: MailSenderService
+
     @PreAuthorize("hasRole('SCANNER')")
     @RequestMapping(value=["/comeIn"], method = [RequestMethod.POST])
     fun comeIn(@RequestBody comeInRequest: ComeInRequest): ResponseEntity<*> {
@@ -36,7 +39,11 @@ class MatchController {
     @RequestMapping(value = ["/create"], method = [RequestMethod.POST])
     fun createMatch(@RequestBody @Valid createMatchRequest: CreateMatchRequest): ResponseEntity<*>{
         return try{
-            ResponseEntity(matchService.createMatch(createMatchRequest), HttpStatus.CREATED)
+            val matchDTO = matchService.createMatch(createMatchRequest)
+
+            mailSenderService.notifyToFansFrom(matchDTO)
+
+            ResponseEntity(matchDTO, HttpStatus.CREATED)
         } catch (exception: MiEntraditaException) {
             ResponseEntity.badRequest().body(exception.toMap())
         }
