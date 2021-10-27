@@ -7,8 +7,8 @@ import ar.edu.unq.mientradita.model.exception.UsernameAlreadyRegistered
 import ar.edu.unq.mientradita.model.user.User
 import ar.edu.unq.mientradita.persistence.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.UserRepository
-import ar.edu.unq.mientradita.webservice.LoginRequest
-import ar.edu.unq.mientradita.webservice.RegisterRequest
+import ar.edu.unq.mientradita.webservice.controllers.LoginRequest
+import ar.edu.unq.mientradita.webservice.controllers.RegisterRequest
 import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

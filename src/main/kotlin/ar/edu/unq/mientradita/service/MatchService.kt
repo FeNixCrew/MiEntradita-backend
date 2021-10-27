@@ -6,8 +6,7 @@ import ar.edu.unq.mientradita.model.exception.*
 import ar.edu.unq.mientradita.persistence.MatchRepository
 import ar.edu.unq.mientradita.persistence.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
-import ar.edu.unq.mientradita.persistence.UserRepository
-import ar.edu.unq.mientradita.webservice.CreateMatchRequest
+import ar.edu.unq.mientradita.webservice.controllers.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

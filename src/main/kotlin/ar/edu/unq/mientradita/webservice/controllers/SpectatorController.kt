@@ -1,4 +1,4 @@
-package ar.edu.unq.mientradita.webservice
+package ar.edu.unq.mientradita.webservice.controllers
 
 import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.service.SpectatorService
@@ -20,20 +20,12 @@ class SpectatorController {
     @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = ["/tickets"], method = [RequestMethod.GET])
     fun pendingTicketsFrom(@RequestParam spectatorId: Long): ResponseEntity<*> {
-        return try {
-            ResponseEntity.ok(spectatorService.pendingTickets(spectatorId))
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
+        return ResponseEntity.ok(spectatorService.pendingTickets(spectatorId))
     }
 
     @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = ["/new-reserve"], method = [RequestMethod.POST])
     fun reserveTicket(@RequestParam spectatorId: Long, matchId: Long): ResponseEntity<*> {
-        return try {
-            ResponseEntity(spectatorService.reserveTicket(spectatorId, matchId), HttpStatus.OK)
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
+        return ResponseEntity(spectatorService.reserveTicket(spectatorId, matchId), HttpStatus.OK)
     }
 }

@@ -1,6 +1,5 @@
-package ar.edu.unq.mientradita.webservice
+package ar.edu.unq.mientradita.webservice.controllers
 
-import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.service.MatchService
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,59 +22,35 @@ class MatchController {
     private lateinit var matchService: MatchService
 
     @PreAuthorize("hasRole('SCANNER')")
-    @RequestMapping(value=["/comeIn"], method = [RequestMethod.POST])
+    @RequestMapping(value = ["/comeIn"], method = [RequestMethod.POST])
     fun comeIn(@RequestBody comeInRequest: ComeInRequest): ResponseEntity<*> {
-        return try {
-            ResponseEntity.ok(matchService.comeIn(comeInRequest.spectatorId, comeInRequest.matchId))
-        } catch (exception: MiEntraditaException){
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
+        return ResponseEntity.ok(matchService.comeIn(comeInRequest.spectatorId, comeInRequest.matchId))
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = ["/create"], method = [RequestMethod.POST])
-    fun createMatch(@RequestBody @Valid createMatchRequest: CreateMatchRequest): ResponseEntity<*>{
-        return try{
-            ResponseEntity(matchService.createMatch(createMatchRequest), HttpStatus.CREATED)
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
+    fun createMatch(@RequestBody @Valid createMatchRequest: CreateMatchRequest): ResponseEntity<*> {
+        return ResponseEntity(matchService.createMatch(createMatchRequest), HttpStatus.CREATED)
     }
 
     @RequestMapping(value = ["search"], method = [RequestMethod.GET])
     fun searchByPartialName(@RequestParam partialName: String, @RequestHeader("Authorization") token: String): ResponseEntity<*> {
-        return try {
-            ResponseEntity.ok(matchService.searchNextMatchsByPartialName(partialName, token))
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
+        return ResponseEntity.ok(matchService.searchNextMatchsByPartialName(partialName, token))
     }
 
     @RequestMapping(value = ["/details"], method = [RequestMethod.GET])
     fun getMatchDetails(@RequestParam matchId: Long): ResponseEntity<*> {
-        return try {
-            ResponseEntity.ok(matchService.getMatchDetails(matchId))
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
+        return ResponseEntity.ok(matchService.getMatchDetails(matchId))
     }
 
     @RequestMapping(value = ["/today-matchs"], method = [RequestMethod.GET])
-    fun todayMatchs(): ResponseEntity<*>{
-        return try{
-            ResponseEntity(matchService.todayMatchs(), HttpStatus.OK)
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
+    fun todayMatchs(): ResponseEntity<*> {
+        return ResponseEntity(matchService.todayMatchs(), HttpStatus.OK)
     }
 
     @RequestMapping(value = ["/matchs"], method = [RequestMethod.GET])
     fun matchs(): ResponseEntity<*> {
-        return try{
-            ResponseEntity(matchService.matchs(), HttpStatus.OK)
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
+        return ResponseEntity(matchService.matchs(), HttpStatus.OK)
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
