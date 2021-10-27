@@ -36,12 +36,4 @@ class TeamController {
     fun teams(): ResponseEntity<*> {
         return ResponseEntity(teamService.getTeams(), HttpStatus.OK)
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValid(ex: MethodArgumentNotValidException): Map<String, String?>? {
-        val errors: MutableMap<String, String?> = HashMap()
-        ex.bindingResult.fieldErrors.forEach(Consumer { error: FieldError -> errors[error.field] = error.defaultMessage })
-        return errors
-    }
 }

@@ -37,14 +37,6 @@ class AuthController {
         return ResponseEntity(authUserService.createSpectator(registerRequest), HttpStatus.CREATED)
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValid(ex: MethodArgumentNotValidException): Map<String, String?>? {
-        val errors: MutableMap<String, String?> = HashMap()
-        ex.bindingResult.fieldErrors.forEach(Consumer { error: FieldError -> errors[error.field] = error.defaultMessage })
-        return errors
-    }
-
 }
 
 data class LoginRequest(

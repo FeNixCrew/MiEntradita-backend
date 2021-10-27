@@ -53,14 +53,6 @@ class MatchController {
         return ResponseEntity(matchService.matchs(), HttpStatus.OK)
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValid(ex: MethodArgumentNotValidException): Map<String, String?>? {
-        val errors: MutableMap<String, String?> = HashMap()
-        ex.bindingResult.fieldErrors.forEach(Consumer { error: FieldError -> errors[error.field] = error.defaultMessage })
-        return errors
-    }
-
 }
 
 data class ComeInRequest(val spectatorId: Long, val matchId: Long)
