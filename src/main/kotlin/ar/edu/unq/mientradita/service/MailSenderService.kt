@@ -40,7 +40,7 @@ class MailSenderService {
                                 <div>${showConditions(spectator, matchDTO)}</div>
                             <div>El encuentro se disputará el <strong>${format(matchDTO.matchStartTime)}, ${hour(matchDTO.matchStartTime)}</strong>.</div>
                         </div>
-                        <div>Saludos.</div>"
+                        <div>Saludos.</div>
                     </body>
                    </html>
                 """.trimIndent(), true
