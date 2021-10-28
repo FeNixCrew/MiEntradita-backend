@@ -196,13 +196,38 @@ class SpectatorServiceTest {
 
     @Test
     fun `un espectador puede cambiar de equipo favorito`() {
-        val teamA = teamService.getTeamDetails(nombreEquipoLocal)
-        val teamB = teamService.getTeamDetails(nombreEquipoVisitante)
-        spectatorService.markAsFavourite(espectador.id, teamA.id)
+        val equipoA = teamService.getTeamDetails(nombreEquipoLocal)
+        val equipoB = teamService.getTeamDetails(nombreEquipoVisitante)
+        spectatorService.markAsFavourite(espectador.id, equipoA.id)
 
-        spectatorService.markAsFavourite(espectador.id, teamB.id)
+        spectatorService.markAsFavourite(espectador.id, equipoB.id)
 
-        assertThat(spectatorService.favouriteTeamFor(espectador.id)).isEqualTo(teamB)
+        assertThat(spectatorService.favouriteTeamFor(espectador.id)).isEqualTo(equipoB)
+    }
+
+    @Test
+    fun `se pueden obtener los fans de los equipos que van a jugar un partido`() {
+        val otroEspectador = authUserService.createSpectator(RegisterRequest("", "", "juancito02", "1234", 42299502, "correosalvaje@gmail.com"))
+        val equipoA = teamService.getTeamDetails(nombreEquipoLocal)
+        val equipoB = teamService.getTeamDetails(nombreEquipoVisitante)
+        spectatorService.markAsFavourite(espectador.id, equipoA.id)
+        spectatorService.markAsFavourite(otroEspectador.id, equipoB.id)
+
+        val partido = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido)
+
+        val obtainedFans = spectatorService.fansFrom(partido.id)
+        assertThat(obtainedFans).hasSize(2)
+        assertThat(obtainedFans[0].id).isEqualTo(espectador.id)
+        assertThat(obtainedFans[1].id).isEqualTo(otroEspectador.id)
+    }
+
+    @Test
+    fun `no se pueden obtener los fans de los equipos de un partido inexistente`() {
+        val exception = assertThrows<MatchDoNotExistsException> {
+            spectatorService.fansFrom(999999999)
+        }
+
+        assertThat(exception.message).isEqualTo("Partido no encontrado")
     }
 
 

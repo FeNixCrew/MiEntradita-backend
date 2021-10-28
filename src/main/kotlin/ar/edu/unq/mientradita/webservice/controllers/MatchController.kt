@@ -1,17 +1,15 @@
 package ar.edu.unq.mientradita.webservice.controllers
 
 import ar.edu.unq.mientradita.model.exception.MiEntraditaException
+import ar.edu.unq.mientradita.service.MailSenderService
 import ar.edu.unq.mientradita.service.MatchService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.validation.FieldError
-import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
-import java.util.function.Consumer
 import javax.validation.Valid
 import javax.validation.constraints.*
 
@@ -20,6 +18,9 @@ import javax.validation.constraints.*
 class MatchController {
     @Autowired
     private lateinit var matchService: MatchService
+
+    @Autowired
+    private lateinit var mailSenderService: MailSenderService
 
     @PreAuthorize("hasRole('SCANNER')")
     @RequestMapping(value = ["/comeIn"], method = [RequestMethod.POST])
@@ -30,7 +31,9 @@ class MatchController {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = ["/create"], method = [RequestMethod.POST])
     fun createMatch(@RequestBody @Valid createMatchRequest: CreateMatchRequest): ResponseEntity<*> {
-        return ResponseEntity(matchService.createMatch(createMatchRequest), HttpStatus.CREATED)
+        val matchDTO = matchService.createMatch(createMatchRequest)
+        mailSenderService.notifyToFansFrom(matchDTO)
+        return ResponseEntity(matchDTO, HttpStatus.CREATED)
     }
 
     @RequestMapping(value = ["search"], method = [RequestMethod.GET])

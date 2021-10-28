@@ -5,7 +5,7 @@ import ar.edu.unq.mientradita.model.exception.EmailAlreadyRegistered
 import ar.edu.unq.mientradita.model.exception.InvalidCredentialsException
 import ar.edu.unq.mientradita.model.exception.UsernameAlreadyRegistered
 import ar.edu.unq.mientradita.model.user.User
-import ar.edu.unq.mientradita.persistence.SpectatorRepository
+import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.UserRepository
 import ar.edu.unq.mientradita.webservice.controllers.LoginRequest
 import ar.edu.unq.mientradita.webservice.controllers.RegisterRequest
