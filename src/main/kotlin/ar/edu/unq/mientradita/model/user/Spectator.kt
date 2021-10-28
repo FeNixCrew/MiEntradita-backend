@@ -27,11 +27,15 @@ class Spectator(
     var favouriteTeam: Team? = null
 
     fun markAsFavourite(team: Team) {
-        this.favouriteTeam = team
+        if (this.favouriteTeam != null && team.isEquals(favouriteTeam!!)) {
+            this.favouriteTeam = null
+        } else {
+            this.favouriteTeam = team
+        }
     }
 
     fun reserveATicketFor(match: Match, reserveTime: LocalDateTime = LocalDateTime.now()) {
-        if(tickets.any{ it.match.isEquals(match) }) throw UserAlreadyHasTicket()
+        if (tickets.any { it.match.isEquals(match) }) throw UserAlreadyHasTicket()
         match.reserveTicket(this, reserveTime)
     }
 

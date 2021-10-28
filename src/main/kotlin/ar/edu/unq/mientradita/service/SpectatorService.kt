@@ -43,7 +43,7 @@ class SpectatorService {
     fun pendingTickets(spectatorId: Long, aTime: LocalDateTime = LocalDateTime.now()): List<TicketDTO> {
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
 
-        val pendingTickets = spectator.tickets.filter { it.isPendingAt(aTime)}
+        val pendingTickets = spectator.tickets.filter { it.isPendingAt(aTime) }
 
         return pendingTickets.map { ticket -> TicketDTO.fromModel(spectatorId, ticket) }
     }
@@ -68,7 +68,11 @@ class SpectatorService {
 
         spectatorRepository.save(spectator)
 
-        return TeamDTO.fromModel(team)
+        return if (spectator.hasFavouriteTeam()) {
+            TeamDTO.fromModel(spectator.favouriteTeam!!)
+        } else {
+            null
+        }
     }
 
     @Transactional
@@ -80,7 +84,7 @@ class SpectatorService {
 
 }
 
-data class TicketDTO(val id:Long, val userId: Long, val matchId: Long, val home: String, val away: String, val matchStartTime: LocalDateTime) {
+data class TicketDTO(val id: Long, val userId: Long, val matchId: Long, val home: String, val away: String, val matchStartTime: LocalDateTime) {
     companion object {
         fun fromModel(spectatorId: Long, ticket: Ticket): TicketDTO {
             return TicketDTO(ticket.id!!, spectatorId, ticket.match.id!!, ticket.match.home.name, ticket.match.away.name, ticket.match.matchStartTime)

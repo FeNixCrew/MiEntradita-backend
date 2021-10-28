@@ -31,12 +31,21 @@ class SpectatorTest {
 
     @Test
     fun `un espectador puede cambiar de equipo favorito`() {
-        val teamA = TeamBuilder().build()
-        val teamB = TeamBuilder().build()
+        val teamA = TeamBuilder().withName("Boca").build()
+        val teamB = TeamBuilder().withName("River").build()
         espectador.markAsFavourite(teamA)
 
         espectador.markAsFavourite(teamB)
 
         assertThat(espectador.favouriteTeam).isEqualTo(teamB)
+    }
+
+    @Test
+    fun `vuelvo a marcar el mismo equipo como favorito y ahora no tengo equipo favorito`() {
+        val teamA = TeamBuilder().build()
+        espectador.markAsFavourite(teamA)
+        espectador.markAsFavourite(teamA)
+
+        assertThat(espectador.favouriteTeam).isEqualTo(null)
     }
 }
