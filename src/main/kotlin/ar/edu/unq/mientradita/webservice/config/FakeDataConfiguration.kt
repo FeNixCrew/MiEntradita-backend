@@ -4,8 +4,8 @@ import ar.edu.unq.mientradita.model.user.Admin
 import ar.edu.unq.mientradita.model.user.Scanner
 import ar.edu.unq.mientradita.persistence.UserRepository
 import ar.edu.unq.mientradita.service.*
-import ar.edu.unq.mientradita.webservice.CreateMatchRequest
-import ar.edu.unq.mientradita.webservice.RegisterRequest
+import ar.edu.unq.mientradita.webservice.controllers.CreateMatchRequest
+import ar.edu.unq.mientradita.webservice.controllers.RegisterRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean

@@ -1,4 +1,4 @@
-package ar.edu.unq.mientradita.webservice
+package ar.edu.unq.mientradita.webservice.controllers
 
 import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.model.user.Spectator
@@ -26,33 +26,15 @@ class AuthController {
 
     @RequestMapping(value = ["/login"], method = [RequestMethod.POST])
     fun logIn(@RequestBody @Valid loginRequest: LoginRequest): ResponseEntity<*> {
-        return try {
-            val responseHeaders = HttpHeaders()
-            val pairTokenUser = authUserService.login(loginRequest)
-            responseHeaders.set("Authorization", pairTokenUser.first)
-
-            ResponseEntity.status(HttpStatus.OK).headers(responseHeaders).body(pairTokenUser.second)
-
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
+        val responseHeaders = HttpHeaders()
+        val pairTokenUser = authUserService.login(loginRequest)
+        responseHeaders.set("Authorization", pairTokenUser.first)
+        return ResponseEntity.status(HttpStatus.OK).headers(responseHeaders).body(pairTokenUser.second)
     }
 
     @RequestMapping(value = ["/register"], method = [RequestMethod.POST])
     fun register(@RequestBody @Valid registerRequest: RegisterRequest): ResponseEntity<*> {
-        return try {
-            ResponseEntity(authUserService.createSpectator(registerRequest), HttpStatus.CREATED)
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValid(ex: MethodArgumentNotValidException): Map<String, String?>? {
-        val errors: MutableMap<String, String?> = HashMap()
-        ex.bindingResult.fieldErrors.forEach(Consumer { error: FieldError -> errors[error.field] = error.defaultMessage })
-        return errors
+        return ResponseEntity(authUserService.createSpectator(registerRequest), HttpStatus.CREATED)
     }
 
 }
@@ -77,7 +59,7 @@ data class RegisterRequest(
         @field:Pattern(regexp = "^.{6,}\$", message = "La contrasenia debe poseer al menos 6 caracteres")
         val password: String,
         @field:NotNull(message = "El dni es requerido")
-        @field:Range(min= 1000000, max = 99999999, message = "El dni ingresado no es valido. Debe contener entre 7 y 8 digitos")
+        @field:Range(min = 1000000, max = 99999999, message = "El dni ingresado no es valido. Debe contener entre 7 y 8 digitos")
         val dni: Int,
         @field:NotBlank(message = "El correo es requerido")
         @field:Email(message = "Correo invalido. Por favor intente nuevamente.")
