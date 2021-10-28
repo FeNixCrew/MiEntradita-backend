@@ -60,13 +60,15 @@ class SpectatorService {
     }
 
     @Transactional
-    fun markAsFavourite(spectatorId: Long, teamId: Long) {
+    fun markAsFavourite(spectatorId: Long, teamId: Long): TeamDTO? {
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
         val team = teamRepository.findById(teamId).orElseThrow { TeamNotRegisteredException() }
 
         spectator.markAsFavourite(team)
 
         spectatorRepository.save(spectator)
+
+        return TeamDTO.fromModel(team)
     }
 
     @Transactional

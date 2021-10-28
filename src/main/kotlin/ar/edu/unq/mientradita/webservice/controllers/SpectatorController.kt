@@ -28,4 +28,16 @@ class SpectatorController {
     fun reserveTicket(@RequestParam spectatorId: Long, matchId: Long): ResponseEntity<*> {
         return ResponseEntity(spectatorService.reserveTicket(spectatorId, matchId), HttpStatus.OK)
     }
+
+    @PreAuthorize("hasRole('USER')")
+    @RequestMapping(value = ["/favourite"], method = [RequestMethod.GET])
+    fun favouriteTeamFor(@RequestParam spectatorId: Long): ResponseEntity<*> {
+        return ResponseEntity(spectatorService.favouriteTeamFor(spectatorId), HttpStatus.OK)
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @RequestMapping(value = ["/favourite"], method = [RequestMethod.POST])
+    fun markAsFavourite(@RequestParam spectatorId: Long, teamId: Long): ResponseEntity<*> {
+        return ResponseEntity(spectatorService.markAsFavourite(spectatorId, teamId), HttpStatus.CREATED)
+    }
 }
