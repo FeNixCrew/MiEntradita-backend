@@ -1,6 +1,5 @@
 package ar.edu.unq.mientradita.webservice.controllers
 
-import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.service.MailSenderService
 import ar.edu.unq.mientradita.service.MatchService
 import org.springframework.beans.factory.annotation.Autowired
