@@ -1,9 +1,6 @@
 package ar.edu.unq.mientradita.model
 
-import ar.edu.unq.mientradita.model.exception.DifferentGameException
-import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
-import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
-import ar.edu.unq.mientradita.model.exception.MatchWithNoTicketsAvailableException
+import ar.edu.unq.mientradita.model.exception.*
 import ar.edu.unq.mientradita.model.user.Spectator
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -24,9 +21,9 @@ class Match(
 
     var admittedPercentage = 100
         set(newPercentage) {
+            checkValidPercentage(newPercentage)
             field = newPercentage
         }
-        get() = field
 
     private var reservedTickets: Int  = 0
 
@@ -38,7 +35,7 @@ class Match(
             reservedTickets += 1
             spectator.addTicket(newTicket)
         } else {
-            throw MatchWithNoTicketsAvailableException()
+            throw TicketsNotAvailablesException()
         }
     }
 
@@ -65,7 +62,11 @@ class Match(
         if (attendDate < openingTime()) throw InvalidOpeningTimeException()
         if (attendDate > closingTime()) throw InvalidClosingTimeException()
     }
+
     private fun openingTime() = matchStartTime.minusHours(3)
     private fun closingTime() = matchStartTime.plusMinutes(90)
 
+    private fun checkValidPercentage(newPercentage: Int) {
+        if(newPercentage < 0 || newPercentage > 100) throw InvalidPercentageException()
+    }
 }
