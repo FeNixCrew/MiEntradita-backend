@@ -11,6 +11,7 @@ import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.io.Serializable
 import java.time.LocalDateTime
 
 @Service
@@ -153,7 +154,7 @@ data class MatchDTO(
         val isReserved: Boolean?,
         val capacitySupported: Int,
         val availableTickets: Int
-) {
+){
     companion object {
         fun fromModel(match: Match, isReserved: Boolean? = null): MatchDTO {
             return MatchDTO(match.id!!, match.home.name, match.away.name, match.ticketPrice, match.matchStartTime, match.stadium(), isReserved, match.maximumCapacity(), match.numberOfTicketsAvailable())

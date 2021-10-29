@@ -1,8 +1,12 @@
 package ar.edu.unq.mientradita.webservice.controllers
 
 import ar.edu.unq.mientradita.service.MailSenderService
+import ar.edu.unq.mientradita.service.MatchDTO
 import ar.edu.unq.mientradita.service.MatchService
+import ar.edu.unq.mientradita.webservice.config.CHANNEL
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,7 +23,10 @@ class MatchController {
     private lateinit var matchService: MatchService
 
     @Autowired
-    private lateinit var mailSenderService: MailSenderService
+    private lateinit var redisTemplate: RedisTemplate<String, String>
+
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     @PreAuthorize("hasRole('SCANNER')")
     @RequestMapping(value = ["/comeIn"], method = [RequestMethod.POST])
@@ -31,7 +38,9 @@ class MatchController {
     @RequestMapping(value = ["/create"], method = [RequestMethod.POST])
     fun createMatch(@RequestBody @Valid createMatchRequest: CreateMatchRequest): ResponseEntity<*> {
         val matchDTO = matchService.createMatch(createMatchRequest)
-        mailSenderService.notifyToFansFrom(matchDTO)
+
+        redisTemplate.convertAndSend(CHANNEL, objectMapper.writeValueAsString(matchDTO))
+
         return ResponseEntity(matchDTO, HttpStatus.CREATED)
     }
 
