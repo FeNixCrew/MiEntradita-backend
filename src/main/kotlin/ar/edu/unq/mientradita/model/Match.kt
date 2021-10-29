@@ -3,6 +3,7 @@ package ar.edu.unq.mientradita.model
 import ar.edu.unq.mientradita.model.exception.DifferentGameException
 import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
 import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
+import ar.edu.unq.mientradita.model.exception.MatchWithNoTicketsAvailableException
 import ar.edu.unq.mientradita.model.user.Spectator
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -21,9 +22,24 @@ class Match(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
+    var admittedPercentage = 100
+        set(newPercentage) {
+            field = newPercentage
+        }
+        get() = field
+
+    private var reservedTickets: Int  = 0
+
+    fun numberOfTicketsAvailable() = this.maximumCapacity() - reservedTickets
+
     fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime) {
-        val newTicket = Ticket(this, reserveTicketTime)
-        spectator.addTicket(newTicket)
+        if(numberOfTicketsAvailable() > 0){
+            val newTicket = Ticket(this, reserveTicketTime)
+            reservedTickets += 1
+            spectator.addTicket(newTicket)
+        } else {
+            throw MatchWithNoTicketsAvailableException()
+        }
     }
 
     fun comeIn(ticket: Ticket, attendDate: LocalDateTime) {
@@ -32,6 +48,8 @@ class Match(
 
         ticket.markAsPresent(attendDate)
     }
+
+    fun maximumCapacity() = home.maximumCapacity * admittedPercentage / 100
 
     fun isEquals(match: Match) = this.home.isEquals(match.home) && this.away.isEquals(match.away)
 

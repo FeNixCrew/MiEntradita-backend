@@ -26,4 +26,11 @@ class TeamTest {
 
         assertThat(equipo.stadium).isEqualTo("El Monumental")
     }
+
+    @Test
+    fun `un equipo tiene una capacidad maxima para albergar gente en su estadio`() {
+        val equipo = TeamBuilder().withMaximumCapacity(3000).build()
+
+        assertThat(equipo.maximumCapacity).isEqualTo(3000)
+    }
 }

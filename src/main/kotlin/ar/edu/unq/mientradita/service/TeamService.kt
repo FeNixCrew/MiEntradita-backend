@@ -16,7 +16,9 @@ class TeamService {
 
     @Transactional
     fun registerTeam(createTeamRequest: CreateTeamRequest): TeamDTO {
-        if(teamRepository.findByName(createTeamRequest.name).isPresent) { throw TeamAlredyRegisteredException() }
+        if (teamRepository.findByName(createTeamRequest.name).isPresent) {
+            throw TeamAlredyRegisteredException()
+        }
         val team = teamRepository.save(createTeamRequest.toModel())
 
         return TeamDTO.fromModel(team)
@@ -24,7 +26,7 @@ class TeamService {
 
     @Transactional
     fun getTeams(): List<TeamDTO> {
-        return teamRepository.findAll().map { team -> TeamDTO(team.id!!, team.name, team.knowName, team.stadium) }
+        return teamRepository.findAll().map { team -> TeamDTO(team.id!!, team.name, team.knowName, team.stadium, team.maximumCapacity) }
     }
 
     @Transactional
@@ -40,18 +42,21 @@ class CreateTeamRequest(
         @field:NotBlank(message = "El nombre conocido del equipo es requerido")
         val knowName: String,
         @field:NotBlank(message = "El nombre del estadio del equipo es requerido")
-        val stadium: String){
-    fun toModel() = Team(this.name, this.knowName, this.stadium)
+        val stadium: String,
+        val maximumCapacity: Int
+) {
+    fun toModel() = Team(this.name, this.knowName, this.stadium, this.maximumCapacity)
 }
 
 data class TeamDTO(
         val id: Long,
         val name: String,
         val knowName: String,
-        val stadium: String){
+        val stadium: String,
+        val maximumCapacity: Int) {
     companion object {
         fun fromModel(team: Team): TeamDTO {
-            return TeamDTO(team.id!!, team.name, team.knowName, team.stadium)
+            return TeamDTO(team.id!!, team.name, team.knowName, team.stadium, team.maximumCapacity)
         }
     }
 }

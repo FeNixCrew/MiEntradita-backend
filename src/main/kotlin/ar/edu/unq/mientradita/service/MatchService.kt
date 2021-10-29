@@ -38,6 +38,8 @@ class MatchService {
         checkIfCanPlay(home, away, createMatchRequest)
 
         val match = Match(home, away, createMatchRequest.matchStartTime, createMatchRequest.ticketPrice)
+        if(createMatchRequest.admittedPercentage != null) match.admittedPercentage = createMatchRequest.admittedPercentage
+
         matchRepository.save(match)
 
         return MatchDTO.fromModel(match)
@@ -148,11 +150,13 @@ data class MatchDTO(
         val ticketPrice: Double,
         val matchStartTime: LocalDateTime,
         val stadium: String,
-        val isReserved: Boolean?
+        val isReserved: Boolean?,
+        val capacitySupported: Int,
+        val availableTickets: Int
 ) {
     companion object {
         fun fromModel(match: Match, isReserved: Boolean? = null): MatchDTO {
-            return MatchDTO(match.id!!, match.home.name, match.away.name, match.ticketPrice, match.matchStartTime, match.stadium(), isReserved)
+            return MatchDTO(match.id!!, match.home.name, match.away.name, match.ticketPrice, match.matchStartTime, match.stadium(), isReserved, match.maximumCapacity(), match.numberOfTicketsAvailable())
         }
     }
 }

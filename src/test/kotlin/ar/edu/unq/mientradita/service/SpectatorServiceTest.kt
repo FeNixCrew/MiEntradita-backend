@@ -48,10 +48,11 @@ class SpectatorServiceTest {
                         dni = 42579865
                 )
         )
-        teamService.registerTeam(CreateTeamRequest(nombreEquipoLocal, "un apodo", "un estadio"))
-        teamService.registerTeam(CreateTeamRequest(nombreEquipoVisitante, "un apodo", "un estadio"))
-        teamService.registerTeam(CreateTeamRequest("Boca", "un apodo", "un estadio"))
-        teamService.registerTeam(CreateTeamRequest("Velez", "un apodo", "un estadio"))
+
+        teamService.registerTeam(CreateTeamRequest(nombreEquipoLocal, "un apodo", "un estadio", 20))
+        teamService.registerTeam(CreateTeamRequest(nombreEquipoVisitante, "un apodo", "un estadio", 20))
+        teamService.registerTeam(CreateTeamRequest("Boca", "un apodo", "un estadio", 20))
+        teamService.registerTeam(CreateTeamRequest("Velez", "un apodo", "un estadio", 20))
 
     }
 
@@ -76,8 +77,9 @@ class SpectatorServiceTest {
         authUserService.createSpectator(
                 RegisterRequest("Fede", "Sandoval", "fede1234", "9999", 45456784, "fede1234@gmail.com"))
 
-        val exception = assertThrows<UsernameAlreadyRegistered> { authUserService.createSpectator(
-                RegisterRequest("Fede", "Sandoval", "fede1234", "9999", 45456784, "fede1234@gmail.com"))
+        val exception = assertThrows<UsernameAlreadyRegistered> {
+            authUserService.createSpectator(
+                    RegisterRequest("Fede", "Sandoval", "fede1234", "9999", 45456784, "fede1234@gmail.com"))
         }
 
         assertThat(exception.message).isEqualTo("Nombre de usuario ya registrado")
@@ -100,7 +102,7 @@ class SpectatorServiceTest {
 
     @Test
     fun `un espectador puede reservar una entrada`() {
-        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido)
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, 50), cargaDePartido)
         val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
         assertThat(entradaReservada)
@@ -108,8 +110,31 @@ class SpectatorServiceTest {
     }
 
     @Test
+    fun `un espectador no puede reservar una entrada para un partido que ya no tiene cupos`() {
+        val espectador2 = authUserService.createSpectator(
+                RegisterRequest(
+                        name = "Fede",
+                        surname = "Sandoval",
+                        username = "fede0000",
+                        password = "1234",
+                        email = "fede0000@gmail.com",
+                        dni = 1234567
+                )
+        )
+        teamService.registerTeam(CreateTeamRequest("Equipo 1", "un apodo", "un estadio", 2))
+        val partidoDTO = matchService.createMatch(CreateMatchRequest("Equipo 1", nombreEquipoVisitante, 500.00, horarioPartido, 50), cargaDePartido)
+        spectatorService.reserveTicket(espectador2.id, partidoDTO.id, horarioPartido.minusDays(4))
+
+        val exception = assertThrows<MiEntraditaException> {
+            spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
+        }
+
+        assertThat(exception.message).isEqualTo("Ya no hay entradas disponibles para este partido")
+    }
+
+    @Test
     fun `un espectador no puede reservar mas de una entrada del mismo partido`() {
-        val partidoDTO = matchService.createMatch(CreateMatchRequest("Boca", "Velez", 500.00, horarioPartido), cargaDePartido)
+        val partidoDTO = matchService.createMatch(CreateMatchRequest("Boca", "Velez", 500.00, horarioPartido, 50), cargaDePartido)
         spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
         val exception = assertThrows<UserAlreadyHasTicket> { spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(2)) }
@@ -138,8 +163,8 @@ class SpectatorServiceTest {
                         espectador.name, espectador.surname, espectador.username,
                         espectador.password, espectador.dni, espectador.email)
         )
-        val partido1 = matchService.createMatch(CreateMatchRequest("Boca", "Velez", 500.00, horarioPartido), cargaDePartido)
-        val partido2 = matchService.createMatch(CreateMatchRequest(nombreEquipoVisitante, nombreEquipoLocal, 500.00, horarioPartido.plusDays(5)), cargaDePartido)
+        val partido1 = matchService.createMatch(CreateMatchRequest("Boca", "Velez", 500.00, horarioPartido, 50), cargaDePartido)
+        val partido2 = matchService.createMatch(CreateMatchRequest(nombreEquipoVisitante, nombreEquipoLocal, 500.00, horarioPartido.plusDays(5), 50), cargaDePartido)
 
         val entrada1 = spectatorService.reserveTicket(espectadorDTO.id, partido1.id)
         val entrada2 = spectatorService.reserveTicket(espectadorDTO.id, partido2.id)
@@ -155,8 +180,8 @@ class SpectatorServiceTest {
                         espectador.name, espectador.surname, espectador.username,
                         espectador.password, espectador.dni, espectador.email)
         )
-        val partido1 = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido)
-        val partido2 = matchService.createMatch(CreateMatchRequest(nombreEquipoVisitante, nombreEquipoLocal, 500.00, horarioPartido.plusDays(5)), cargaDePartido)
+        val partido1 = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, 50), cargaDePartido)
+        val partido2 = matchService.createMatch(CreateMatchRequest(nombreEquipoVisitante, nombreEquipoLocal, 500.00, horarioPartido.plusDays(5), 50), cargaDePartido)
 
         val entrada1 = spectatorService.reserveTicket(espectadorDTO.id, partido1.id)
         val entrada2 = spectatorService.reserveTicket(espectadorDTO.id, partido2.id)
@@ -210,7 +235,7 @@ class SpectatorServiceTest {
         spectatorService.markAsFavourite(espectador.id, equipoA.id)
         spectatorService.markAsFavourite(otroEspectador.id, equipoB.id)
 
-        val partido = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido)
+        val partido = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, 50), cargaDePartido)
 
         val obtainedFans = spectatorService.fansFrom(partido.id)
         assertThat(obtainedFans).hasSize(2)
@@ -226,7 +251,6 @@ class SpectatorServiceTest {
 
         assertThat(exception.message).isEqualTo("Partido no encontrado")
     }
-
 
 
     @AfterEach
