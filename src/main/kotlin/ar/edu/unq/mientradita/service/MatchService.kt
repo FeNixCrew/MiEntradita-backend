@@ -152,11 +152,12 @@ data class MatchDTO(
         val stadium: String,
         val isReserved: Boolean?,
         val capacitySupported: Int,
-        val availableTickets: Int
+        val availableTickets: Int,
+        val percentageOfCapacityAllowed: Int
 ) {
     companion object {
         fun fromModel(match: Match, isReserved: Boolean? = null): MatchDTO {
-            return MatchDTO(match.id!!, match.home.name, match.away.name, match.ticketPrice, match.matchStartTime, match.stadium(), isReserved, match.maximumCapacity(), match.numberOfTicketsAvailable())
+            return MatchDTO(match.id!!, match.home.name, match.away.name, match.ticketPrice, match.matchStartTime, match.stadium(), isReserved, match.maximumCapacity(), match.numberOfTicketsAvailable(), match.admittedPercentage)
         }
     }
 }

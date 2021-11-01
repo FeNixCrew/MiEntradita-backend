@@ -112,14 +112,14 @@ class MatchTest {
         val team = TeamBuilder().withMaximumCapacity(500).build()
         val partido = MatchBuilder().withHome(team).build()
 
-        assertThat(partido.maximumCapacity()).isEqualTo(team.maximumCapacity)
+        assertThat(partido.maximumCapacity()).isEqualTo(team.stadiumCapacity)
     }
 
     @Test
     fun `a un partido se le puede indicar cuanta capacidad de la total puede admitir`() {
         val team = TeamBuilder().withMaximumCapacity(500).build()
         val partido = MatchBuilder().withHome(team).build()
-        val capacidadEsperada = team.maximumCapacity * 50 / 100
+        val capacidadEsperada = team.stadiumCapacity * 50 / 100
 
         partido.admittedPercentage = 50
 

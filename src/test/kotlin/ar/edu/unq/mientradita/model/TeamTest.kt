@@ -31,6 +31,6 @@ class TeamTest {
     fun `un equipo tiene una capacidad maxima para albergar gente en su estadio`() {
         val equipo = TeamBuilder().withMaximumCapacity(3000).build()
 
-        assertThat(equipo.maximumCapacity).isEqualTo(3000)
+        assertThat(equipo.stadiumCapacity).isEqualTo(3000)
     }
 }
