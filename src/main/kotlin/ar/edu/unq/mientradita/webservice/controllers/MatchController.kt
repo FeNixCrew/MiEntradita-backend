@@ -76,5 +76,5 @@ data class CreateMatchRequest(
         val ticketPrice: Double,
         @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         val matchStartTime: LocalDateTime,
-        val admittedPercentage: Int? = null
+        val admittedPercentage: Int? = 50
 )

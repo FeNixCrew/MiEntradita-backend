@@ -42,7 +42,7 @@ class TeamServiceTest {
     fun `se pueden obtener todos los equipos`() {
         val racing = teamService.registerTeam(CreateTeamRequest("Racing", "La Academia", "El Cilindro", 200))
 
-        val equiposEsperados = listOf(equipo, racing).map { TeamDTO(it.id, it.name, it.knowName, it.stadium, it.maximumCapacity) }
+        val equiposEsperados = listOf(equipo, racing).map { TeamDTO(it.id, it.name, it.knowName, it.stadium, it.stadiumCapacity) }
         assertThat(teamService.getTeams()).usingRecursiveComparison().isEqualTo(equiposEsperados)
     }
 

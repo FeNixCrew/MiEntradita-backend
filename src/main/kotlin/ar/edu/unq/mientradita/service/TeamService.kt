@@ -26,7 +26,7 @@ class TeamService {
 
     @Transactional
     fun getTeams(): List<TeamDTO> {
-        return teamRepository.findAll().map { team -> TeamDTO(team.id!!, team.name, team.knowName, team.stadium, team.maximumCapacity) }
+        return teamRepository.findAll().map { team -> TeamDTO(team.id!!, team.name, team.knowName, team.stadium, team.stadiumCapacity) }
     }
 
     @Transactional
@@ -43,9 +43,9 @@ class CreateTeamRequest(
         val knowName: String,
         @field:NotBlank(message = "El nombre del estadio del equipo es requerido")
         val stadium: String,
-        val maximumCapacity: Int
+        val stadiumCapacity: Int
 ) {
-    fun toModel() = Team(this.name, this.knowName, this.stadium, this.maximumCapacity)
+    fun toModel() = Team(this.name, this.knowName, this.stadium, this.stadiumCapacity)
 }
 
 data class TeamDTO(
@@ -53,10 +53,10 @@ data class TeamDTO(
         val name: String,
         val knowName: String,
         val stadium: String,
-        val maximumCapacity: Int) {
+        val stadiumCapacity: Int) {
     companion object {
         fun fromModel(team: Team): TeamDTO {
-            return TeamDTO(team.id!!, team.name, team.knowName, team.stadium, team.maximumCapacity)
+            return TeamDTO(team.id!!, team.name, team.knowName, team.stadium, team.stadiumCapacity)
         }
     }
 }

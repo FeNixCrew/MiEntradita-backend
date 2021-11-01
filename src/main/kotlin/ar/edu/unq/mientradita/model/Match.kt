@@ -46,7 +46,7 @@ class Match(
         ticket.markAsPresent(attendDate)
     }
 
-    fun maximumCapacity() = home.maximumCapacity * admittedPercentage / 100
+    fun maximumCapacity() = home.stadiumCapacity * admittedPercentage / 100
 
     fun isEquals(match: Match) = this.home.isEquals(match.home) && this.away.isEquals(match.away)
 

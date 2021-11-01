@@ -8,7 +8,7 @@ class Team(
     val name: String,
     val knowName: String,
     val stadium: String,
-    val maximumCapacity: Int) {
+    val stadiumCapacity: Int) {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
