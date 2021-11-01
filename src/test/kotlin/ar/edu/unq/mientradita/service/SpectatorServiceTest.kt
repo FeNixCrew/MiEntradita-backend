@@ -125,7 +125,7 @@ class SpectatorServiceTest {
         val partidoDTO = matchService.createMatch(CreateMatchRequest("Equipo 1", nombreEquipoVisitante, 500.00, horarioPartido, 50), cargaDePartido)
         spectatorService.reserveTicket(espectador2.id, partidoDTO.id, horarioPartido.minusDays(4))
 
-        val exception = assertThrows<MiEntraditaException> {
+        val exception = assertThrows<TicketsNotAvailablesException> {
             spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
         }
 

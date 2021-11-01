@@ -32,6 +32,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("commons-validator:commons-validator:1.4.1")
 	implementation("org.springframework.boot:spring-boot-starter-mail:2.2.5.RELEASE")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
 }
 

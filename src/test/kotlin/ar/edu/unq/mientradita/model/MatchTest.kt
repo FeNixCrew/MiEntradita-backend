@@ -7,6 +7,7 @@ import ar.edu.unq.mientradita.model.builders.TicketBuilder
 import ar.edu.unq.mientradita.model.exception.DifferentGameException
 import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
 import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
+import ar.edu.unq.mientradita.model.exception.InvalidPercentageException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -146,4 +147,37 @@ class MatchTest {
         assertThat(cantidadDeTicketsParaVenderAntes).isGreaterThan(partido.numberOfTicketsAvailable())
         assertThat(partido.numberOfTicketsAvailable()).isEqualTo(0)
     }
+
+    @Test
+    fun `un partido no puede tener un porcentaje de aforo menor a 0 porciento`() {
+        val team = TeamBuilder().withMaximumCapacity(500).build()
+        val partido = MatchBuilder().withHome(team).build()
+
+        val exception = assertThrows<InvalidPercentageException> {
+            partido.admittedPercentage = -1
+        }
+
+        assertThat(exception.message).isEqualTo("El porcentaje debe estar entre 0 y 100")
+    }
+
+    @Test
+    fun `un partido no puede superar el 100 porciento de aforo`() {
+        val team = TeamBuilder().withMaximumCapacity(500).build()
+        val partido = MatchBuilder().withHome(team).build()
+
+        val exception = assertThrows<InvalidPercentageException> {
+            partido.admittedPercentage = 101
+        }
+
+        assertThat(exception.message).isEqualTo("El porcentaje debe estar entre 0 y 100")
+    }
+
+    @Test
+    fun `un partido puede tener un porcentaje de aforo hasta el 100 porciento`() {
+        val team = TeamBuilder().withMaximumCapacity(500).build()
+        val partido = MatchBuilder().withHome(team).build()
+
+        assertThat(partido.admittedPercentage).isEqualTo(100)
+    }
+
 }

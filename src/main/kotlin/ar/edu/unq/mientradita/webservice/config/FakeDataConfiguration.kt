@@ -61,10 +61,12 @@ class FakeDataConfiguration {
                         "holasusana9999",
                         "cafecito000",
                         224455770,
-                        "aguante_el_sillon@gmail.com")
+                        "losurditopro@gmail.com")
         )
 
         generateTicketsFor(moniFutbolera.id, listOf(matchs.first(), matchs.last()), spectatorService)
+
+        spectatorService.markAsFavourite(moniFutbolera.id, 1)
     }
 
     private fun generateTicketsFor(spectatorId: Long, matchs: List<MatchDTO>, spectatorService: SpectatorService) {

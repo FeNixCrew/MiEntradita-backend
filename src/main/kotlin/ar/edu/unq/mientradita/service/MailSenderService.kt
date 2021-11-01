@@ -2,7 +2,10 @@ package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.exception.format
 import ar.edu.unq.mientradita.model.user.Spectator
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.redis.connection.Message
+import org.springframework.data.redis.connection.MessageListener
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
@@ -11,7 +14,7 @@ import javax.mail.MessagingException
 
 
 @Service
-class MailSenderService {
+class MailSenderService: MessageListener {
 
     @Autowired
     private lateinit var javaMailSender: JavaMailSender
@@ -19,7 +22,15 @@ class MailSenderService {
     @Autowired
     private lateinit var spectatorService: SpectatorService
 
-    fun notifyToFansFrom(matchDTO: MatchDTO) {
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
+
+
+    override fun onMessage(message: Message, pattern: ByteArray?) {
+        notifyToFansFrom(getMatchFrom(message))
+    }
+
+    private fun notifyToFansFrom(matchDTO: MatchDTO) {
         spectatorService.fansFrom(matchDTO.id).forEach { notifyToFan(it, matchDTO) }
     }
 
@@ -51,6 +62,11 @@ class MailSenderService {
         }
     }
 
+    private fun getMatchFrom(message: Message): MatchDTO {
+        val jsonMatchDTO: String = message.body.decodeToString().substring(7)
+        return objectMapper.readValue(jsonMatchDTO, MatchDTO::class.java)
+    }
+
     private fun showConditions(spectator: Spectator, matchDTO: MatchDTO): String {
         return if (spectator.favouriteTeam!!.name == matchDTO.home) {
             "${matchDTO.home} jugará en condición de LOCAL contra ${matchDTO.away}"
@@ -62,5 +78,4 @@ class MailSenderService {
     private fun hour(matchStartTime: LocalDateTime): String {
         return "${matchStartTime.hour}:${matchStartTime.minute}Hs"
     }
-
 }
