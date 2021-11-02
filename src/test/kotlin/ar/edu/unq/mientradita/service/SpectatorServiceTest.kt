@@ -261,7 +261,7 @@ class SpectatorServiceTest {
     }
 
     @Test
-    fun `si no tengo equipo favorito no tengo proximos partidos`() {
+    fun `si un espectador no tiene equipo favorito, entonces no existen proximos partidos`() {
         teamService.getTeamDetails("Boca")
 
         assertThat(spectatorService.nextMatchesOfFavoriteTeam(espectador.id, horarioPartido)).isNull()

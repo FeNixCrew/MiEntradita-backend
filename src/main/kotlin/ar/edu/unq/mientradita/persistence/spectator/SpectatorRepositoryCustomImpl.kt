@@ -9,7 +9,7 @@ import javax.persistence.EntityManager
 import javax.persistence.criteria.CriteriaQuery
 import javax.persistence.criteria.Root
 
-class SpectatorRepositoryCustomImpl: SpectatorRepositoryCustom {
+class SpectatorRepositoryCustomImpl : SpectatorRepositoryCustom {
 
     @Autowired
     private lateinit var em: EntityManager
@@ -30,15 +30,15 @@ class SpectatorRepositoryCustomImpl: SpectatorRepositoryCustom {
         return em.createQuery(cq).resultList
     }
 
-    override fun nextMatchesOfFavoriteTeam(spectator: Spectator, aDateTime: LocalDateTime): List<Match> {
+    override fun nextMatchsFor(teamId: Long, aDateTime: LocalDateTime): List<Match> {
         val cb = em.criteriaBuilder
         val cq: CriteriaQuery<Match> = cb.createQuery(Match::class.java)
         val root: Root<Match> = cq.from(Match::class.java)
 
-        val matchInHomeCondition = cb.like(root.get<Team>("home").get("name"), spectator.favouriteTeam?.name)
-        val matchInAwayCondition = cb.like(root.get<Team>("away").get("name"), spectator.favouriteTeam?.name)
+        val matchInHomeCondition = cb.equal(root.get<Team>("home").get<Long>("id"), teamId)
+        val matchInAwayCondition = cb.equal(root.get<Team>("away").get<Long>("id"), teamId)
 
-        val notPlayed = cb.greaterThanOrEqualTo(root.get<LocalDateTime>("matchStartTime"), aDateTime)
+        val notPlayed = cb.greaterThanOrEqualTo(root.get("matchStartTime"), aDateTime)
         val homeOrAway = cb.or(matchInHomeCondition, matchInAwayCondition)
 
         val conditionToApply = cb.and(homeOrAway, notPlayed)

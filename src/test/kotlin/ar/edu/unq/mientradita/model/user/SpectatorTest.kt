@@ -48,12 +48,4 @@ class SpectatorTest {
 
         assertThat(espectador.favouriteTeam).isEqualTo(null)
     }
-
-    @Test
-    fun `un espectador puede reservar una entrada`() {
-        val teamA = TeamBuilder().withMaximumCapacity(2).build()
-
-
-        assertThat(espectador.favouriteTeam).isEqualTo(null)
-    }
 }

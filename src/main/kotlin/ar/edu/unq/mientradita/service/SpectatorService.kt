@@ -88,11 +88,15 @@ class SpectatorService {
             dateTime: LocalDateTime = LocalDateTime.now()
     ): List<MatchDTO>? {
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
-        if(spectator.favouriteTeam == null) return null
+        val favouriteTeam = spectator.favouriteTeam
 
-        val matchs = spectatorRepository.nextMatchesOfFavoriteTeam(spectator, dateTime)
-
-        return matchs.map { MatchDTO.fromModel(it) }
+        return if(favouriteTeam != null) {
+            spectatorRepository
+                .nextMatchsFor(favouriteTeam.id!!, dateTime)
+                .map { MatchDTO.fromModel(it) }
+        } else {
+            null
+        }
     }
 
 }

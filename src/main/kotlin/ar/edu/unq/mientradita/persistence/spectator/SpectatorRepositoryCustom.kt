@@ -9,5 +9,5 @@ import java.time.LocalDateTime
 @Repository
 interface SpectatorRepositoryCustom {
     fun fansFrom(match: Match): List<Spectator>
-    fun nextMatchesOfFavoriteTeam(spectator: Spectator, aDateTime: LocalDateTime): List<Match>
+    fun nextMatchsFor(teamId: Long, aDateTime: LocalDateTime): List<Match>
 }
