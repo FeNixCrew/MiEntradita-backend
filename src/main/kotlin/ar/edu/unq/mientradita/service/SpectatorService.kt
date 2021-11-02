@@ -8,7 +8,6 @@ import ar.edu.unq.mientradita.model.user.Spectator
 import ar.edu.unq.mientradita.persistence.match.MatchRepository
 import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
-import ar.edu.unq.mientradita.persistence.match.MailAndMatch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -81,6 +80,19 @@ class SpectatorService {
         val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
 
         return spectatorRepository.fansFrom(match)
+    }
+
+    @Transactional
+    fun nextMatchesOfFavoriteTeam(
+            spectatorId: Long,
+            dateTime: LocalDateTime = LocalDateTime.now()
+    ): List<MatchDTO> {
+        val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
+        val team = teamRepository.findById(spectator.favouriteTeam?.id!!).orElseThrow { TeamNotRegisteredException() }
+
+        val matchs = spectatorRepository.nextMatchesOf(team, dateTime)
+
+        return matchs.map { MatchDTO.fromModel(it) }
     }
 
 }

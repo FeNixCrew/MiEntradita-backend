@@ -4,6 +4,7 @@ import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.user.Spectator
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.LocalDateTime
 import javax.persistence.EntityManager
 import javax.persistence.criteria.CriteriaQuery
 import javax.persistence.criteria.Root
@@ -26,6 +27,25 @@ class SpectatorRepositoryCustomImpl: SpectatorRepositoryCustom {
         val condition = cb.and(hasFavouriteTeam, playFavouriteTeam)
 
         cq.where(condition)
+        return em.createQuery(cq).resultList
+    }
+
+    override fun nextMatchesOf(team: Team, aDateTime: LocalDateTime): List<Match> {
+        val cb = em.criteriaBuilder
+        val cq: CriteriaQuery<Match> = cb.createQuery(Match::class.java)
+        val root: Root<Match> = cq.from(Match::class.java)
+
+        val matchInHomeCondition = cb.like(root.get<Team>("home").get("name"), team.name)
+        val matchInAwayCondition = cb.like(root.get<Team>("away").get("name"), team.name)
+
+        val notPlayed = cb.greaterThanOrEqualTo(root.get<LocalDateTime>("matchStartTime"), aDateTime)
+        val homeOrAway = cb.or(matchInHomeCondition, matchInAwayCondition)
+
+        val conditionToApply = cb.and(homeOrAway, notPlayed)
+
+        cq.where(conditionToApply)
+        cq.orderBy(cb.asc(root.get<LocalDateTime>("matchStartTime")))
+
         return em.createQuery(cq).resultList
     }
 }

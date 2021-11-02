@@ -1,6 +1,5 @@
 package ar.edu.unq.mientradita.webservice.controllers
 
-import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.service.SpectatorService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -39,5 +38,11 @@ class SpectatorController {
     @RequestMapping(value = ["/favourite"], method = [RequestMethod.POST])
     fun markAsFavourite(@RequestParam spectatorId: Long, teamId: Long): ResponseEntity<*> {
         return ResponseEntity(spectatorService.markAsFavourite(spectatorId, teamId), HttpStatus.CREATED)
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @RequestMapping(value = ["/next-matchs"], method = [RequestMethod.GET])
+    fun nextMatchesOfFavoriteTeam(@RequestParam spectatorId: Long): ResponseEntity<*> {
+        return ResponseEntity(spectatorService.nextMatchesOfFavoriteTeam(spectatorId), HttpStatus.OK)
     }
 }

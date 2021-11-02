@@ -252,6 +252,41 @@ class SpectatorServiceTest {
         assertThat(exception.message).isEqualTo("Partido no encontrado")
     }
 
+    @Test
+    fun `mi equipo favorito inicialmente no tiene ningun proximo partido`() {
+        val team = teamService.getTeamDetails("Boca")
+        spectatorService.markAsFavourite(espectador.id, team.id)
+
+        assertThat(spectatorService.nextMatchesOfFavoriteTeam(espectador.id, horarioPartido)).isEmpty()
+    }
+
+    @Test
+    fun `se pueden obtener los proximos partidos de mi equipo favorito`() {
+        val team = teamService.getTeamDetails("Boca")
+        spectatorService.markAsFavourite(espectador.id, team.id)
+        val partido1 = matchService.createMatch(CreateMatchRequest("Boca", "racing", 500.00, horarioPartido.plusDays(1), 50), cargaDePartido)
+        val partido2 = matchService.createMatch(CreateMatchRequest("Velez", "Boca", 500.00, horarioPartido.plusDays(7), 50), cargaDePartido)
+        val expectedMatchs = arrayListOf(partido1, partido2)
+
+        assertThat(spectatorService.nextMatchesOfFavoriteTeam(espectador.id, horarioPartido))
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expectedMatchs)
+    }
+
+    @Test
+    fun `al consultar por los proximos partidos no se trae partidos viejos`() {
+        val team = teamService.getTeamDetails("Boca")
+        spectatorService.markAsFavourite(espectador.id, team.id)
+        matchService.createMatch(CreateMatchRequest("Boca", "racing", 500.00, horarioPartido.plusDays(1), 50), cargaDePartido)
+        val partido2 = matchService.createMatch(CreateMatchRequest("Velez", "Boca", 500.00, horarioPartido.plusDays(7), 50), cargaDePartido)
+        val expectedMatchs = arrayListOf(partido2)
+
+        assertThat(spectatorService.nextMatchesOfFavoriteTeam(espectador.id, horarioPartido.plusDays(2)))
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expectedMatchs)
+    }
 
     @AfterEach
     fun tearDown() {
