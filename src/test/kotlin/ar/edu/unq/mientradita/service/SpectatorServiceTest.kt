@@ -261,6 +261,13 @@ class SpectatorServiceTest {
     }
 
     @Test
+    fun `si no tengo equipo favorito no tengo proximos partidos`() {
+        teamService.getTeamDetails("Boca")
+
+        assertThat(spectatorService.nextMatchesOfFavoriteTeam(espectador.id, horarioPartido)).isNull()
+    }
+
+    @Test
     fun `se pueden obtener los proximos partidos de mi equipo favorito`() {
         val team = teamService.getTeamDetails("Boca")
         spectatorService.markAsFavourite(espectador.id, team.id)

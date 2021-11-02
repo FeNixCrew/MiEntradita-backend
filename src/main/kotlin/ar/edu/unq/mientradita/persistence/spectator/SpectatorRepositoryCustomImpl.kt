@@ -30,13 +30,13 @@ class SpectatorRepositoryCustomImpl: SpectatorRepositoryCustom {
         return em.createQuery(cq).resultList
     }
 
-    override fun nextMatchesOf(team: Team, aDateTime: LocalDateTime): List<Match> {
+    override fun nextMatchesOfFavoriteTeam(spectator: Spectator, aDateTime: LocalDateTime): List<Match> {
         val cb = em.criteriaBuilder
         val cq: CriteriaQuery<Match> = cb.createQuery(Match::class.java)
         val root: Root<Match> = cq.from(Match::class.java)
 
-        val matchInHomeCondition = cb.like(root.get<Team>("home").get("name"), team.name)
-        val matchInAwayCondition = cb.like(root.get<Team>("away").get("name"), team.name)
+        val matchInHomeCondition = cb.like(root.get<Team>("home").get("name"), spectator.favouriteTeam?.name)
+        val matchInAwayCondition = cb.like(root.get<Team>("away").get("name"), spectator.favouriteTeam?.name)
 
         val notPlayed = cb.greaterThanOrEqualTo(root.get<LocalDateTime>("matchStartTime"), aDateTime)
         val homeOrAway = cb.or(matchInHomeCondition, matchInAwayCondition)
