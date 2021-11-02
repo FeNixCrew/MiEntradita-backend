@@ -8,6 +8,7 @@ import ar.edu.unq.mientradita.model.user.Spectator
 import ar.edu.unq.mientradita.persistence.match.MatchRepository
 import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
+import ar.edu.unq.mientradita.persistence.match.MailAndMatch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

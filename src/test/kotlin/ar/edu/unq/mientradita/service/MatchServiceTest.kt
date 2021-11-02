@@ -226,6 +226,27 @@ class MatchServiceTest {
         assertThat(matchService.todayMatchs(horarioPartido)).isEqualTo(listOf(partido))
     }
 
+    @Test
+    fun `se pueden obtener los correos y partidos de entradas reservadas para el siguiente dia del dado`() {
+        val otroEspectador = authUserService.createSpectator(RegisterRequest("", "", "juancito02", "1234", 42299502, "correosalvaje@gmail.com"))
+        val partido = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500.00, horarioPartido, 50), cargaDePartido)
+        spectatorService.reserveTicket(espectador.id, partido.id, horarioPartido.minusDays(4))
+        spectatorService.reserveTicket(otroEspectador.id, partido.id, horarioPartido.minusDays(4))
+
+        val mailAndMatchs = matchService.rememberOf(horarioPartido.minusDays(1).minusHours(4))
+
+        val expectedFirstMatch = MatchDTO.fromModel(mailAndMatchs.first().match)
+        val expectedSecondMatch = MatchDTO.fromModel(mailAndMatchs[1].match)
+        assertThat(mailAndMatchs).hasSize(2)
+        assertThat(mailAndMatchs.first().mail).isEqualTo(espectador.email)
+        assertThat(mailAndMatchs[1].mail).isEqualTo(otroEspectador.email)
+        assertThat(expectedFirstMatch)
+            .usingRecursiveComparison()
+            .ignoringFields("availableTickets")
+            .isEqualTo(expectedSecondMatch)
+            .isEqualTo(partido)
+    }
+
     @AfterEach
     fun tearDown() {
         matchService.clearDataSet()

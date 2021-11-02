@@ -2,12 +2,15 @@ package ar.edu.unq.mientradita.persistence.match
 
 import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
+import ar.edu.unq.mientradita.model.Ticket
+import ar.edu.unq.mientradita.model.user.Spectator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.EntityManager
 import javax.persistence.criteria.CriteriaQuery
+import javax.persistence.criteria.Join
 import javax.persistence.criteria.Root
 
 @Repository
@@ -73,5 +76,28 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
         return em.createQuery(cq).resultList
     }
 
+    override fun rememberOf(actualTime: LocalDateTime): List<MailAndMatch> {
+        val cb = em.criteriaBuilder
+        val cq: CriteriaQuery<MailAndMatch> = cb.createQuery(MailAndMatch::class.java)
+        val spectator: Root<Spectator> = cq.from(Spectator::class.java)
+        val spectatorAndTicket: Join<Spectator, Ticket> = spectator.join("tickets")
+
+        val playAfter = cb.greaterThanOrEqualTo(spectatorAndTicket.get<Match>("match").get("matchStartTime"), actualTime.plusHours(24))
+        val playBefore = cb.lessThan(spectatorAndTicket.get<Match>("match").get("matchStartTime"), actualTime.plusHours(48))
+
+        val condition = cb.and(playAfter, playBefore)
+        cq.where(condition)
+
+        cq.multiselect(
+            spectator.get<String>("email"),
+            spectatorAndTicket.get<Match>("match")
+        )
+
+        return em.createQuery(cq).resultList
+    }
+
 
 }
+
+
+data class MailAndMatch(val mail:String, val match: Match)

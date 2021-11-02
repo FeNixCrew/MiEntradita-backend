@@ -6,6 +6,7 @@ import ar.edu.unq.mientradita.model.exception.*
 import ar.edu.unq.mientradita.persistence.match.MatchRepository
 import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
+import ar.edu.unq.mientradita.persistence.match.MailAndMatch
 import ar.edu.unq.mientradita.webservice.controllers.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -80,12 +81,17 @@ class MatchService {
 
     @Transactional
     fun todayMatchs(actualTime: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
-        return matchRepository.matchsOf(actualTime).map { MatchDTO.fromModel(it) }
+        return matchRepository.matchsOf(withoutTime(actualTime)).map { MatchDTO.fromModel(it) }
     }
 
     @Transactional
     fun matchs(): List<MatchDTO> {
         return matchRepository.findAll().map { MatchDTO.fromModel(it) }
+    }
+
+    @Transactional
+    fun rememberOf(minusDays: LocalDateTime = LocalDateTime.now()): List<MailAndMatch> {
+        return matchRepository.rememberOf(withoutTime(minusDays))
     }
 
     @Transactional
