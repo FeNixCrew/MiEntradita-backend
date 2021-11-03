@@ -1,5 +1,7 @@
 package ar.edu.unq.mientradita.service
 
+import ar.edu.unq.mientradita.model.Match
+import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.Ticket
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
@@ -8,6 +10,7 @@ import ar.edu.unq.mientradita.model.user.Spectator
 import ar.edu.unq.mientradita.persistence.match.MatchRepository
 import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
+import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -24,6 +27,9 @@ class SpectatorService {
 
     @Autowired
     private lateinit var teamRepository: TeamRepository
+
+    @Autowired
+    private lateinit var jwtUtil: JWTUtil
 
     @Transactional
     fun reserveTicket(spectatorId: Long, matchId: Long, reserveTicketTime: LocalDateTime = LocalDateTime.now()): TicketDTO {
@@ -85,19 +91,39 @@ class SpectatorService {
     @Transactional
     fun nextMatchesOfFavoriteTeam(
             spectatorId: Long,
+            token: String?,
             dateTime: LocalDateTime = LocalDateTime.now()
     ): List<MatchDTO>? {
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
-        val favouriteTeam = spectator.favouriteTeam
+        val favouriteTeam: Team? = spectator.favouriteTeam
 
         return if(favouriteTeam != null) {
-            spectatorRepository
-                .nextMatchsFor(favouriteTeam.id!!, dateTime)
-                .map { MatchDTO.fromModel(it) }
+            val matchs =  spectatorRepository.nextMatchsFor(favouriteTeam.id!!, dateTime)
+            returnMatchsByUserIfIsAnUser(token, matchs)
         } else {
             null
         }
     }
+
+    private fun returnMatchsByUserIfIsAnUser(token: String?, matchs: List<Match>): List<MatchDTO> {
+        return if (isAnUser(token)) {
+            matchsByUser(token!!, matchs)
+        } else {
+            matchs.map { MatchDTO.fromModel(it) }
+        }
+    }
+
+    private fun isAnUser(token: String?) = token != null && jwtUtil.isRoleUser(token)
+
+
+    private fun matchsByUser(token: String, matchs: List<Match>): List<MatchDTO> {
+        val spectator = spectatorRepository
+                .findByUsername(jwtUtil.getUsername(token))
+                .orElseThrow { SpectatorNotRegistered() }
+
+        return matchs.map{ MatchDTO.fromModel(it, spectator.wasReserved(it)) }
+    }
+
 
 }
 

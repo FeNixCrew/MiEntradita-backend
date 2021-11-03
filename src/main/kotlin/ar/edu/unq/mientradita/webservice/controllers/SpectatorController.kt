@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/spectator")
@@ -41,8 +38,8 @@ class SpectatorController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @RequestMapping(value = ["/next-matchs"], method = [RequestMethod.GET])
-    fun nextMatchesOfFavoriteTeam(@RequestParam spectatorId: Long): ResponseEntity<*> {
-        return ResponseEntity(spectatorService.nextMatchesOfFavoriteTeam(spectatorId), HttpStatus.OK)
+    @RequestMapping(value = ["/next-matches"], method = [RequestMethod.GET])
+    fun nextMatchesOfFavoriteTeam(@RequestParam spectatorId: Long, @RequestHeader("Authorization") token: String): ResponseEntity<*> {
+        return ResponseEntity(spectatorService.nextMatchesOfFavoriteTeam(spectatorId, token), HttpStatus.OK)
     }
 }
