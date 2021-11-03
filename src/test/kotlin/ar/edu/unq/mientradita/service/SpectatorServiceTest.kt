@@ -278,6 +278,7 @@ class SpectatorServiceTest {
         assertThat(spectatorService.nextMatchesOfFavoriteTeam(espectador.id, horarioPartido))
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
+                .ignoringFields("isReserved")
                 .isEqualTo(expectedMatchs)
     }
 
@@ -292,6 +293,7 @@ class SpectatorServiceTest {
         assertThat(spectatorService.nextMatchesOfFavoriteTeam(espectador.id, horarioPartido.plusDays(2)))
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
+                .ignoringFields("isReserved")
                 .isEqualTo(expectedMatchs)
     }
 

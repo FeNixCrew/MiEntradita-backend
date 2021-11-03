@@ -91,40 +91,18 @@ class SpectatorService {
     @Transactional
     fun nextMatchesOfFavoriteTeam(
             spectatorId: Long,
-            token: String?,
             dateTime: LocalDateTime = LocalDateTime.now()
     ): List<MatchDTO>? {
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
         val favouriteTeam: Team? = spectator.favouriteTeam
 
-        return if(favouriteTeam != null) {
-            val matchs =  spectatorRepository.nextMatchsFor(favouriteTeam.id!!, dateTime)
-            returnMatchsByUserIfIsAnUser(token, matchs)
+        return if (favouriteTeam != null) {
+            val matchs = spectatorRepository.nextMatchsFor(favouriteTeam.id!!, dateTime)
+            matchs.map { MatchDTO.fromModel(it, spectator.wasReserved(it)) }
         } else {
             null
         }
     }
-
-    private fun returnMatchsByUserIfIsAnUser(token: String?, matchs: List<Match>): List<MatchDTO> {
-        return if (isAnUser(token)) {
-            matchsByUser(token!!, matchs)
-        } else {
-            matchs.map { MatchDTO.fromModel(it) }
-        }
-    }
-
-    private fun isAnUser(token: String?) = token != null && jwtUtil.isRoleUser(token)
-
-
-    private fun matchsByUser(token: String, matchs: List<Match>): List<MatchDTO> {
-        val spectator = spectatorRepository
-                .findByUsername(jwtUtil.getUsername(token))
-                .orElseThrow { SpectatorNotRegistered() }
-
-        return matchs.map{ MatchDTO.fromModel(it, spectator.wasReserved(it)) }
-    }
-
-
 }
 
 data class TicketDTO(val id: Long, val userId: Long, val matchId: Long, val home: String, val away: String, val matchStartTime: LocalDateTime) {

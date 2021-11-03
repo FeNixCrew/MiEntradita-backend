@@ -39,7 +39,7 @@ class SpectatorController {
 
     @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = ["/next-matches"], method = [RequestMethod.GET])
-    fun nextMatchesOfFavoriteTeam(@RequestParam spectatorId: Long, @RequestHeader("Authorization") token: String): ResponseEntity<*> {
-        return ResponseEntity(spectatorService.nextMatchesOfFavoriteTeam(spectatorId, token), HttpStatus.OK)
+    fun nextMatchesOfFavoriteTeam(@RequestParam spectatorId: Long): ResponseEntity<*> {
+        return ResponseEntity(spectatorService.nextMatchesOfFavoriteTeam(spectatorId), HttpStatus.OK)
     }
 }
