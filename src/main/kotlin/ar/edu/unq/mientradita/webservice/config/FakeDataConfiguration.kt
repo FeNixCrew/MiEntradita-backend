@@ -49,7 +49,7 @@ class FakeDataConfiguration {
                         "usuario",
                         "usuario",
                         22334455,
-                        "zapatero_bigote@gmail.com")
+                        "pepito_argento@gmail.com")
         )
 
         generateTicketsFor(pepe.id, matchs, spectatorService)
@@ -61,7 +61,7 @@ class FakeDataConfiguration {
                         "holasusana9999",
                         "cafecito000",
                         224455770,
-                        "losurditopro@gmail.com")
+                        "moni_argento@gmail.com")
         )
 
         generateTicketsFor(moniFutbolera.id, listOf(matchs.first(), matchs.last()), spectatorService)
@@ -79,7 +79,7 @@ class FakeDataConfiguration {
         val fechaDeAhora = LocalDateTime.now()
         val horaDelPartido1 = fechaDeAhora.plusHours(1)
         val horaDelPartido2 = fechaDeAhora.plusHours(3)
-        val horaDelPartido3 = fechaDeAhora.plusDays(5)
+        val horaDelPartido3 = fechaDeAhora.plusDays(1)
         val horaDelPartido4 = fechaDeAhora.plusMonths(1)
         val horaDelPartido5 = fechaDeAhora.minusDays(5)
         val fechaCargaDePartido = fechaDeAhora.minusMonths(1)

@@ -54,6 +54,10 @@ class Match(
 
     fun isBeforeMatchEnd(aTime: LocalDateTime) = closingTime() >= aTime
 
+    override fun toString(): String {
+        return "${home.name} vs ${away.name}"
+    }
+
     private fun checkIfIsTheSameMatch(match: Match) {
         if (!this.isEquals(match)) throw DifferentGameException()
     }
