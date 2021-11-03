@@ -15,7 +15,7 @@ import javax.mail.MessagingException
 
 
 @Service
-class MailSenderService: MessageListener {
+class MailSenderService : MessageListener {
 
     @Autowired
     private lateinit var javaMailSender: JavaMailSender
@@ -38,17 +38,16 @@ class MailSenderService: MessageListener {
         matchService.rememberOf(dateTime).forEach { mailAndMatch -> sendReminder(mailAndMatch) }
     }
 
-    private fun sendReminder(mailAndMatch: MailAndMatch) {
-        val mailMessage = javaMailSender.createMimeMessage()
-        val helper: MimeMessageHelper
-        try {
-            val match = mailAndMatch.match
+    private fun notifyToFansFrom(matchDTO: MatchDTO) {
+        spectatorService.fansFrom(matchDTO.id).forEach { notifyToFan(it, matchDTO) }
+    }
 
-            helper = MimeMessageHelper(mailMessage, false)
-            helper.setTo(mailAndMatch.mail)
-            helper.setSubject("[Recordatorio] $match, ${format(match.matchStartTime)}")
-            helper.setText(
-                """
+    private fun sendReminder(mailAndMatch: MailAndMatch) {
+        val match = mailAndMatch.match
+        sendMail(
+            mailAndMatch.mail,
+            "[Recordatorio] $match, ${format(match.matchStartTime)}",
+            """
                    <html>
                     <body>
                         <div>
@@ -63,40 +62,40 @@ class MailSenderService: MessageListener {
                         <div>Saludos.</div>
                     </body>
                    </html>
-                """.trimIndent(), true
-            )
-            javaMailSender.send(mailMessage)
-        } catch (e: MessagingException) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun notifyToFansFrom(matchDTO: MatchDTO) {
-        spectatorService.fansFrom(matchDTO.id).forEach { notifyToFan(it, matchDTO) }
+                """.trimIndent()
+        )
     }
 
     private fun notifyToFan(spectator: Spectator, matchDTO: MatchDTO) {
-        val mailMessage = javaMailSender.createMimeMessage()
-        val helper: MimeMessageHelper
-        try {
-            helper = MimeMessageHelper(mailMessage, false)
-            helper.setTo(spectator.email)
-            helper.setSubject("¡Entradas para un nuevo partido ya disponibles!")
-            helper.setText(
-                """
+        sendMail(
+            spectator.email,
+            "¡Entradas para un nuevo partido ya disponibles!",
+            """
                    <html>
                     <body>
                         <div>
                             <div> Hola ${spectator.username},</div>
                             <div> Tenemos el agrado de comunicarle que ya se encuentran disponibles las entradas para un nuevo partido de tu equipo favorito.</div>
                                 <div>${showConditions(spectator, matchDTO)}</div>
-                            <div>El encuentro se disputará el <strong>${format(matchDTO.matchStartTime)}, ${hour(matchDTO.matchStartTime)}</strong>.</div>
+                            <div>El encuentro se disputará el 
+                              <strong>${format(matchDTO.matchStartTime)}, ${hour(matchDTO.matchStartTime)}</strong>.
+                            </div>
                         </div>
                         <div>Saludos.</div>
                     </body>
                    </html>
-                """.trimIndent(), true
-            )
+                """.trimIndent()
+        )
+    }
+
+    private fun sendMail(to: String, subject: String, text: String) {
+        val mailMessage = javaMailSender.createMimeMessage()
+        val helper: MimeMessageHelper
+        try {
+            helper = MimeMessageHelper(mailMessage, false)
+            helper.setTo(to)
+            helper.setSubject(subject)
+            helper.setText(text, true)
             javaMailSender.send(mailMessage)
         } catch (e: MessagingException) {
             e.printStackTrace()
@@ -117,6 +116,12 @@ class MailSenderService: MessageListener {
     }
 
     private fun hour(matchStartTime: LocalDateTime): String {
-        return "${matchStartTime.hour}:${matchStartTime.minute}Hs"
+        val minute = if (matchStartTime.minute >9 || matchStartTime.minute == 0) {
+            "0" + matchStartTime.minute
+        } else {
+            matchStartTime.minute
+        }
+
+        return "${matchStartTime.hour}:${minute}Hs"
     }
 }
