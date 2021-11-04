@@ -1,16 +1,14 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.Ticket
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
 import ar.edu.unq.mientradita.model.exception.TeamNotRegisteredException
 import ar.edu.unq.mientradita.model.user.Spectator
+import ar.edu.unq.mientradita.persistence.TeamRepository
 import ar.edu.unq.mientradita.persistence.match.MatchRepository
 import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
-import ar.edu.unq.mientradita.persistence.TeamRepository
-import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,9 +25,6 @@ class SpectatorService {
 
     @Autowired
     private lateinit var teamRepository: TeamRepository
-
-    @Autowired
-    private lateinit var jwtUtil: JWTUtil
 
     @Transactional
     fun reserveTicket(spectatorId: Long, matchId: Long, reserveTicketTime: LocalDateTime = LocalDateTime.now()): TicketDTO {
