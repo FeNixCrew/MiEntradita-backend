@@ -61,12 +61,12 @@ class FakeDataConfiguration {
                         "Argento",
                         "holasusana9999",
                         "cafecito000",
-                        224455770,
+                        22445570,
                         "moni_argento@gmail.com"
 		)
         )
 
-        generateTicketsFor(moniFutbolera.id, listOf(matchs.first(), matchs.last()), spectatorService)
+        generateTicketsFor(moniFutbolera.id, listOf(matchs.first()), spectatorService)
 
         spectatorService.markAsFavourite(moniFutbolera.id, 1)
     	
@@ -76,10 +76,27 @@ class FakeDataConfiguration {
 			"Argento",
 			"coqui00",
 			"usuario",
-			422298015,
+			42229801,
 			"coqui_argento@gmail.com"
 		)
 	)
+        var counter = 1
+        repeat(8) {
+            val spectator = authUserService.createSpectator(
+                    RegisterRequest(
+                            "Juan${counter}",
+                            "Gonzales${counter}",
+                            "juancho00${counter}",
+                            "usuario",
+                            32298015 + counter,
+                            "juan_gonzales${counter}@gmail.com"
+                    )
+            )
+            counter += 1
+
+            spectatorService.reserveTicket(spectator.id, matchs.last().id)
+
+        }
     }
 
     private fun generateTicketsFor(spectatorId: Long, matchs: List<MatchDTO>, spectatorService: SpectatorService) {
@@ -95,6 +112,7 @@ class FakeDataConfiguration {
         val horaDelPartido3 = fechaDeAhora.plusDays(1)
         val horaDelPartido4 = fechaDeAhora.plusMonths(1)
         val horaDelPartido5 = fechaDeAhora.minusDays(5)
+        val horaDelPartido6 = fechaDeAhora.plusWeeks(3)
         val fechaCargaDePartido = fechaDeAhora.minusMonths(1)
 
         val racing = teamService.registerTeam(CreateTeamRequest("Racing", "Academia", "Estadio Presidente Peron", 42500))
@@ -107,14 +125,17 @@ class FakeDataConfiguration {
         val arsenal = teamService.registerTeam(CreateTeamRequest("Arsenal de Sarandi", "El Arse", "Estadio Julio Humberto Grondona", 18300))
         val atlTucuman = teamService.registerTeam(CreateTeamRequest("Atletico Tucuman", "El Decano", "Estadio Monumental José Fierro", 35200))
         val gimnasiaLP = teamService.registerTeam(CreateTeamRequest("Gimnasia y Esgrima de la Plata", "El Lobo Tripero", "Estadio Juan Carmelo Zerillo", 21500))
+        val godoyCruz = teamService.registerTeam(CreateTeamRequest("Godoy Cruz", "El Tomba", "Estadio Malvinas Argentinas", 100))
+
 
         val racingIndependiente = matchService.createMatch(CreateMatchRequest(racing.name, independiente.name, 700.00, horaDelPartido1, 50), actualTime = fechaCargaDePartido)
         val riverDefe = matchService.createMatch(CreateMatchRequest(river.name, dyj.name, 500.00, horaDelPartido2, 50), actualTime = fechaCargaDePartido)
         val colonEstudiantes = matchService.createMatch(CreateMatchRequest(colon.name, estudiantes.name, 500.00, horaDelPartido3, 50), actualTime = fechaCargaDePartido)
         val talleresArsenal = matchService.createMatch(CreateMatchRequest(talleres.name, arsenal.name, 500.00, horaDelPartido4, 50), actualTime = fechaCargaDePartido)
         val atleticoTucumanGimnasia = matchService.createMatch(CreateMatchRequest(atlTucuman.name, gimnasiaLP.name, 400.00, horaDelPartido5, 50), actualTime = fechaCargaDePartido)
+        val godoyCruzTalleres = matchService.createMatch(CreateMatchRequest(godoyCruz.name, talleres.name, 800.00, horaDelPartido6, 11), actualTime = fechaCargaDePartido)
 
-        return listOf(racingIndependiente, riverDefe, colonEstudiantes, talleresArsenal, atleticoTucumanGimnasia)
+        return listOf(racingIndependiente, riverDefe, colonEstudiantes, talleresArsenal, atleticoTucumanGimnasia, godoyCruzTalleres)
     }
 
 
