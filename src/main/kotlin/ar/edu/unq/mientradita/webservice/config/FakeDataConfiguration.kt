@@ -49,7 +49,8 @@ class FakeDataConfiguration {
                         "usuario",
                         "usuario",
                         22334455,
-                        "pepito_argento@gmail.com")
+                        "pepito_argento@gmail.com"
+		)
         )
 
         generateTicketsFor(pepe.id, matchs, spectatorService)
@@ -61,12 +62,24 @@ class FakeDataConfiguration {
                         "holasusana9999",
                         "cafecito000",
                         224455770,
-                        "moni_argento@gmail.com")
+                        "moni_argento@gmail.com"
+		)
         )
 
         generateTicketsFor(moniFutbolera.id, listOf(matchs.first(), matchs.last()), spectatorService)
 
         spectatorService.markAsFavourite(moniFutbolera.id, 1)
+    	
+	authUserService.createSpectator(
+		RegisterRequest(
+			"Coqui",
+			"Argento",
+			"coqui00",
+			"usuario",
+			422298015,
+			"coqui_argento@gmail.com"
+		)
+	)
     }
 
     private fun generateTicketsFor(spectatorId: Long, matchs: List<MatchDTO>, spectatorService: SpectatorService) {
@@ -85,7 +98,7 @@ class FakeDataConfiguration {
         val fechaCargaDePartido = fechaDeAhora.minusMonths(1)
 
         val racing = teamService.registerTeam(CreateTeamRequest("Racing", "Academia", "Estadio Presidente Peron", 42500))
-        val independiente = teamService.registerTeam(CreateTeamRequest("Independiente", "Bojo", "Estadio Libertadores de América", 42069))
+        val independiente = teamService.registerTeam(CreateTeamRequest("Independiente", "El Rojo", "Estadio Libertadores de América", 42069))
         val river = teamService.registerTeam(CreateTeamRequest("River", "Millonario", "Estadio Antonio Vespucio Liberti", 72054))
         val dyj = teamService.registerTeam(CreateTeamRequest("Defensa y Justicia", "El Halcon de Varela", "Estadio Norberto Tito Tomaghello", 10500))
         val colon = teamService.registerTeam(CreateTeamRequest("Colon de Santa Fe", "El Sabalero", "Estadio Brigadier General Estanislao López", 45000))
