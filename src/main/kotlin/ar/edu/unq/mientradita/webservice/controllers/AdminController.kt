@@ -1,4 +1,4 @@
-package ar.edu.unq.mientradita.webservice
+package ar.edu.unq.mientradita.webservice.controllers
 
 import ar.edu.unq.mientradita.service.AdminService
 import ar.edu.unq.mientradita.webservice.controllers.ComeInRequest

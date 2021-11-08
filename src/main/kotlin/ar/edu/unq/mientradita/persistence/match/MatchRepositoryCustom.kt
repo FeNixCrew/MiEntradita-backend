@@ -11,4 +11,5 @@ interface MatchRepositoryCustom {
     fun matchFromTeamBetweenDate(team: String, wantedStartTime: LocalDateTime): Optional<Match>
     fun matchsOf(actualTime: LocalDateTime): List<Match>
     fun rememberOf(actualTime: LocalDateTime): List<MailAndMatch>
+    fun getSpectatorsAttendance(match: Match): List<SpectatorAttendance>
 }

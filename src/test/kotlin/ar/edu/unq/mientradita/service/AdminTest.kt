@@ -58,45 +58,48 @@ class AdminTest {
 
 
     @Test
-    fun `un admin puede pedir la informacion de usuarios que fueron a un partido`() {
-        spectatorService.reserveTicket(espectador.id, partido.id)
-
-        assertThat(adminService.getMatchInformation(partido.id)).isNotEmpty
-
-    }
-
-    @Test
-    fun `cuando un partido no tuvo ventas aun, no hay datos del partido`() {
+    fun `cuando un partido no tuvo reservas aun, no hay datos del partido`() {
         assertThat(adminService.getMatchInformation(partido.id)).isEmpty()
     }
 
     @Test
-    fun `un espectador asiste a un partido y el admin sabe sus datos`() {
+    fun `se pueden obtener los espectadores que estan pendientes de asistencia a un partido antes de que termine`() {
         spectatorService.reserveTicket(espectador.id, partido.id)
-        matchService.comeIn(espectador.id, partido.id, horarioPartido)
 
-        val espectadorReal = spectatorService.obtainSpectator(espectador.id)!!
-        val espectadorInfo = adminService.getMatchInformation(partido.id).first()
+        val asistenciaAlPartido = adminService.getMatchInformation(partido.id, horarioPartido)
 
-        assertThat(espectadorInfo.spectatorId).isEqualTo(espectadorReal.id)
-        assertThat(espectadorInfo.spectatorDni).isEqualTo(espectadorReal.dni)
-        assertThat(espectadorInfo.spectatorName).isEqualTo(espectadorReal.name)
-        assertThat(espectadorInfo.checkIn).isEqualTo(partido.matchStartTime)
-        assertThat(espectadorInfo.isPresent).isTrue
+        assertThat(asistenciaAlPartido.all { it.attendance == Attendance.PENDING }).isTrue
     }
 
     @Test
-    fun `un espectador compra una entrada pero no asiste al partido y el admin sabe sus datos`() {
+    fun `se pueden obtener los espectadores que estuvieron presentes en un partido`() {
+        val otroEspectador = authUserService.createSpectator(
+            RegisterRequest(
+                name = "Federico",
+                surname = "Sandoval",
+                username = "chester",
+                password = "1234",
+                email = "chester@gmail.com",
+                dni = 12345679
+            )
+        )
+        spectatorService.reserveTicket(espectador.id, partido.id)
+        spectatorService.reserveTicket(otroEspectador.id, partido.id)
+        matchService.comeIn(espectador.id, partido.id, horarioPartido)
+        matchService.comeIn(otroEspectador.id, partido.id, horarioPartido)
+
+        val asistenciaAlPartido = adminService.getMatchInformation(partido.id)
+
+        assertThat(asistenciaAlPartido.all { it.attendance == Attendance.PRESENT }).isTrue
+    }
+
+    @Test
+    fun `se pueden obtener los espectadores que faltaron a un partido luego de que el partido haya terminado`() {
         spectatorService.reserveTicket(espectador.id, partido.id)
 
-        val espectadorReal = spectatorService.obtainSpectator(espectador.id)!!
-        val espectadorInfo = adminService.getMatchInformation(partido.id).first()
+        val asistenciaAlPartido = adminService.getMatchInformation(partido.id, horarioPartido.plusDays(3))
 
-        assertThat(espectadorInfo.spectatorId).isEqualTo(espectadorReal.id)
-        assertThat(espectadorInfo.spectatorDni).isEqualTo(espectadorReal.dni)
-        assertThat(espectadorInfo.spectatorName).isEqualTo(espectadorReal.name)
-        assertThat(espectadorInfo.isPresent).isFalse
-        assertThat(espectadorInfo.checkIn).isNull()
+        assertThat(asistenciaAlPartido.all { it.attendance == Attendance.ABSENT }).isTrue
     }
 
     @AfterEach

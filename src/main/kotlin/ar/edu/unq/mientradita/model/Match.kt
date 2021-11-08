@@ -66,8 +66,8 @@ class Match(
         if (attendDate < openingTime()) throw InvalidOpeningTimeException()
         if (attendDate > closingTime()) throw InvalidClosingTimeException()
     }
-
     private fun openingTime() = matchStartTime.minusHours(3)
+
     private fun closingTime() = matchStartTime.plusMinutes(90)
 
     private fun checkValidPercentage(newPercentage: Int) {

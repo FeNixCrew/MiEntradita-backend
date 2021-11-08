@@ -96,8 +96,36 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
         return em.createQuery(cq).resultList
     }
 
+    override fun getSpectatorsAttendance(match: Match): List<SpectatorAttendance> {
+        val cb = em.criteriaBuilder
+        val cq: CriteriaQuery<SpectatorAttendance> = cb.createQuery(SpectatorAttendance::class.java)
+        val spectator: Root<Spectator> = cq.from(Spectator::class.java)
+        val spectatorAndTicket: Join<Spectator, Ticket> = spectator.join("tickets")
+
+        val isMatch = cb.equal(spectatorAndTicket.get<Match>("match").get<Long>("id"), match.id)
+        cq.where(isMatch)
+
+        cq.multiselect(
+            spectator.get<Long>("id"),
+            spectator.get<Int>("dni"),
+            spectator.get<String>("name"),
+            spectator.get<String>("surname"),
+            spectatorAndTicket.get<LocalDateTime?>("presentTime")
+        )
+
+        return em.createQuery(cq).resultList
+    }
+
 
 }
 
 
 data class MailAndMatch(val mail:String, val match: Match)
+
+data class SpectatorAttendance(
+    val id: Long,
+    val dni: Int,
+    val name: String,
+    val surname: String,
+    val presentTime: LocalDateTime?,
+)
