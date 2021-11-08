@@ -68,7 +68,7 @@ class AdminTest {
 
         val asistenciaAlPartido = adminService.getMatchInformation(partido.id, horarioPartido)
 
-        assertThat(asistenciaAlPartido.all { it.attendance == Attendance.PENDING }).isTrue
+        assertThat(asistenciaAlPartido.all { it.ASISTENCIA == Asistencia.PENDIENTE }).isTrue
     }
 
     @Test
@@ -90,7 +90,7 @@ class AdminTest {
 
         val asistenciaAlPartido = adminService.getMatchInformation(partido.id)
 
-        assertThat(asistenciaAlPartido.all { it.attendance == Attendance.PRESENT }).isTrue
+        assertThat(asistenciaAlPartido.all { it.ASISTENCIA == Asistencia.PRESENTE }).isTrue
     }
 
     @Test
@@ -99,7 +99,7 @@ class AdminTest {
 
         val asistenciaAlPartido = adminService.getMatchInformation(partido.id, horarioPartido.plusDays(3))
 
-        assertThat(asistenciaAlPartido.all { it.attendance == Attendance.ABSENT }).isTrue
+        assertThat(asistenciaAlPartido.all { it.ASISTENCIA == Asistencia.AUSENTE }).isTrue
     }
 
     @AfterEach
