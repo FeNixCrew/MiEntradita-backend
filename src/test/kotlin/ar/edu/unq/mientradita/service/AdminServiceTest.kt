@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDateTime
 
 @SpringBootTest
-class AdminTest {
+class AdminServiceTest {
 
     @Autowired
     private lateinit var matchService: MatchService
@@ -59,16 +59,16 @@ class AdminTest {
 
     @Test
     fun `cuando un partido no tuvo reservas aun, no hay datos del partido`() {
-        assertThat(adminService.getMatchInformation(partido.id)).isEmpty()
+        assertThat(adminService.attendanceFor(partido.id)).isEmpty()
     }
 
     @Test
     fun `se pueden obtener los espectadores que estan pendientes de asistencia a un partido antes de que termine`() {
         spectatorService.reserveTicket(espectador.id, partido.id)
 
-        val asistenciaAlPartido = adminService.getMatchInformation(partido.id, horarioPartido)
+        val asistenciaAlPartido = adminService.attendanceFor(partido.id, horarioPartido)
 
-        assertThat(asistenciaAlPartido.all { it.ASISTENCIA == Asistencia.PENDIENTE }).isTrue
+        assertThat(asistenciaAlPartido.all { it.asistencia == Asistencia.PENDIENTE }).isTrue
     }
 
     @Test
@@ -88,18 +88,18 @@ class AdminTest {
         matchService.comeIn(espectador.id, partido.id, horarioPartido)
         matchService.comeIn(otroEspectador.id, partido.id, horarioPartido)
 
-        val asistenciaAlPartido = adminService.getMatchInformation(partido.id)
+        val asistenciaAlPartido = adminService.attendanceFor(partido.id)
 
-        assertThat(asistenciaAlPartido.all { it.ASISTENCIA == Asistencia.PRESENTE }).isTrue
+        assertThat(asistenciaAlPartido.all { it.asistencia == Asistencia.PRESENTE }).isTrue
     }
 
     @Test
     fun `se pueden obtener los espectadores que faltaron a un partido luego de que el partido haya terminado`() {
         spectatorService.reserveTicket(espectador.id, partido.id)
 
-        val asistenciaAlPartido = adminService.getMatchInformation(partido.id, horarioPartido.plusDays(3))
+        val asistenciaAlPartido = adminService.attendanceFor(partido.id, horarioPartido.plusDays(3))
 
-        assertThat(asistenciaAlPartido.all { it.ASISTENCIA == Asistencia.AUSENTE }).isTrue
+        assertThat(asistenciaAlPartido.all { it.asistencia == Asistencia.AUSENTE }).isTrue
     }
 
     @AfterEach

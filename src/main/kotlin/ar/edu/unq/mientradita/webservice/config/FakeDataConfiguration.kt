@@ -80,23 +80,28 @@ class FakeDataConfiguration {
                 "coqui_argento@gmail.com"
             )
         )
-        var counter = 1
+        var contador = 1
+        val losJuanes = mutableListOf<UserDTO>()
+        val partido = matchs.last()
         repeat(8) {
             val spectator = authUserService.createSpectator(
                 RegisterRequest(
-                    "Juan${counter}",
-                    "Gonzales${counter}",
-                    "juancho00${counter}",
+                    "Juan${contador}",
+                    "Gonzales${contador}",
+                    "juancho00${contador}",
                     "usuario",
-                    32298015 + counter,
-                    "juan_gonzales${counter}@gmail.com"
+                    32298015 + contador,
+                    "juan_gonzales${contador}@gmail.com"
                 )
             )
-            counter += 1
-
-            spectatorService.reserveTicket(spectator.id, matchs.last().id)
-
+            losJuanes.add(spectator)
+            contador += 1
+            spectatorService.reserveTicket(spectator.id, partido.id)
         }
+
+        matchService.comeIn(pepe.id, partido.id)
+        matchService.comeIn(losJuanes.first().id, partido.id)
+        matchService.comeIn(losJuanes.last().id, partido.id)
     }
 
     private fun generateTicketsFor(spectatorId: Long, matchs: List<MatchDTO>, spectatorService: SpectatorService) {
@@ -112,11 +117,16 @@ class FakeDataConfiguration {
         val horaDelPartido3 = fechaDeAhora.plusDays(1)
         val horaDelPartido4 = fechaDeAhora.plusMonths(1)
         val horaDelPartido5 = fechaDeAhora.minusDays(5)
-        val horaDelPartido6 = fechaDeAhora.plusWeeks(3)
+        val horaDelPartido6 = fechaDeAhora.minusMinutes(1)
         val fechaCargaDePartido = fechaDeAhora.minusMonths(1)
 
-        val racing =
-            teamService.registerTeam(CreateTeamRequest("Racing", "Academia", "Estadio Presidente Peron", 42500))
+        val racing = teamService.registerTeam(
+            CreateTeamRequest(
+                "Racing",
+                "La Academia",
+                "Estadio Presidente Peron",
+                42500)
+        )
         val independiente = teamService.registerTeam(
             CreateTeamRequest(
                 "Independiente",
@@ -128,7 +138,7 @@ class FakeDataConfiguration {
         val river = teamService.registerTeam(
             CreateTeamRequest(
                 "River",
-                "Millonario",
+                "El Millonario",
                 "Estadio Antonio Vespucio Liberti",
                 72054
             )
@@ -152,7 +162,7 @@ class FakeDataConfiguration {
         val estudiantes = teamService.registerTeam(
             CreateTeamRequest(
                 "Estudiantes de la Plata",
-                "Pincharratas",
+                "El Pincharrata",
                 "Estadio UNO Jorge Luis Hirschi",
                 30018
             )
@@ -189,8 +199,13 @@ class FakeDataConfiguration {
                 21500
             )
         )
-        val godoyCruz =
-            teamService.registerTeam(CreateTeamRequest("Godoy Cruz", "El Tomba", "Estadio Malvinas Argentinas", 100))
+        val godoyCruz = teamService.registerTeam(
+            CreateTeamRequest(
+                "Godoy Cruz",
+                "El Tomba",
+                "Estadio Malvinas Argentinas",
+                100)
+        )
 
 
         val racingIndependiente = matchService.createMatch(

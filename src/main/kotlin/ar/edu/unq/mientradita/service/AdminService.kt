@@ -14,7 +14,7 @@ class AdminService {
     private lateinit var matchRepository: MatchRepository
 
     @Transactional
-    fun getMatchInformation(matchId: Long, time: LocalDateTime = LocalDateTime.now()): List<AsistenciaDeEspectador> {
+    fun attendanceFor(matchId: Long, time: LocalDateTime = LocalDateTime.now()): List<AsistenciaDeEspectador> {
         val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
         val results = matchRepository.getSpectatorsAttendance(match)
 
@@ -48,10 +48,10 @@ class AdminService {
 }
 
 data class AsistenciaDeEspectador(
-    val ID: Long,
-    val DNI: Int,
-    val NOMBRE: String,
-    val ASISTENCIA: Asistencia,
+    val id: Long,
+    val dni: Int,
+    val nombre: String,
+    val asistencia: Asistencia,
 )
 
 enum class Asistencia { PRESENTE, AUSENTE, PENDIENTE; }
