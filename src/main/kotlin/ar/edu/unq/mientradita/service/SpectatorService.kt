@@ -98,6 +98,11 @@ class SpectatorService {
             null
         }
     }
+
+    @Transactional
+    fun obtainSpectator(spectatorId: Long): Spectator? {
+        return spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
+    }
 }
 
 data class TicketDTO(val id: Long, val userId: Long, val matchId: Long, val home: String, val away: String, val matchStartTime: LocalDateTime) {
