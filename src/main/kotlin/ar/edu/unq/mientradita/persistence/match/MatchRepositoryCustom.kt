@@ -7,7 +7,7 @@ import java.util.*
 
 @Repository
 interface MatchRepositoryCustom {
-    fun searchNextMatchsBy(partialTeamName: String, aDate: LocalDateTime): List<Match>
+    fun searchNextMatchsBy(partialTeamName: String, isFinished: Boolean?, aDate: LocalDateTime): List<Match>
     fun matchFromTeamBetweenDate(team: String, wantedStartTime: LocalDateTime): Optional<Match>
     fun matchsOf(actualTime: LocalDateTime): List<Match>
     fun rememberOf(actualTime: LocalDateTime): List<MailAndMatch>

@@ -12,7 +12,6 @@ import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.io.Serializable
 import java.time.LocalDateTime
 
 @Service
@@ -63,12 +62,14 @@ class MatchService {
     fun searchNextMatchsByPartialName(
         partialTeamName: String,
         token: String? = null,
+        isFinished: Boolean? = null,
         aDate: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
-        val matchs = matchRepository.searchNextMatchsBy(partialTeamName, aDate)
 
         return if (isAnUser(token)) {
+            val matchs = matchRepository.searchNextMatchsBy(partialTeamName, false, aDate)
             matchsByUser(token!!, matchs)
         } else {
+            val matchs = matchRepository.searchNextMatchsBy(partialTeamName, isFinished, aDate)
             matchs.map { MatchDTO.fromModel(it) }
         }
     }

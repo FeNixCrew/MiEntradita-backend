@@ -11,6 +11,7 @@ import java.util.*
 import javax.persistence.EntityManager
 import javax.persistence.criteria.CriteriaQuery
 import javax.persistence.criteria.Join
+import javax.persistence.criteria.Predicate
 import javax.persistence.criteria.Root
 
 @Repository
@@ -19,7 +20,7 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
     @Autowired
     private lateinit var em: EntityManager
 
-    override fun searchNextMatchsBy(partialTeamName: String, aDate: LocalDateTime): List<Match> {
+    override fun searchNextMatchsBy(partialTeamName: String, isFinished: Boolean?, aDate: LocalDateTime): List<Match> {
         val cb = em.criteriaBuilder
         val cq: CriteriaQuery<Match> = cb.createQuery(Match::class.java)
         val match: Root<Match> = cq.from(Match::class.java)
@@ -27,12 +28,23 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
         val matchWithHomeTeam = cb.like(cb.upper(match.get<Team>("home").get("name")), "%${partialTeamName.toUpperCase()}%")
         val matchWithAwayTeam = cb.like(cb.upper(match.get<Team>("away").get("name")), "%${partialTeamName.toUpperCase()}%")
 
-        val isntPlayed = cb.greaterThanOrEqualTo(match.get("matchStartTime"), aDate)
+        val predicates: MutableList<Predicate> = ArrayList()
+
         val matchWithAnyTeam = cb.or(matchWithHomeTeam, matchWithAwayTeam)
+        predicates.add(matchWithAnyTeam)
 
-        val condition = cb.and(isntPlayed, matchWithAnyTeam)
+        if(isFinished!=null) {
+            val expectedTime = aDate.minusMinutes(90)
+            if (isFinished) {
+                val finished = cb.lessThan(match.get("matchStartTime"), expectedTime)
+                predicates.add(finished)
+            } else {
+                val notFinished = cb.greaterThanOrEqualTo(match.get("matchStartTime"), expectedTime)
+                predicates.add(notFinished)
+            }
+        }
 
-        cq.where(condition)
+        cq.where(*predicates.toTypedArray())
         cq.orderBy(cb.asc(match.get<LocalDateTime>("matchStartTime")))
 
         return em.createQuery(cq).resultList

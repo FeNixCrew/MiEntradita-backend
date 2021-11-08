@@ -30,6 +30,7 @@ class MatchServiceTest {
     private val nombreEquipoVisitante = "racing"
     private val nombreOtroEquipo = "velez"
     private val horarioPartido = LocalDateTime.of(2021, 9, 20, 16, 15)
+    private val otroHorario = horarioPartido.plusDays(7).plusMinutes(90)
     private val cargaDePartido = horarioPartido.minusMonths(1)
     private lateinit var espectador: UserDTO
 
@@ -120,28 +121,51 @@ class MatchServiceTest {
         partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido))
         partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido.plusDays(7), 50), cargaDePartido))
 
-        val partidos = matchService.searchNextMatchsByPartialName("vel", null, horarioPartido)
+        val partidos = matchService.searchNextMatchsByPartialName("vel", null, false, horarioPartido)
 
         assertThat(partidos).containsExactly(partidosCreados[0], partidosCreados[1])
     }
 
     @Test
-    fun `se pueden buscar partidos luego de una fecha determinada`() {
+    fun `se pueden buscar partidos que no han terminado`() {
         val partidosCreados = mutableListOf<MatchDTO>()
         partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido))
-        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido.plusDays(7)), cargaDePartido))
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, otroHorario), cargaDePartido))
 
-        val partidos = matchService.searchNextMatchsByPartialName("", null, horarioPartido.plusDays(1))
+        val partidos = matchService.searchNextMatchsByPartialName("", null, false, otroHorario.plusMinutes(1))
 
-        assertThat(partidos).doesNotContain(partidosCreados[0]).containsExactly(partidosCreados[1])
+        assertThat(partidos).containsExactly(partidosCreados[1])
     }
+
+    @Test
+    fun `se pueden buscar partidos que hayan terminado`() {
+        val partidosCreados = mutableListOf<MatchDTO>()
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido))
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, otroHorario), cargaDePartido))
+
+        val partidos = matchService.searchNextMatchsByPartialName("", null, true, otroHorario.plusMinutes(1))
+
+        assertThat(partidos).containsExactly(partidosCreados[0])
+    }
+
+    @Test
+    fun `se pueden buscar partidos independientemente si han terminado o no`() {
+        val partidosCreados = mutableListOf<MatchDTO>()
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido), cargaDePartido))
+        partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, otroHorario), cargaDePartido))
+
+        val partidos = matchService.searchNextMatchsByPartialName("", null, null, otroHorario.plusMinutes(1))
+
+        assertThat(partidos).containsExactly(*partidosCreados.toTypedArray())
+    }
+
 
     @Test
     fun `al buscar partidos, se encuentran ordenados por la fecha mas proxima`() {
         val partido1 = matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500.00, horarioPartido.plusDays(7)), cargaDePartido)
         val partido2 = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreOtroEquipo, 500.00, horarioPartido), cargaDePartido)
 
-        val partidos = matchService.searchNextMatchsByPartialName("", null, horarioPartido.minusDays(5))
+        val partidos = matchService.searchNextMatchsByPartialName("", null, false, horarioPartido.minusDays(5))
 
         assertThat(partidos[0]).isEqualTo(partido2)
         assertThat(partidos[1]).isEqualTo(partido1)
@@ -154,7 +178,7 @@ class MatchServiceTest {
 
         val partidoCreado = matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreDeUnEquipo, 500.00, horarioPartido), cargaDePartido)
 
-        val partidos = matchService.searchNextMatchsByPartialName("ele", null, horarioPartido)
+        val partidos = matchService.searchNextMatchsByPartialName("ele", null, false, horarioPartido)
 
         assertThat(partidos.size).isEqualTo(1)
         assertThat(partidos).containsExactly(partidoCreado)
