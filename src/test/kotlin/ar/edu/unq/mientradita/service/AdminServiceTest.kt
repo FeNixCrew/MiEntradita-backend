@@ -102,6 +102,27 @@ class AdminServiceTest {
         assertThat(asistenciaAlPartido.all { it.asistencia == Asistencia.AUSENTE }).isTrue
     }
 
+    @Test
+    fun `se obtiene el estado de asistencias ordenando a las personas por dni, de los mas grandes a los mas chicos`() {
+        val otroEspectador = authUserService.createSpectator(
+            RegisterRequest(
+                name = "Federico",
+                surname = "Sandoval",
+                username = "chester",
+                password = "1234",
+                email = "chester@gmail.com",
+                dni = 22345678
+            )
+        )
+        spectatorService.reserveTicket(espectador.id, partido.id)
+        spectatorService.reserveTicket(otroEspectador.id, partido.id)
+
+        val asistenciaAlPartido = adminService.attendanceFor(partido.id)
+
+        assertThat(asistenciaAlPartido.first().id).isEqualTo(otroEspectador.id)
+        assertThat(asistenciaAlPartido.last().id).isEqualTo(espectador.id)
+    }
+
     @AfterEach
     fun tearDown() {
         matchService.clearDataSet()

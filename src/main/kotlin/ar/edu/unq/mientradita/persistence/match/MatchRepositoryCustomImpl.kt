@@ -117,6 +117,8 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
         val isMatch = cb.equal(spectatorAndTicket.get<Match>("match").get<Long>("id"), match.id)
         cq.where(isMatch)
 
+        cq.orderBy(cb.desc(spectator.get<Long>("dni")))
+
         cq.multiselect(
             spectator.get<Long>("id"),
             spectator.get<Int>("dni"),
