@@ -171,7 +171,7 @@ class FakeDataConfiguration {
             CreateTeamRequest(
                 "Talleres de Córdoba",
                 "El Matador",
-                "Estadio Mario Alberto Kempes",
+                "Estadio Mario Alberto Kémpes",
                 57000
             )
         )
@@ -185,7 +185,7 @@ class FakeDataConfiguration {
         )
         val atlTucuman = teamService.registerTeam(
             CreateTeamRequest(
-                "Atlético Tucuman",
+                "Atlético Tucumán",
                 "El Decano",
                 "Estadio Monumental José Fierro",
                 35200
