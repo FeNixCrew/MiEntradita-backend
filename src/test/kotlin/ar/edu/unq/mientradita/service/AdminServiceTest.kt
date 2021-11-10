@@ -103,8 +103,8 @@ class AdminServiceTest {
     }
 
     @Test
-    fun `se obtiene el estado de asistencias ordenando a las personas por dni, de los mas grandes a los mas chicos`() {
-        val otroEspectador = authUserService.createSpectator(
+    fun `se obtiene el estado de asistencias ordenando a las personas de mayor a menor en cuanto a edad`() {
+        val espectadorJoven = authUserService.createSpectator(
             RegisterRequest(
                 name = "Federico",
                 surname = "Sandoval",
@@ -114,13 +114,13 @@ class AdminServiceTest {
                 dni = 22345678
             )
         )
+        spectatorService.reserveTicket(espectadorJoven.id, partido.id)
         spectatorService.reserveTicket(espectador.id, partido.id)
-        spectatorService.reserveTicket(otroEspectador.id, partido.id)
 
         val asistenciaAlPartido = adminService.attendanceFor(partido.id)
 
-        assertThat(asistenciaAlPartido.first().id).isEqualTo(otroEspectador.id)
-        assertThat(asistenciaAlPartido.last().id).isEqualTo(espectador.id)
+        assertThat(asistenciaAlPartido.first().id).isEqualTo(espectador.id)
+        assertThat(asistenciaAlPartido.last().id).isEqualTo(espectadorJoven.id)
     }
 
     @AfterEach
