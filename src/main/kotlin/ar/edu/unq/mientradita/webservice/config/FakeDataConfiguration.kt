@@ -124,7 +124,7 @@ class FakeDataConfiguration {
             CreateTeamRequest(
                 "Racing",
                 "La Academia",
-                "Estadio Presidente Peron",
+                "Estadio Presidente Perón",
                 42500)
         )
         val independiente = teamService.registerTeam(
@@ -146,14 +146,14 @@ class FakeDataConfiguration {
         val dyj = teamService.registerTeam(
             CreateTeamRequest(
                 "Defensa y Justicia",
-                "El Halcon de Varela",
+                "El Halcón de Varela",
                 "Estadio Norberto Tito Tomaghello",
                 10500
             )
         )
         val colon = teamService.registerTeam(
             CreateTeamRequest(
-                "Colon de Santa Fe",
+                "Colón de Santa Fe",
                 "El Sabalero",
                 "Estadio Brigadier General Estanislao López",
                 45000
@@ -169,7 +169,7 @@ class FakeDataConfiguration {
         )
         val talleres = teamService.registerTeam(
             CreateTeamRequest(
-                "Talleres de Cordoba",
+                "Talleres de Córdoba",
                 "El Matador",
                 "Estadio Mario Alberto Kempes",
                 57000
@@ -177,7 +177,7 @@ class FakeDataConfiguration {
         )
         val arsenal = teamService.registerTeam(
             CreateTeamRequest(
-                "Arsenal de Sarandi",
+                "Arsenal de Sarandí",
                 "El Arse",
                 "Estadio Julio Humberto Grondona",
                 18300
@@ -185,7 +185,7 @@ class FakeDataConfiguration {
         )
         val atlTucuman = teamService.registerTeam(
             CreateTeamRequest(
-                "Atletico Tucuman",
+                "Atlético Tucuman",
                 "El Decano",
                 "Estadio Monumental José Fierro",
                 35200
