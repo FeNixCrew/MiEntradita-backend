@@ -1,6 +1,6 @@
 package ar.edu.unq.mientradita.webservice.config.security
 
-import ar.edu.unq.mientradita.model.user.User
+import ar.edu.unq.mientradita.model.user.MiEntraditaUser
 import ar.edu.unq.mientradita.persistence.UserRepository
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
@@ -87,7 +87,7 @@ class JwtUserDetailsService : UserDetailsService {
 
     @Transactional
     override fun loadUserByUsername(username: String): UserDetails {
-        val systemUser: User = userRepository.findByUsername(username).orElseThrow { UsernameNotFoundException("User not found with username: $username")  }
+        val systemUser: MiEntraditaUser = userRepository.findByUsername(username).orElseThrow { UsernameNotFoundException("User not found with username: $username")  }
 
         return SpringUserDetails(
             systemUser.username, systemUser.password,

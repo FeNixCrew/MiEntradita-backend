@@ -1,12 +1,11 @@
 package ar.edu.unq.mientradita.webservice.config.security
 
 import ar.edu.unq.mientradita.model.user.Role
-import ar.edu.unq.mientradita.model.user.User
+import ar.edu.unq.mientradita.model.user.MiEntraditaUser
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -15,7 +14,7 @@ class JWTUtil {
     @Value("\${jwt.secret}")
     private val secret: String? = null
 
-    fun generateToken(user: User): String {
+    fun generateToken(user: MiEntraditaUser): String {
         val token = Jwts
             .builder()
             .setSubject("MiEntradita JWTToken")

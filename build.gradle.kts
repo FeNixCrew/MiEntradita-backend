@@ -25,14 +25,15 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("io.jsonwebtoken:jjwt:0.9.1")
-	runtimeOnly("com.h2database:h2")
-	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.security:spring-security-test")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("commons-validator:commons-validator:1.4.1")
 	implementation("org.springframework.boot:spring-boot-starter-mail:2.2.5.RELEASE")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.security:spring-security-test")
+	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+	runtimeOnly("org.postgresql:postgresql")
+	runtimeOnly("com.h2database:h2")
 
 }
 
