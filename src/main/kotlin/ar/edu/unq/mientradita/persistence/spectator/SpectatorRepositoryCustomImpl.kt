@@ -38,7 +38,7 @@ class SpectatorRepositoryCustomImpl : SpectatorRepositoryCustom {
         val matchInHomeCondition = cb.equal(root.get<Team>("home").get<Long>("id"), teamId)
         val matchInAwayCondition = cb.equal(root.get<Team>("away").get<Long>("id"), teamId)
 
-        val notPlayed = cb.greaterThanOrEqualTo(root.get("matchStartTime"), aDateTime)
+        val notPlayed = cb.greaterThanOrEqualTo(root.get("matchStartTime"), aDateTime.minusMinutes(90))
         val homeOrAway = cb.or(matchInHomeCondition, matchInAwayCondition)
 
         val conditionToApply = cb.and(homeOrAway, notPlayed)
