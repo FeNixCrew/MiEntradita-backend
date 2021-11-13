@@ -1,4 +1,4 @@
-package ar.edu.unq.mientradita.webservice
+package ar.edu.unq.mientradita.webservice.controllers
 
 import ar.edu.unq.mientradita.model.exception.MiEntraditaException
 import ar.edu.unq.mientradita.service.CreateTeamRequest
@@ -22,38 +22,18 @@ class TeamController {
 
     @RequestMapping(value = ["/details"], method = [RequestMethod.GET])
     fun getTeamDetails(@RequestParam teamName: String): ResponseEntity<*> {
-        return try{
-            ResponseEntity(teamService.getTeamDetails(teamName), HttpStatus.OK)
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
+        return ResponseEntity(teamService.getTeamDetails(teamName), HttpStatus.OK)
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = ["/create"], method = [RequestMethod.POST])
     fun createTeam(@RequestBody @Valid createTeamRequest: CreateTeamRequest): ResponseEntity<*> {
-        return try{
-            ResponseEntity(teamService.registerTeam(createTeamRequest), HttpStatus.CREATED)
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
+        return ResponseEntity(teamService.registerTeam(createTeamRequest), HttpStatus.CREATED)
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = ["/all"], method = [RequestMethod.GET])
-    fun teams(): ResponseEntity<*>{
-        return try{
-            ResponseEntity(teamService.getTeams(), HttpStatus.OK)
-        } catch (exception: MiEntraditaException) {
-            ResponseEntity.badRequest().body(exception.toMap())
-        }
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValid(ex: MethodArgumentNotValidException): Map<String, String?>? {
-        val errors: MutableMap<String, String?> = HashMap()
-        ex.bindingResult.fieldErrors.forEach(Consumer { error: FieldError -> errors[error.field] = error.defaultMessage })
-        return errors
+    fun teams(): ResponseEntity<*> {
+        return ResponseEntity(teamService.getTeams(), HttpStatus.OK)
     }
 }

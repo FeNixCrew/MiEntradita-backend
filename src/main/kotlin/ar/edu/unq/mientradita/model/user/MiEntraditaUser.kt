@@ -4,7 +4,7 @@ import javax.persistence.*
 
 @Entity
 @Inheritance(strategy= InheritanceType.JOINED)
-open class User(
+open class MiEntraditaUser(
     @Column(unique = true)
     open val username: String,
     open val password: String,

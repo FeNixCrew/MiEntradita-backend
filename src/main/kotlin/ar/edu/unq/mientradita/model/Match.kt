@@ -1,8 +1,6 @@
 package ar.edu.unq.mientradita.model
 
-import ar.edu.unq.mientradita.model.exception.DifferentGameException
-import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
-import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
+import ar.edu.unq.mientradita.model.exception.*
 import ar.edu.unq.mientradita.model.user.Spectator
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -21,9 +19,24 @@ class Match(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
+    var admittedPercentage = 100
+        set(newPercentage) {
+            checkValidPercentage(newPercentage)
+            field = newPercentage
+        }
+
+    private var reservedTickets: Int  = 0
+
+    fun numberOfTicketsAvailable() = this.maximumCapacity() - reservedTickets
+
     fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime) {
-        val newTicket = Ticket(this, reserveTicketTime)
-        spectator.addTicket(newTicket)
+        if(numberOfTicketsAvailable() > 0){
+            val newTicket = Ticket(this, reserveTicketTime)
+            reservedTickets += 1
+            spectator.addTicket(newTicket)
+        } else {
+            throw TicketsNotAvailablesException()
+        }
     }
 
     fun comeIn(ticket: Ticket, attendDate: LocalDateTime) {
@@ -33,11 +46,17 @@ class Match(
         ticket.markAsPresent(attendDate)
     }
 
+    fun maximumCapacity() = home.stadiumCapacity * admittedPercentage / 100
+
     fun isEquals(match: Match) = this.home.isEquals(match.home) && this.away.isEquals(match.away)
 
     fun stadium() = home.stadium
 
     fun isBeforeMatchEnd(aTime: LocalDateTime) = closingTime() >= aTime
+
+    override fun toString(): String {
+        return "${home.name} vs ${away.name}"
+    }
 
     private fun checkIfIsTheSameMatch(match: Match) {
         if (!this.isEquals(match)) throw DifferentGameException()
@@ -48,6 +67,10 @@ class Match(
         if (attendDate > closingTime()) throw InvalidClosingTimeException()
     }
     private fun openingTime() = matchStartTime.minusHours(3)
+
     private fun closingTime() = matchStartTime.plusMinutes(90)
 
+    private fun checkValidPercentage(newPercentage: Int) {
+        if(newPercentage < 0 || newPercentage > 100) throw InvalidPercentageException()
+    }
 }

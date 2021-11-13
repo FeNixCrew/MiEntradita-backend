@@ -3,7 +3,7 @@ package ar.edu.unq.mientradita.model.user
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class UserTest {
+class MiEntraditaUserTest {
 
     @Test
     fun `un espectador tiene rol de usuario`() {

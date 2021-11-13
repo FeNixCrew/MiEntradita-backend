@@ -7,9 +7,10 @@ class TeamBuilder {
     private var name: String = "a"
     private var knowName: String = "b"
     private var stadium: String = "c"
+    private var maximumCapacity = 0
 
     fun build(): Team {
-        return Team(name, knowName, stadium)
+        return Team(name, knowName, stadium, maximumCapacity)
     }
 
     fun withName(name: String): TeamBuilder {
@@ -19,6 +20,11 @@ class TeamBuilder {
 
     fun withKnowName(knowName: String): TeamBuilder {
         this.knowName = knowName
+        return this
+    }
+
+    fun withMaximumCapacity(maximumCapacity: Int): TeamBuilder {
+        this.maximumCapacity = maximumCapacity
         return this
     }
 

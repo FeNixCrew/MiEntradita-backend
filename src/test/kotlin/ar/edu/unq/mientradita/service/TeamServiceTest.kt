@@ -21,7 +21,7 @@ class TeamServiceTest {
 
     @BeforeEach
     fun setUp() {
-        equipo = teamService.registerTeam(CreateTeamRequest("River", "El Millo", "El Monumental"))
+        equipo = teamService.registerTeam(CreateTeamRequest("River", "El Millo", "El Monumental", 200))
     }
 
     @Test
@@ -32,7 +32,7 @@ class TeamServiceTest {
     @Test
     fun `no se pueden registrar a un equipo con un nombre ya existente`() {
         val exception = assertThrows<TeamAlredyRegisteredException> {
-            teamService.registerTeam(CreateTeamRequest("River", "El Millo", "El Monumental"))
+            teamService.registerTeam(CreateTeamRequest("River", "El Millo", "El Monumental", 200))
         }
 
         assertThat(exception.message).isEqualTo("El equipo ya fue registrado")
@@ -40,9 +40,9 @@ class TeamServiceTest {
 
     @Test
     fun `se pueden obtener todos los equipos`() {
-        val racing = teamService.registerTeam(CreateTeamRequest("Racing", "La Academia", "El Cilindro"))
+        val racing = teamService.registerTeam(CreateTeamRequest("Racing", "La Academia", "El Cilindro", 200))
 
-        val equiposEsperados = listOf(equipo, racing).map { TeamDTO(it.id, it.name, it.knowName, it.stadium) }
+        val equiposEsperados = listOf(equipo, racing).map { TeamDTO(it.id, it.name, it.knowName, it.stadium, it.stadiumCapacity) }
         assertThat(teamService.getTeams()).usingRecursiveComparison().isEqualTo(equiposEsperados)
     }
 

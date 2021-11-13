@@ -3,11 +3,11 @@ package ar.edu.unq.mientradita.service
 import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.exception.*
-import ar.edu.unq.mientradita.persistence.MatchRepository
-import ar.edu.unq.mientradita.persistence.SpectatorRepository
+import ar.edu.unq.mientradita.persistence.match.MatchRepository
+import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
-import ar.edu.unq.mientradita.persistence.UserRepository
-import ar.edu.unq.mientradita.webservice.CreateMatchRequest
+import ar.edu.unq.mientradita.persistence.match.MailAndMatch
+import ar.edu.unq.mientradita.webservice.controllers.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -39,6 +39,8 @@ class MatchService {
         checkIfCanPlay(home, away, createMatchRequest)
 
         val match = Match(home, away, createMatchRequest.matchStartTime, createMatchRequest.ticketPrice)
+        if(createMatchRequest.admittedPercentage != null) match.admittedPercentage = createMatchRequest.admittedPercentage
+
         matchRepository.save(match)
 
         return MatchDTO.fromModel(match)
@@ -60,12 +62,14 @@ class MatchService {
     fun searchNextMatchsByPartialName(
         partialTeamName: String,
         token: String? = null,
+        isFinished: Boolean? = null,
         aDate: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
-        val matchs = matchRepository.searchNextMatchsBy(partialTeamName, aDate)
 
         return if (isAnUser(token)) {
+            val matchs = matchRepository.searchNextMatchsBy(partialTeamName, false, aDate)
             matchsByUser(token!!, matchs)
         } else {
+            val matchs = matchRepository.searchNextMatchsBy(partialTeamName, isFinished, aDate)
             matchs.map { MatchDTO.fromModel(it) }
         }
     }
@@ -78,12 +82,17 @@ class MatchService {
 
     @Transactional
     fun todayMatchs(actualTime: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
-        return matchRepository.matchsOf(actualTime).map { MatchDTO.fromModel(it) }
+        return matchRepository.matchsOf(withoutTime(actualTime)).map { MatchDTO.fromModel(it) }
     }
 
     @Transactional
     fun matchs(): List<MatchDTO> {
         return matchRepository.findAll().map { MatchDTO.fromModel(it) }
+    }
+
+    @Transactional
+    fun rememberOf(minusDays: LocalDateTime = LocalDateTime.now()): List<MailAndMatch> {
+        return matchRepository.rememberOf(withoutTime(minusDays))
     }
 
     @Transactional
@@ -149,11 +158,14 @@ data class MatchDTO(
         val ticketPrice: Double,
         val matchStartTime: LocalDateTime,
         val stadium: String,
-        val isReserved: Boolean?
+        val isReserved: Boolean?,
+        val capacitySupported: Int,
+        val availableTickets: Int,
+        val percentageOfCapacityAllowed: Int
 ) {
     companion object {
         fun fromModel(match: Match, isReserved: Boolean? = null): MatchDTO {
-            return MatchDTO(match.id!!, match.home.name, match.away.name, match.ticketPrice, match.matchStartTime, match.stadium(), isReserved)
+            return MatchDTO(match.id!!, match.home.name, match.away.name, match.ticketPrice, match.matchStartTime, match.stadium(), isReserved, match.maximumCapacity(), match.numberOfTicketsAvailable(), match.admittedPercentage)
         }
     }
 }
