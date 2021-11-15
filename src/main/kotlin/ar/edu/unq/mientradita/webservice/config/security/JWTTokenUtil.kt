@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class JWTUtil {
+class JWTTokenUtil {
     @Value("\${jwt.secret}")
     private val secret: String? = null
 
