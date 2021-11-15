@@ -3,6 +3,7 @@ package ar.edu.unq.mientradita.service
 import ar.edu.unq.mientradita.model.exception.format
 import ar.edu.unq.mientradita.model.user.Spectator
 import ar.edu.unq.mientradita.persistence.match.MailAndMatch
+import ar.edu.unq.mientradita.service.dto.MatchDTO
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.connection.Message

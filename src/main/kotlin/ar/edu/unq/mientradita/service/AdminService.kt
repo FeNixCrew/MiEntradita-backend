@@ -2,6 +2,8 @@ package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.persistence.match.MatchRepository
+import ar.edu.unq.mientradita.service.dto.Asistencia
+import ar.edu.unq.mientradita.service.dto.AsistenciaDeEspectador
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -46,12 +48,3 @@ class AdminService {
         }
     }
 }
-
-data class AsistenciaDeEspectador(
-    val id: Long,
-    val dni: Int,
-    val nombre: String,
-    val asistencia: Asistencia,
-)
-
-enum class Asistencia { PRESENTE, AUSENTE, PENDIENTE; }

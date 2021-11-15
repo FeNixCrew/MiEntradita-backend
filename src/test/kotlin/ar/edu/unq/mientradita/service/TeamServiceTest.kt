@@ -1,6 +1,8 @@
 package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.exception.TeamAlredyRegisteredException
+import ar.edu.unq.mientradita.service.dto.CreateTeamRequest
+import ar.edu.unq.mientradita.service.dto.TeamDTO
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

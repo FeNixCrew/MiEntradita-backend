@@ -1,13 +1,13 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.exception.TeamAlredyRegisteredException
 import ar.edu.unq.mientradita.model.exception.TeamNotFoundException
 import ar.edu.unq.mientradita.persistence.TeamRepository
+import ar.edu.unq.mientradita.service.dto.CreateTeamRequest
+import ar.edu.unq.mientradita.service.dto.TeamDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import javax.validation.constraints.NotBlank
 
 @Service
 class TeamService {
@@ -36,27 +36,3 @@ class TeamService {
     }
 }
 
-class CreateTeamRequest(
-        @field:NotBlank(message = "El nombre del equipo es requerido")
-        val name: String,
-        @field:NotBlank(message = "El nombre conocido del equipo es requerido")
-        val knowName: String,
-        @field:NotBlank(message = "El nombre del estadio del equipo es requerido")
-        val stadium: String,
-        val stadiumCapacity: Int
-) {
-    fun toModel() = Team(this.name, this.knowName, this.stadium, this.stadiumCapacity)
-}
-
-data class TeamDTO(
-        val id: Long,
-        val name: String,
-        val knowName: String,
-        val stadium: String,
-        val stadiumCapacity: Int) {
-    companion object {
-        fun fromModel(team: Team): TeamDTO {
-            return TeamDTO(team.id!!, team.name, team.knowName, team.stadium, team.stadiumCapacity)
-        }
-    }
-}

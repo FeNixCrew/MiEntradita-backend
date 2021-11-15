@@ -7,8 +7,9 @@ import ar.edu.unq.mientradita.persistence.match.MatchRepository
 import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
 import ar.edu.unq.mientradita.persistence.match.MailAndMatch
+import ar.edu.unq.mientradita.service.dto.MatchDTO
 import ar.edu.unq.mientradita.webservice.controllers.CreateMatchRequest
-import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
+import ar.edu.unq.mientradita.webservice.config.security.JWTTokenUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,7 +28,7 @@ class MatchService {
     private lateinit var teamRepository: TeamRepository
 
     @Autowired
-    private lateinit var jwtUtil: JWTUtil
+    private lateinit var jwtUtil: JWTTokenUtil
 
     @Transactional
     fun createMatch(createMatchRequest: CreateMatchRequest, actualTime: LocalDateTime = LocalDateTime.now()): MatchDTO {
@@ -149,23 +150,4 @@ class MatchService {
     }
 
     private fun isAnUser(token: String?) = token != null && jwtUtil.isRoleUser(token)
-}
-
-data class MatchDTO(
-        val id: Long,
-        val home: String,
-        val away: String,
-        val ticketPrice: Double,
-        val matchStartTime: LocalDateTime,
-        val stadium: String,
-        val isReserved: Boolean?,
-        val capacitySupported: Int,
-        val availableTickets: Int,
-        val percentageOfCapacityAllowed: Int
-) {
-    companion object {
-        fun fromModel(match: Match, isReserved: Boolean? = null): MatchDTO {
-            return MatchDTO(match.id!!, match.home.name, match.away.name, match.ticketPrice, match.matchStartTime, match.stadium(), isReserved, match.maximumCapacity(), match.numberOfTicketsAvailable(), match.admittedPercentage)
-        }
-    }
 }

@@ -26,7 +26,7 @@ import org.springframework.security.core.userdetails.User as SpringUserDetails
 class JWTAuthFilter : OncePerRequestFilter() {
 
     @Autowired
-    private lateinit var jwtUtil: JWTUtil
+    private lateinit var jwtUtil: JWTTokenUtil
 
     @Autowired
     private lateinit var jwtUserDetailsService: JwtUserDetailsService

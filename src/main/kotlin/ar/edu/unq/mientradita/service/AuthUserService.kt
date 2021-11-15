@@ -4,12 +4,12 @@ import ar.edu.unq.mientradita.model.exception.DniAlreadyRegistered
 import ar.edu.unq.mientradita.model.exception.EmailAlreadyRegistered
 import ar.edu.unq.mientradita.model.exception.InvalidCredentialsException
 import ar.edu.unq.mientradita.model.exception.UsernameAlreadyRegistered
-import ar.edu.unq.mientradita.model.user.MiEntraditaUser
-import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.UserRepository
-import ar.edu.unq.mientradita.webservice.controllers.LoginRequest
+import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
+import ar.edu.unq.mientradita.service.dto.UserDTO
+import ar.edu.unq.mientradita.webservice.config.security.JWTTokenUtil
+import ar.edu.unq.mientradita.service.dto.LoginRequest
 import ar.edu.unq.mientradita.webservice.controllers.RegisterRequest
-import ar.edu.unq.mientradita.webservice.config.security.JWTUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -24,7 +24,7 @@ class AuthUserService {
     private lateinit var spectatorRepository: SpectatorRepository
 
     @Autowired
-    private lateinit var jwtUtil: JWTUtil
+    private lateinit var jwtUtil: JWTTokenUtil
 
     @Transactional
     fun createSpectator(registerRequest: RegisterRequest): UserDTO {
@@ -53,14 +53,6 @@ class AuthUserService {
             throw InvalidCredentialsException()
         }
 
-        return Pair(jwtUtil.generateToken(maybeSpectator.get()),UserDTO.fromModel(maybeSpectator.get()))
-    }
-}
-
-data class UserDTO(val id: Long, val username: String, val role: String, val email: String) {
-    companion object {
-        fun fromModel(user: MiEntraditaUser): UserDTO {
-            return UserDTO(user.id!!, user.username, user.role.toString(), user.email)
-        }
+        return Pair(jwtUtil.generateToken(maybeSpectator.get()), UserDTO.fromModel(maybeSpectator.get()))
     }
 }

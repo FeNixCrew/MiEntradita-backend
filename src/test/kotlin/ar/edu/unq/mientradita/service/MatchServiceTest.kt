@@ -1,6 +1,9 @@
 package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.exception.*
+import ar.edu.unq.mientradita.service.dto.CreateTeamRequest
+import ar.edu.unq.mientradita.service.dto.MatchDTO
+import ar.edu.unq.mientradita.service.dto.UserDTO
 import ar.edu.unq.mientradita.webservice.controllers.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.controllers.RegisterRequest
 import org.assertj.core.api.Assertions.assertThat

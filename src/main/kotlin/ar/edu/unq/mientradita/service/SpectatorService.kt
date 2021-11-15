@@ -1,7 +1,6 @@
 package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.Team
-import ar.edu.unq.mientradita.model.Ticket
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
 import ar.edu.unq.mientradita.model.exception.TeamNotRegisteredException
@@ -9,6 +8,9 @@ import ar.edu.unq.mientradita.model.user.Spectator
 import ar.edu.unq.mientradita.persistence.TeamRepository
 import ar.edu.unq.mientradita.persistence.match.MatchRepository
 import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
+import ar.edu.unq.mientradita.service.dto.MatchDTO
+import ar.edu.unq.mientradita.service.dto.TeamDTO
+import ar.edu.unq.mientradita.service.dto.TicketDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -102,13 +104,5 @@ class SpectatorService {
     @Transactional
     fun obtainSpectator(spectatorId: Long): Spectator? {
         return spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
-    }
-}
-
-data class TicketDTO(val id: Long, val userId: Long, val matchId: Long, val home: String, val away: String, val matchStartTime: LocalDateTime) {
-    companion object {
-        fun fromModel(spectatorId: Long, ticket: Ticket): TicketDTO {
-            return TicketDTO(ticket.id!!, spectatorId, ticket.match.id!!, ticket.match.home.name, ticket.match.away.name, ticket.match.matchStartTime)
-        }
     }
 }
