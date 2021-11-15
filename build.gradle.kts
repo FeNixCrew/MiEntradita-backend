@@ -7,6 +7,7 @@ plugins {
 	kotlin("jvm") version "1.4.31"
 	kotlin("plugin.spring") version "1.4.31"
 	kotlin("plugin.jpa") version "1.4.31"
+	jacoco
 }
 
 group = "ar.edu.unq"
@@ -46,4 +47,35 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.withType<Test> {
+	useJUnitPlatform()
+}
+
+tasks.test {
+	finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+tasks.jacocoTestReport {
+	dependsOn(tasks.test) // tests are required to run before generating the report
+}
+
+tasks.jacocoTestReport {
+	reports {
+		xml.isEnabled = true
+		csv.isEnabled = false
+		html.destination = layout.buildDirectory.dir("jacocoHtml").get().asFile
+	}
+
+	classDirectories.setFrom(
+		sourceSets.main.get().output.asFileTree.matching {
+			include("ar/edu/unq/mientradita/model/**")
+			include("ar/edu/unq/mientradita/persistence/**")
+			include("ar/edu/unq/mientradita/service/**")
+			exclude("ar/edu/unq/mientradita/service/MailSender*")
+			exclude("ar/edu/unq/mientradita/service/Reminder*")
+			exclude("ar/edu/unq/mientradita/model/builders")
+			exclude("ar/edu/unq/mientradita/service/dto/**")
+		}
+	)
 }
