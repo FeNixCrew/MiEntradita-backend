@@ -35,7 +35,7 @@ dependencies {
 	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 	runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly("com.h2database:h2")
-
+	implementation("com.mercadopago:sdk-java:1.8.0")
 }
 
 tasks.withType<KotlinCompile> {

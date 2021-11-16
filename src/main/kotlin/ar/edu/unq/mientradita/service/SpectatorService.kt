@@ -1,13 +1,16 @@
 package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.Team
+import ar.edu.unq.mientradita.model.Ticket
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
 import ar.edu.unq.mientradita.model.exception.TeamNotRegisteredException
 import ar.edu.unq.mientradita.model.user.Spectator
 import ar.edu.unq.mientradita.persistence.TeamRepository
+import ar.edu.unq.mientradita.persistence.TicketRepository
 import ar.edu.unq.mientradita.persistence.match.MatchRepository
 import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
+import ar.edu.unq.mientradita.service.client.MercadoPagoClient
 import ar.edu.unq.mientradita.service.dto.MatchDTO
 import ar.edu.unq.mientradita.service.dto.TeamDTO
 import ar.edu.unq.mientradita.service.dto.TicketDTO
@@ -26,19 +29,25 @@ class SpectatorService {
     private lateinit var matchRepository: MatchRepository
 
     @Autowired
+    private lateinit var ticketRepository: TicketRepository
+
+    @Autowired
     private lateinit var teamRepository: TeamRepository
+
+    @Autowired
+    private lateinit var mercadoPagoClient: MercadoPagoClient
 
     @Transactional
     fun reserveTicket(spectatorId: Long, matchId: Long, reserveTicketTime: LocalDateTime = LocalDateTime.now()): TicketDTO {
         val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
-
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
 
-        spectator.reserveATicketFor(match, reserveTicketTime)
+        val newTicket: Ticket = spectator.reserveATicketFor(match, reserveTicketTime)
+        mercadoPagoClient.createLink(spectator, newTicket)
 
+        ticketRepository.save(newTicket)
         matchRepository.save(match)
         val updatedSpectator = spectatorRepository.save(spectator)
-
         return TicketDTO.fromModel(spectatorId, updatedSpectator.findTicketFrom(match))
     }
 

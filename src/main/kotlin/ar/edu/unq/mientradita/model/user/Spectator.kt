@@ -34,13 +34,14 @@ class Spectator(
         }
     }
 
-    fun reserveATicketFor(match: Match, reserveTime: LocalDateTime = LocalDateTime.now()) {
+    fun reserveATicketFor(match: Match, reserveTime: LocalDateTime = LocalDateTime.now()): Ticket {
         if (tickets.any { it.match.isEquals(match) }) throw UserAlreadyHasTicket()
-        match.reserveTicket(this, reserveTime)
+        return match.reserveTicket(this, reserveTime)
     }
 
-    fun addTicket(aTicket: Ticket) {
+    fun addTicket(aTicket: Ticket): Ticket {
         tickets.add(aTicket)
+        return aTicket
     }
 
     fun findTicketFrom(match: Match) =

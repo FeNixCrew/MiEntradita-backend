@@ -29,11 +29,11 @@ class Match(
 
     fun numberOfTicketsAvailable() = this.maximumCapacity() - reservedTickets
 
-    fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime) {
+    fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime): Ticket {
         if(numberOfTicketsAvailable() > 0){
             val newTicket = Ticket(this, reserveTicketTime)
             reservedTickets += 1
-            spectator.addTicket(newTicket)
+            return spectator.addTicket(newTicket)
         } else {
             throw TicketsNotAvailablesException()
         }
