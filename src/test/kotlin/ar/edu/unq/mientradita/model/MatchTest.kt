@@ -1,9 +1,6 @@
 package ar.edu.unq.mientradita.model
 
-import ar.edu.unq.mientradita.model.builders.MatchBuilder
-import ar.edu.unq.mientradita.model.builders.SpectatorBuilder
-import ar.edu.unq.mientradita.model.builders.TeamBuilder
-import ar.edu.unq.mientradita.model.builders.TicketBuilder
+import ar.edu.unq.mientradita.model.builders.*
 import ar.edu.unq.mientradita.model.exception.DifferentGameException
 import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
 import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
@@ -102,7 +99,8 @@ class MatchTest {
 
     @Test
     fun `un partido sabe en que estadio se va a jugar`() {
-        val team = TeamBuilder().withStadium("Santiago Bernabeu").build()
+        val estadio = StadiumBuilder().withName("Santiago Bernabeu").build()
+        val team = TeamBuilder().withStadium(estadio).build()
         val partido = MatchBuilder().withHome(team).build()
 
         assertThat(partido.stadium()).isEqualTo(team.stadium)
@@ -110,17 +108,19 @@ class MatchTest {
 
     @Test
     fun `un partido sabe la capacidad maxima de hinchas que puede albergar`() {
-        val team = TeamBuilder().withMaximumCapacity(500).build()
-        val partido = MatchBuilder().withHome(team).build()
+        val estadio = StadiumBuilder().withCapacity(500).build()
+        val equipo = TeamBuilder().withStadium(estadio).build()
+        val partido = MatchBuilder().withHome(equipo).build()
 
-        assertThat(partido.maximumCapacity()).isEqualTo(team.stadiumCapacity)
+        assertThat(partido.maximumCapacity()).isEqualTo(equipo.stadium.capacity)
     }
 
     @Test
     fun `a un partido se le puede indicar cuanta capacidad de la total puede admitir`() {
-        val team = TeamBuilder().withMaximumCapacity(500).build()
-        val partido = MatchBuilder().withHome(team).build()
-        val capacidadEsperada = team.stadiumCapacity * 50 / 100
+        val estadio = StadiumBuilder().withCapacity(500).build()
+        val equipo = TeamBuilder().withStadium(estadio).build()
+        val partido = MatchBuilder().withHome(equipo).build()
+        val capacidadEsperada = equipo.stadium.capacity * 50 / 100
 
         partido.admittedPercentage = 50
 
@@ -129,20 +129,22 @@ class MatchTest {
 
     @Test
     fun `un partido que no vendio entradas tiene todas las entradas para vender`() {
-        val team = TeamBuilder().withMaximumCapacity(500).build()
-        val partido = MatchBuilder().withHome(team).build()
+        val estadio = StadiumBuilder().withCapacity(500).build()
+        val equipo = TeamBuilder().withStadium(estadio).build()
+        val partido = MatchBuilder().withHome(equipo).build()
 
         assertThat(partido.numberOfTicketsAvailable()).isEqualTo(partido.maximumCapacity())
     }
 
     @Test
     fun `un partido vende una entrada y ya no tiene entradas para vender`() {
-        val team = TeamBuilder().withMaximumCapacity(1).build()
-        val partido = MatchBuilder().withHome(team).build()
-        val spectator = SpectatorBuilder().build()
+        val estadio = StadiumBuilder().withCapacity(1).build()
+        val equipo = TeamBuilder().withStadium(estadio).build()
+        val partido = MatchBuilder().withHome(equipo).build()
+        val espectador = SpectatorBuilder().build()
         val cantidadDeTicketsParaVenderAntes = partido.numberOfTicketsAvailable()
 
-        spectator.reserveATicketFor(partido)
+        espectador.reserveATicketFor(partido)
 
         assertThat(cantidadDeTicketsParaVenderAntes).isGreaterThan(partido.numberOfTicketsAvailable())
         assertThat(partido.numberOfTicketsAvailable()).isEqualTo(0)
@@ -150,8 +152,9 @@ class MatchTest {
 
     @Test
     fun `un partido no puede tener un porcentaje de aforo menor a 0 porciento`() {
-        val team = TeamBuilder().withMaximumCapacity(500).build()
-        val partido = MatchBuilder().withHome(team).build()
+        val estadio = StadiumBuilder().withCapacity(500).build()
+        val equipo = TeamBuilder().withStadium(estadio).build()
+        val partido = MatchBuilder().withHome(equipo).build()
 
         val exception = assertThrows<InvalidPercentageException> {
             partido.admittedPercentage = -1
@@ -162,8 +165,9 @@ class MatchTest {
 
     @Test
     fun `un partido no puede superar el 100 porciento de aforo`() {
-        val team = TeamBuilder().withMaximumCapacity(500).build()
-        val partido = MatchBuilder().withHome(team).build()
+        val estadio = StadiumBuilder().withCapacity(500).build()
+        val equipo = TeamBuilder().withStadium(estadio).build()
+        val partido = MatchBuilder().withHome(equipo).build()
 
         val exception = assertThrows<InvalidPercentageException> {
             partido.admittedPercentage = 101
@@ -174,8 +178,9 @@ class MatchTest {
 
     @Test
     fun `un partido puede tener un porcentaje de aforo hasta el 100 porciento`() {
-        val team = TeamBuilder().withMaximumCapacity(500).build()
-        val partido = MatchBuilder().withHome(team).build()
+        val estadio = StadiumBuilder().withCapacity(500).build()
+        val equipo = TeamBuilder().withStadium(estadio).build()
+        val partido = MatchBuilder().withHome(equipo).build()
 
         assertThat(partido.admittedPercentage).isEqualTo(100)
     }

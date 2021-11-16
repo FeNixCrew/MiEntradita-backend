@@ -50,9 +50,9 @@ class MatchServiceTest {
                 )
         )
 
-        teamService.registerTeam(CreateTeamRequest(nombreEquipoLocal, "un apodo", "un estadio", 20))
-        teamService.registerTeam(CreateTeamRequest(nombreEquipoVisitante, "un apodo", "un estadio", 20))
-        teamService.registerTeam(CreateTeamRequest(nombreOtroEquipo, "un apodo", "un estadio", 20))
+        teamService.registerTeam(CreateTeamRequest(nombreEquipoLocal, "un apodo", "un estadio", 20, 0.0, 0.0))
+        teamService.registerTeam(CreateTeamRequest(nombreEquipoVisitante, "un apodo", "un estadio", 20, 0.0, 0.0))
+        teamService.registerTeam(CreateTeamRequest(nombreOtroEquipo, "un apodo", "un estadio", 20, 0.0, 0.0))
     }
 
     @Test
@@ -177,7 +177,7 @@ class MatchServiceTest {
     @Test
     fun `no se repiten los partidos en una busqueda si ambos equipos matchean con el nombre parcial buscado`() {
         val nombreDeUnEquipo = "fieles"
-        teamService.registerTeam(CreateTeamRequest(nombreDeUnEquipo, "un apodo", "un estadio", 0))
+        teamService.registerTeam(CreateTeamRequest(nombreDeUnEquipo, "un apodo", "un estadio", 0, 0.0,0.0))
 
         val partidoCreado = matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreDeUnEquipo, 500.00, horarioPartido), cargaDePartido)
 

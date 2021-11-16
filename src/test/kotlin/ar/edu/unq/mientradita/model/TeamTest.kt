@@ -1,5 +1,6 @@
 package ar.edu.unq.mientradita.model
 
+import ar.edu.unq.mientradita.model.builders.StadiumBuilder
 import ar.edu.unq.mientradita.model.builders.TeamBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -22,15 +23,10 @@ class TeamTest {
 
     @Test
     fun `un equipo tiene un estadio`(){
-        val equipo = TeamBuilder().withStadium("El Monumental").build()
+        val estadio = StadiumBuilder().withName("El Monumental").build()
+        val equipo = TeamBuilder().withStadium(estadio).build()
 
-        assertThat(equipo.stadium).isEqualTo("El Monumental")
+        assertThat(equipo.stadium).isEqualTo(estadio)
     }
 
-    @Test
-    fun `un equipo tiene una capacidad maxima para albergar gente en su estadio`() {
-        val equipo = TeamBuilder().withMaximumCapacity(3000).build()
-
-        assertThat(equipo.stadiumCapacity).isEqualTo(3000)
-    }
 }

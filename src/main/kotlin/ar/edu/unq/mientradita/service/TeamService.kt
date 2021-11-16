@@ -2,6 +2,7 @@ package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.exception.TeamAlredyRegisteredException
 import ar.edu.unq.mientradita.model.exception.TeamNotFoundException
+import ar.edu.unq.mientradita.persistence.StadiumRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
 import ar.edu.unq.mientradita.service.dto.CreateTeamRequest
 import ar.edu.unq.mientradita.service.dto.TeamDTO
@@ -14,19 +15,23 @@ class TeamService {
     @Autowired
     private lateinit var teamRepository: TeamRepository
 
+    @Autowired
+    private lateinit var stadiumRepository: StadiumRepository
+
     @Transactional
     fun registerTeam(createTeamRequest: CreateTeamRequest): TeamDTO {
-        if (teamRepository.findByName(createTeamRequest.name).isPresent) {
-            throw TeamAlredyRegisteredException()
-        }
-        val team = teamRepository.save(createTeamRequest.toModel())
+        teamRepository.findByName(createTeamRequest.name).ifPresent { throw TeamAlredyRegisteredException() }
+
+        val team = createTeamRequest.toModel()
+        stadiumRepository.save(team.stadium)
+        teamRepository.save(team)
 
         return TeamDTO.fromModel(team)
     }
 
     @Transactional
     fun getTeams(): List<TeamDTO> {
-        return teamRepository.findAll().map { team -> TeamDTO(team.id!!, team.name, team.knowName, team.stadium, team.stadiumCapacity) }
+        return teamRepository.findAll().map { team -> TeamDTO.fromModel(team) }
     }
 
     @Transactional

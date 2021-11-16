@@ -52,10 +52,10 @@ class SpectatorServiceTest {
                 )
         )
 
-        teamService.registerTeam(CreateTeamRequest(nombreEquipoLocal, "un apodo", "un estadio", 20))
-        teamService.registerTeam(CreateTeamRequest(nombreEquipoVisitante, "un apodo", "un estadio", 20))
-        teamService.registerTeam(CreateTeamRequest("Boca", "un apodo", "un estadio", 20))
-        teamService.registerTeam(CreateTeamRequest("Velez", "un apodo", "un estadio", 20))
+        teamService.registerTeam(CreateTeamRequest(nombreEquipoLocal, "un apodo", "un estadio", 20, 0.0, 0.0))
+        teamService.registerTeam(CreateTeamRequest(nombreEquipoVisitante, "un apodo", "un estadio", 20, 0.0, 0.0))
+        teamService.registerTeam(CreateTeamRequest("Boca", "un apodo", "un estadio", 20, 0.0, 0.0))
+        teamService.registerTeam(CreateTeamRequest("Velez", "un apodo", "un estadio", 20, 0.0, 0.0))
 
     }
 
@@ -124,7 +124,7 @@ class SpectatorServiceTest {
                         dni = 1234567
                 )
         )
-        teamService.registerTeam(CreateTeamRequest("Equipo 1", "un apodo", "un estadio", 2))
+        teamService.registerTeam(CreateTeamRequest("Equipo 1", "un apodo", "un estadio", 2, 0.0, 0.0))
         val partidoDTO = matchService.createMatch(CreateMatchRequest("Equipo 1", nombreEquipoVisitante, 500.00, horarioPartido, 50), cargaDePartido)
         spectatorService.reserveTicket(espectador2.id, partidoDTO.id, horarioPartido.minusDays(4))
 

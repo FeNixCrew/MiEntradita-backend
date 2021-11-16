@@ -53,9 +53,9 @@ class AdminServiceTest {
                 )
         )
 
-        teamService.registerTeam(CreateTeamRequest(river, "un apodo", "un estadio", 20))
-        teamService.registerTeam(CreateTeamRequest(racing, "un apodo", "un estadio", 20))
-        teamService.registerTeam(CreateTeamRequest(velez, "un apodo", "un estadio", 20))
+        teamService.registerTeam(CreateTeamRequest(river, "un apodo", "un estadio", 20, 0.0, 0.0))
+        teamService.registerTeam(CreateTeamRequest(racing, "un apodo", "un estadio", 20, 0.0, 0.0))
+        teamService.registerTeam(CreateTeamRequest(velez, "un apodo", "un estadio", 20, 0.0, 0.0))
         partido = matchService.createMatch(CreateMatchRequest(river, racing, 500.00, horarioPartido), cargaDePartido)
 
     }

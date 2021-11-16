@@ -23,7 +23,7 @@ data class MatchDTO(
                 match.away.name,
                 match.ticketPrice,
                 match.matchStartTime,
-                match.stadium(),
+                match.stadium().name,
                 isReserved,
                 match.maximumCapacity(),
                 match.numberOfTicketsAvailable(),
