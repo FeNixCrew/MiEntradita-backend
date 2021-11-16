@@ -7,7 +7,7 @@ data class MatchDTO(
     val id: Long,
     val home: String,
     val away: String,
-    val ticketPrice: Double,
+    val ticketPrice: Float,
     val matchStartTime: LocalDateTime,
     val stadium: String,
     val isReserved: Boolean?,

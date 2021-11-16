@@ -8,7 +8,7 @@ import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
 import ar.edu.unq.mientradita.persistence.match.MailAndMatch
 import ar.edu.unq.mientradita.service.dto.MatchDTO
-import ar.edu.unq.mientradita.webservice.controllers.CreateMatchRequest
+import ar.edu.unq.mientradita.service.dto.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.config.security.JWTTokenUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

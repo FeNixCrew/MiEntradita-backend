@@ -4,7 +4,7 @@ import ar.edu.unq.mientradita.service.dto.Asistencia
 import ar.edu.unq.mientradita.service.dto.CreateTeamRequest
 import ar.edu.unq.mientradita.service.dto.MatchDTO
 import ar.edu.unq.mientradita.service.dto.UserDTO
-import ar.edu.unq.mientradita.webservice.controllers.CreateMatchRequest
+import ar.edu.unq.mientradita.service.dto.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.controllers.RegisterRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -56,7 +56,7 @@ class AdminServiceTest {
         teamService.registerTeam(CreateTeamRequest(river, "un apodo", "un estadio", 20, 0.0, 0.0))
         teamService.registerTeam(CreateTeamRequest(racing, "un apodo", "un estadio", 20, 0.0, 0.0))
         teamService.registerTeam(CreateTeamRequest(velez, "un apodo", "un estadio", 20, 0.0, 0.0))
-        partido = matchService.createMatch(CreateMatchRequest(river, racing, 500.00, horarioPartido), cargaDePartido)
+        partido = matchService.createMatch(CreateMatchRequest(river, racing, 500F, horarioPartido), cargaDePartido)
 
     }
 

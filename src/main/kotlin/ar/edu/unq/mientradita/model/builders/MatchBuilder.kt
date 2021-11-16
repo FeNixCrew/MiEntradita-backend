@@ -9,7 +9,7 @@ class MatchBuilder {
     private var home: Team = TeamBuilder().build()
     private var away: Team = TeamBuilder().build()
     private var matchStartTime: LocalDateTime = LocalDateTime.now()
-    private var ticketPrice: Double = 0.0
+    private var ticketPrice: Float = 0F
 
     fun build(): Match {
         return Match(home, away, matchStartTime, ticketPrice)
@@ -30,7 +30,7 @@ class MatchBuilder {
         return this
     }
 
-    fun withPrice(aPrice: Double): MatchBuilder {
+    fun withPrice(aPrice: Float): MatchBuilder {
         this.ticketPrice = aPrice
         return this
     }

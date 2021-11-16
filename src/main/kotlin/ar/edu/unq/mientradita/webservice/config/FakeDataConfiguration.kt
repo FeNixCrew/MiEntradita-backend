@@ -10,7 +10,7 @@ import ar.edu.unq.mientradita.service.TeamService
 import ar.edu.unq.mientradita.service.dto.CreateTeamRequest
 import ar.edu.unq.mientradita.service.dto.MatchDTO
 import ar.edu.unq.mientradita.service.dto.UserDTO
-import ar.edu.unq.mientradita.webservice.controllers.CreateMatchRequest
+import ar.edu.unq.mientradita.service.dto.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.controllers.RegisterRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
@@ -238,27 +238,27 @@ class FakeDataConfiguration {
 
 
         val racingIndependiente = matchService.createMatch(
-                CreateMatchRequest(racing.name, independiente.name, 700.00, horaDelPartido1, 50),
+                CreateMatchRequest(racing.name, independiente.name, 700F, horaDelPartido1, 50),
                 actualTime = fechaCargaDePartido
         )
         val riverDefe = matchService.createMatch(
-                CreateMatchRequest(river.name, dyj.name, 500.00, horaDelPartido2, 50),
+                CreateMatchRequest(river.name, dyj.name, 500F, horaDelPartido2, 50),
                 actualTime = fechaCargaDePartido
         )
         val colonEstudiantes = matchService.createMatch(
-                CreateMatchRequest(colon.name, estudiantes.name, 500.00, horaDelPartido3, 50),
+                CreateMatchRequest(colon.name, estudiantes.name, 500F, horaDelPartido3, 50),
                 actualTime = fechaCargaDePartido
         )
         val talleresArsenal = matchService.createMatch(
-                CreateMatchRequest(talleres.name, arsenal.name, 500.00, horaDelPartido4, 50),
+                CreateMatchRequest(talleres.name, arsenal.name, 500F, horaDelPartido4, 50),
                 actualTime = fechaCargaDePartido
         )
         val atleticoTucumanGimnasia = matchService.createMatch(
-                CreateMatchRequest(atlTucuman.name, gimnasiaLP.name, 400.00, horaDelPartido5, 50),
+                CreateMatchRequest(atlTucuman.name, gimnasiaLP.name, 400F, horaDelPartido5, 50),
                 actualTime = fechaCargaDePartido
         )
         val godoyCruzTalleres = matchService.createMatch(
-                CreateMatchRequest(godoyCruz.name, talleres.name, 800.00, horaDelPartido6, 11),
+                CreateMatchRequest(godoyCruz.name, talleres.name, 800F, horaDelPartido6, 11),
                 actualTime = fechaCargaDePartido
         )
 

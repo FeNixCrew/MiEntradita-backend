@@ -12,7 +12,7 @@ class Match(
     @ManyToOne(fetch=FetchType.EAGER)
     val away: Team,
     val matchStartTime: LocalDateTime,
-    val ticketPrice: Double
+    val ticketPrice: Float
     ) {
 
     @Id
