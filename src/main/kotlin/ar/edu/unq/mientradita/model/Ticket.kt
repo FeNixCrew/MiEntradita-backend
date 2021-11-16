@@ -14,11 +14,17 @@ class Ticket(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
     var presentTime: LocalDateTime? = null
+    @OneToOne(fetch= FetchType.EAGER, cascade = [CascadeType.ALL])
+    val payment: Payment = Payment()
 
     fun markAsPresent(presentTime: LocalDateTime = LocalDateTime.now()): LocalDateTime {
         if (existPresentTime()) throw AlreadyPresentInGameException()
         this.presentTime = presentTime
         return presentTime
+    }
+
+    fun savePaymentLink(paymentLink: String) {
+        payment.savePaymentLink(paymentLink)
     }
 
     fun wasPresent(): Boolean{
