@@ -24,7 +24,11 @@ class Ticket(
     }
 
     fun savePaymentLink(paymentLink: String) {
-        payment.savePaymentLink(paymentLink)
+        payment.saveLink(paymentLink)
+    }
+
+    fun markAsPayed(paymentId: String) {
+        this.payment.savePayment(paymentId)
     }
 
     fun wasPresent(): Boolean{
@@ -37,6 +41,6 @@ class Ticket(
 
     fun isFrom(aMatch: Match) = match.isEquals(aMatch)
 
+    fun isPayed() = payment.isPayed()
     private fun existPresentTime() = presentTime != null
 }
-

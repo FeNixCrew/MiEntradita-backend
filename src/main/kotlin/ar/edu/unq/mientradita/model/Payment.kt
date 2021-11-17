@@ -6,12 +6,19 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-class Payment(var paymentLink: String? = null) {
+class Payment(var link: String? = null) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+    private var paymentId : String? = null
 
-    fun savePaymentLink(paymentLink: String) {
-        this.paymentLink = paymentLink
+    fun saveLink(paymentLink: String) {
+        this.link = paymentLink
     }
+
+    fun savePayment(paymentId: String) {
+        this.paymentId = paymentId
+    }
+
+    fun isPayed() = paymentId != null
 }

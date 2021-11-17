@@ -4,6 +4,7 @@ import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.Ticket
 import ar.edu.unq.mientradita.model.exception.TicketFromMatchNotFoundException
+import ar.edu.unq.mientradita.model.exception.TicketNotFoundException
 import ar.edu.unq.mientradita.model.exception.UserAlreadyHasTicket
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -11,13 +12,13 @@ import javax.persistence.*
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
 class Spectator(
-        val name: String,
-        val surname: String,
-        username: String,
-        email: String,
-        @Column(unique = true)
-        val dni: Int,
-        password: String
+    val name: String,
+    val surname: String,
+    username: String,
+    email: String,
+    @Column(unique = true)
+    val dni: Int,
+    password: String
 ) : MiEntraditaUser(username, password, email, Role.ROLE_USER) {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
@@ -45,8 +46,20 @@ class Spectator(
     }
 
     fun findTicketFrom(match: Match) =
-            tickets.find { ticket -> ticket.match.isEquals(match) }
-                    ?: throw TicketFromMatchNotFoundException(this, match)
+        tickets.find { ticket -> ticket.match.isEquals(match) }
+            ?: throw TicketFromMatchNotFoundException(this, match)
+
+    fun pendingPaymentTickets(): List<Ticket> {
+        return tickets.filterNot { it.isPayed() }
+    }
+
+    fun savePayedTicket(ticket: Ticket, paymentId: String) {
+        try {
+            tickets.find { it.isFrom(ticket.match) }!!.markAsPayed(paymentId)
+        } catch (_: NullPointerException) {
+            throw TicketNotFoundException()
+        }
+    }
 
     fun fullname() = "$name $surname"
 

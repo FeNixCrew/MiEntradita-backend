@@ -38,7 +38,11 @@ class SpectatorService {
     private lateinit var mercadoPagoClient: MercadoPagoClient
 
     @Transactional
-    fun reserveTicket(spectatorId: Long, matchId: Long, reserveTicketTime: LocalDateTime = LocalDateTime.now()): TicketDTO {
+    fun reserveTicket(
+        spectatorId: Long,
+        matchId: Long,
+        reserveTicketTime: LocalDateTime = LocalDateTime.now()
+    ): TicketDTO {
         val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
 
@@ -96,8 +100,8 @@ class SpectatorService {
 
     @Transactional
     fun nextMatchesOfFavoriteTeam(
-            spectatorId: Long,
-            dateTime: LocalDateTime = LocalDateTime.now()
+        spectatorId: Long,
+        dateTime: LocalDateTime = LocalDateTime.now()
     ): List<MatchDTO>? {
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
         val favouriteTeam: Team? = spectator.favouriteTeam
@@ -111,7 +115,20 @@ class SpectatorService {
     }
 
     @Transactional
-    fun obtainSpectator(spectatorId: Long): Spectator? {
+    fun pendingTicketsPaymentFor(spectatorId: Long): List<TicketDTO> {
+        return obtainSpectator(spectatorId)
+            .pendingPaymentTickets()
+            .map { TicketDTO.fromModel(spectatorId, it) }
+    }
+
+
+    @Transactional
+    fun savePaymentFrom(spectatorId: Long, ticketId: Long, paymentId: String) {
+        val ticket = ticketRepository.findById(ticketId)
+        obtainSpectator(spectatorId).savePayedTicket(ticket.get(), paymentId)
+    }
+
+    fun obtainSpectator(spectatorId: Long): Spectator {
         return spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
     }
 }

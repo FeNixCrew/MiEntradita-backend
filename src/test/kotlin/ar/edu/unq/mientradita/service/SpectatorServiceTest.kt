@@ -300,6 +300,26 @@ class SpectatorServiceTest {
                 .isEqualTo(expectedMatchs)
     }
 
+    @Test
+    fun `se pueden obtener las entradas pendientes de pago de un espectador`() {
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido, 50), cargaDePartido)
+
+        val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
+
+        assertThat(spectatorService.pendingTicketsPaymentFor(espectador.id))
+            .containsExactly(entradaReservada)
+    }
+
+    @Test
+    fun `se puede registrar un pago de entradas para un partido y deja de ser pendiente de pago`() {
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido, 50), cargaDePartido)
+        val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
+
+        spectatorService.savePaymentFrom(espectador.id, entradaReservada.id, "unIdDePago")
+
+        assertThat(spectatorService.pendingTicketsPaymentFor(espectador.id)).isEmpty()
+    }
+
     @AfterEach
     fun tearDown() {
         matchService.clearDataSet()
