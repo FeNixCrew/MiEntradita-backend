@@ -8,6 +8,7 @@ import ar.edu.unq.mientradita.service.dto.CreateMatchRequest
 import ar.edu.unq.mientradita.service.dto.LoginRequest
 import ar.edu.unq.mientradita.service.dto.UserDTO
 import ar.edu.unq.mientradita.webservice.controllers.RegisterRequest
+import ar.edu.unq.mientradita.service.dto.SuccessPaymentRequest
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -109,7 +110,7 @@ class SpectatorServiceTest {
         val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
         assertThat(entradaReservada)
-                .isEqualTo(TicketDTO(entradaReservada.id, espectador.id, partidoDTO.id, nombreEquipoLocal, nombreEquipoVisitante, horarioPartido))
+                .isEqualTo(TicketDTO(entradaReservada.id, espectador.id, partidoDTO.id, nombreEquipoLocal, nombreEquipoVisitante, horarioPartido, 500F, entradaReservada.link))
     }
 
     @Test
@@ -315,7 +316,7 @@ class SpectatorServiceTest {
         val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido, 50), cargaDePartido)
         val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
-        spectatorService.savePaymentFrom(espectador.id, entradaReservada.id, "unIdDePago")
+        spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entradaReservada.id, "unIdDePago"))
 
         assertThat(spectatorService.pendingTicketsPaymentFor(espectador.id)).isEmpty()
     }

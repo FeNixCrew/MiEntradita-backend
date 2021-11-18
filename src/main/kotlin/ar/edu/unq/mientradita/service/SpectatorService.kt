@@ -1,5 +1,6 @@
 package ar.edu.unq.mientradita.service
 
+import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.Ticket
 import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
@@ -14,6 +15,7 @@ import ar.edu.unq.mientradita.service.client.MercadoPagoClient
 import ar.edu.unq.mientradita.service.dto.MatchDTO
 import ar.edu.unq.mientradita.service.dto.TeamDTO
 import ar.edu.unq.mientradita.service.dto.TicketDTO
+import ar.edu.unq.mientradita.service.dto.SuccessPaymentRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -46,8 +48,7 @@ class SpectatorService {
         val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
 
-        val newTicket: Ticket = spectator.reserveATicketFor(match, reserveTicketTime)
-        mercadoPagoClient.createLink(spectator, newTicket)
+        val newTicket: Ticket = createTicketWithMPLink(spectator, match, reserveTicketTime)
 
         ticketRepository.save(newTicket)
         matchRepository.save(match)
@@ -121,14 +122,26 @@ class SpectatorService {
             .map { TicketDTO.fromModel(spectatorId, it) }
     }
 
-
     @Transactional
-    fun savePaymentFrom(spectatorId: Long, ticketId: Long, paymentId: String) {
-        val ticket = ticketRepository.findById(ticketId)
-        obtainSpectator(spectatorId).savePayedTicket(ticket.get(), paymentId)
+    fun savePaymentFrom(successPaymentRequest: SuccessPaymentRequest) {
+        val ticket = ticketRepository.findById(successPaymentRequest.ticketId).get()
+        obtainSpectator(successPaymentRequest.spectatorId)
+            .savePayedTicket(ticket, successPaymentRequest.paymentId)
     }
 
     fun obtainSpectator(spectatorId: Long): Spectator {
         return spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
+    }
+
+    private fun createTicketWithMPLink(
+        spectator: Spectator,
+        match: Match,
+        reserveTicketTime: LocalDateTime
+    ): Ticket {
+        val newTicket: Ticket = spectator.reserveATicketFor(match, reserveTicketTime)
+        ticketRepository.save(newTicket)
+        val linkMP: String = mercadoPagoClient.createLink(spectator, newTicket)
+        newTicket.savePaymentLink(linkMP)
+        return newTicket
     }
 }

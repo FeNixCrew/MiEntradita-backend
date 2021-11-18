@@ -6,8 +6,9 @@ import com.mercadopago.MercadoPago
 import com.mercadopago.resources.Preference
 import com.mercadopago.resources.datastructures.preference.BackUrls
 import com.mercadopago.resources.datastructures.preference.Item
+import com.mercadopago.resources.datastructures.preference.Payer
+import com.mercadopago.resources.datastructures.preference.PaymentMethods
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 class MercadoPagoClient {
@@ -15,11 +16,23 @@ class MercadoPagoClient {
         MercadoPago.SDK.setAccessToken(System.getenv()["MP_ACCESS_TOKEN"])
         val preference = Preference()
 
+        val payer = Payer()
+        payer.email = spectator.email
+        payer.name = spectator.name
+        payer.surname = spectator.surname
+        preference.payer = payer
+
         val backUrls = BackUrls()
-        backUrls.failure = "http://localhost:3000/${spectator.username}/checkout/error/${ticket.id}"
-        backUrls.pending = "http://localhost:3000/${spectator.username}/checkout/${ticket.id}"
-        backUrls.success = "http://localhost:3000/checkout/success/${ticket.id}"
+        backUrls.failure = "http://localhost:3000/${spectator.username}/payments/pending"
+        backUrls.pending = "http://localhost:3000/${spectator.username}/payments/pending"
+        backUrls.success = "http://localhost:3000/${spectator.username}/payments/success/${ticket.id}"
         preference.backUrls = backUrls
+
+        val paymentMethods = PaymentMethods()
+        paymentMethods.setExcludedPaymentTypes("ticket", "atm")
+        preference.paymentMethods = paymentMethods
+
+        preference.autoReturn = Preference.AutoReturn.all
 
         val item = Item()
         item.title = "Entrada - ${ticket.match.home.name} vs ${ticket.match.away.name}"
@@ -27,9 +40,7 @@ class MercadoPagoClient {
         item.unitPrice = ticket.match.ticketPrice
         preference.appendItem(item)
 
-        val paymentLink: String = preference.save().sandboxInitPoint
-        ticket.savePaymentLink(paymentLink)
-        return paymentLink
+        return preference.save().sandboxInitPoint
     }
 }
 
