@@ -42,5 +42,6 @@ class Ticket(
     fun isFrom(aMatch: Match) = match.isEquals(aMatch)
 
     fun isPayed() = payment.isPayed()
+
     private fun existPresentTime() = presentTime != null
 }

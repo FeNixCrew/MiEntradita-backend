@@ -26,6 +26,12 @@ class SpectatorController {
     }
 
     @PreAuthorize("hasRole('USER')")
+    @RequestMapping(value = ["/tickets/pending-payment"], method = [RequestMethod.GET])
+    fun pendingPaymentTicketsFrom(@RequestParam spectatorId: Long): ResponseEntity<*> {
+        return ResponseEntity.ok(spectatorService.pendingTicketsPaymentFor(spectatorId))
+    }
+
+    @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = ["/favourite"], method = [RequestMethod.GET])
     fun favouriteTeamFor(@RequestParam spectatorId: Long): ResponseEntity<*> {
         return ResponseEntity(spectatorService.favouriteTeamFor(spectatorId), HttpStatus.OK)
