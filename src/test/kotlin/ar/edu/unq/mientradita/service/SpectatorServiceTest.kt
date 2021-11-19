@@ -352,7 +352,7 @@ class SpectatorServiceTest {
         val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido, 50), cargaDePartido)
         val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
-        spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entradaReservada.id, "unIdDePago"))
+        spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entradaReservada.id, "1243590211"))
 
         val entradaDespuesDeSerPagada = spectatorService.pendingTickets(espectador.id, horarioPartido.minusDays(4)).first()
 
