@@ -318,9 +318,33 @@ class SpectatorServiceTest {
         val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido, 50), cargaDePartido)
         val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
-        spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entradaReservada.id, "unIdDePago"))
+        spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entradaReservada.id, "1243590211"))
 
         assertThat(spectatorService.pendingTicketsPaymentFor(espectador.id)).isEmpty()
+    }
+
+    @Test
+    fun `no se puede registrar un pago de entrada si la misma no es valida`() {
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido, 50), cargaDePartido)
+        val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
+
+        val exception = assertThrows<InvalidPaymentException> {
+            spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entradaReservada.id, "999999999"))
+        }
+
+        assertThat(exception.message).isEqualTo("El id de pago no es valido")
+    }
+
+    @Test
+    fun `no se puede registrar un pago de entrada si la misma no esta aprobada`() {
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido, 50), cargaDePartido)
+        val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
+
+        val exception = assertThrows<PaymentNotApprovedException> {
+            spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entradaReservada.id, "1243732308"))
+        }
+
+        assertThat(exception.message).isEqualTo("El pago de la entrada no posee un estado de aprobado")
     }
 
     @AfterEach

@@ -1,8 +1,11 @@
 package ar.edu.unq.mientradita.service.client
 
 import ar.edu.unq.mientradita.model.Ticket
+import ar.edu.unq.mientradita.model.exception.InvalidPaymentException
+import ar.edu.unq.mientradita.model.exception.PaymentNotApprovedException
 import ar.edu.unq.mientradita.model.user.Spectator
 import com.mercadopago.MercadoPago
+import com.mercadopago.resources.Payment
 import com.mercadopago.resources.Preference
 import com.mercadopago.resources.datastructures.preference.BackUrls
 import com.mercadopago.resources.datastructures.preference.Item
@@ -42,11 +45,18 @@ class MercadoPagoClient {
 
         return preference.save().sandboxInitPoint
     }
+
+    fun validatePaymentId(paymentId: String) {
+        val payment: Payment = Payment.findById(paymentId)
+
+        if (payment.dateCreated == null) throw InvalidPaymentException()
+
+        if (payment.status != Payment.Status.approved) throw PaymentNotApprovedException()
+    }
 }
 
 /*
 resultado   tipo tarjeta	    nro	                    cod. seguridad	        vencimiento
 Success     Mastercard	        5031 7557 3453 0604	    123	                    11/25
 Failure     Mastercard	        5182 4320 0439 0716	    347	                    04/23
-Success     American Express	3711 803032 57522	    1234	                11/25
  */

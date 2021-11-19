@@ -125,6 +125,8 @@ class SpectatorService {
     @Transactional
     fun savePaymentFrom(successPaymentRequest: SuccessPaymentRequest) {
         val ticket = ticketRepository.findById(successPaymentRequest.ticketId).get()
+        mercadoPagoClient.validatePaymentId(successPaymentRequest.paymentId)
+
         obtainSpectator(successPaymentRequest.spectatorId)
             .savePayedTicket(ticket, successPaymentRequest.paymentId)
     }
