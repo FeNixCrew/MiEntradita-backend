@@ -50,12 +50,12 @@ class Spectator(
             ?: throw TicketFromMatchNotFoundException(this, match)
 
     fun pendingPaymentTickets(): List<Ticket> {
-        return tickets.filterNot { it.isPayed() }
+        return tickets.filterNot { it.isPaid() }
     }
 
     fun savePayedTicket(ticket: Ticket, paymentId: String) {
         try {
-            tickets.find { it.isFrom(ticket.match) }!!.markAsPayed(paymentId)
+            tickets.find { it.isFrom(ticket.match) }!!.markAsPaid(paymentId)
         } catch (_: NullPointerException) {
             throw TicketNotFoundException()
         }

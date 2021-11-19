@@ -58,4 +58,15 @@ class TicketTest {
     fun `una entrada esta ausente cuando el partido ya paso y no se asistio al mismo`() {
         assertThat(entrada.wasPresent()).isFalse
     }
+
+    @Test
+    fun `una entrada inicialmente no esta pagada`() {
+        assertThat(entrada.isPaid()).isFalse
+    }
+
+    @Test
+    fun `una entrada puede ser marcada como pagada`() {
+        entrada.markAsPaid("unIdDePago")
+        assertThat(entrada.isPaid()).isTrue
+    }
 }

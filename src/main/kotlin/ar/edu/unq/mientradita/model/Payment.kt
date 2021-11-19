@@ -20,5 +20,5 @@ class Payment(var link: String? = null) {
         this.paymentId = paymentId
     }
 
-    fun isPayed() = paymentId != null
+    fun isPaid() = paymentId != null
 }

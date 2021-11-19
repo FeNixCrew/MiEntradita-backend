@@ -12,6 +12,7 @@ data class TicketDTO(
     val matchStartTime: LocalDateTime,
     val price: Float,
     val link: String,
+    val isPaid: Boolean
 ) {
     companion object {
         fun fromModel(spectatorId: Long, ticket: Ticket): TicketDTO {
@@ -23,7 +24,8 @@ data class TicketDTO(
                 ticket.match.away.name,
                 ticket.match.matchStartTime,
                 ticket.match.ticketPrice,
-                ticket.payment.link!!
+                ticket.payment.link!!,
+                ticket.isPaid()
             )
         }
     }

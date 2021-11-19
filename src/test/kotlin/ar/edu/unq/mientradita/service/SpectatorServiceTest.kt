@@ -112,7 +112,7 @@ class SpectatorServiceTest {
         val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
         assertThat(entradaReservada)
-                .isEqualTo(TicketDTO(entradaReservada.id, espectador.id, partidoDTO.id, nombreEquipoLocal, nombreEquipoVisitante, horarioPartido, 500F, entradaReservada.link))
+                .isEqualTo(TicketDTO(entradaReservada.id, espectador.id, partidoDTO.id, nombreEquipoLocal, nombreEquipoVisitante, horarioPartido, 500F, entradaReservada.link, entradaReservada.isPaid))
     }
 
     @Test
@@ -345,6 +345,18 @@ class SpectatorServiceTest {
         }
 
         assertThat(exception.message).isEqualTo("El pago de la entrada no posee un estado de aprobado")
+    }
+
+    @Test
+    fun `se puede registrar un pago de entradas para un partido y ahora esta paga`() {
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido, 50), cargaDePartido)
+        val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
+
+        spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entradaReservada.id, "unIdDePago"))
+
+        val entradaDespuesDeSerPagada = spectatorService.pendingTickets(espectador.id, horarioPartido.minusDays(4)).first()
+
+        assertThat(entradaDespuesDeSerPagada.isPaid).isTrue
     }
 
     @AfterEach
