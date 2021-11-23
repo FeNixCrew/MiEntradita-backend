@@ -36,6 +36,7 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly("com.h2database:h2")
 	implementation("com.mercadopago:sdk-java:1.8.0")
+	implementation ("org.slf4j:slf4j-api:1.7.30")
 }
 
 tasks.withType<KotlinCompile> {
