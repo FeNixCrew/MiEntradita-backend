@@ -75,7 +75,7 @@ class MatchServiceTest {
     fun `un espectador quiere reservar una entrada para un partido que no existe y no puede`() {
         val idDePartidoInexistente = 9999.toLong()
 
-        val excepcion = assertThrows<MatchDoNotExistsException> {
+        val excepcion = assertThrows<MatchNotFoundException> {
             spectatorService.reserveTicket(espectador.id, idDePartidoInexistente, horarioPartido.minusDays(2))
         }
 
@@ -100,7 +100,7 @@ class MatchServiceTest {
     fun `un espectador no puede asistir a un partido que no existe`() {
         val partidoInexistenteId = 9999.toLong()
 
-        val exception = assertThrows<MatchDoNotExistsException> {
+        val exception = assertThrows<MatchNotFoundException> {
             matchService.comeIn(espectador.id, partidoInexistenteId, horarioPartido)
         }
 
@@ -113,7 +113,7 @@ class MatchServiceTest {
         spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
         matchService.comeIn(espectador.id, partidoDTO.id, horarioPartido)
 
-        val exception = assertThrows<AlreadyPresentInGameException> { matchService.comeIn(espectador.id, partidoDTO.id, horarioPartido) }
+        val exception = assertThrows<BusinessException> { matchService.comeIn(espectador.id, partidoDTO.id, horarioPartido) }
 
         assertThat(exception.message).isEqualTo("El espectador ya ha ingresado al partido")
     }
@@ -215,12 +215,30 @@ class MatchServiceTest {
     fun `dos equipos no pueden jugar un partido con la misma condicion de local y visitante`() {
         matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido), cargaDePartido)
 
-        val excepcion = assertThrows<MatchAlreadyExists> {
+        val excepcion = assertThrows<MatchAlreadyExistsException> {
             matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido.plusMonths(3)), cargaDePartido)
         }
 
         assertThat(excepcion.message)
-                .isEqualTo("Ya se ha disputado un partido entre $nombreEquipoLocal como local y $nombreEquipoVisitante como visitante")
+            .isEqualTo("Ya se ha disputado un partido entre $nombreEquipoLocal como local y $nombreEquipoVisitante como visitante")
+    }
+
+    @Test
+    fun `no se puede crear un partido si uno de los equipos no existe`() {
+        val excepcion = assertThrows<TeamNotFoundException> {
+            matchService.createMatch(CreateMatchRequest("equipo inexistente", nombreEquipoVisitante, 500F, horarioPartido.plusMonths(3)), cargaDePartido)
+        }
+        assertThat(excepcion.message)
+            .isEqualTo("Equipo llamado equipo inexistente no encontrado")
+    }
+
+    @Test
+    fun `un equipo no puede jugar contra si mismo`() {
+        val excepcion = assertThrows<BusinessException> {
+            matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoLocal, 500F, horarioPartido.plusMonths(3)), cargaDePartido)
+        }
+        assertThat(excepcion.message)
+            .isEqualTo("Un equipo no puede jugar contra si mismo")
     }
 
     @Test
@@ -238,7 +256,7 @@ class MatchServiceTest {
 
     @Test
     fun `los partidos deben crearse con al menos siete dias de anticipacion`(){
-        val excepcion = assertThrows<InvalidStartTimeException> {
+        val excepcion = assertThrows<BusinessException> {
             matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido), horarioPartido.minusDays(6))
         }
 

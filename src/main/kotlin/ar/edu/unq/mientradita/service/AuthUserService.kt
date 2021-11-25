@@ -1,9 +1,6 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.model.exception.DniAlreadyRegistered
-import ar.edu.unq.mientradita.model.exception.EmailAlreadyRegistered
-import ar.edu.unq.mientradita.model.exception.InvalidCredentialsException
-import ar.edu.unq.mientradita.model.exception.UsernameAlreadyRegistered
+import ar.edu.unq.mientradita.model.exception.*
 import ar.edu.unq.mientradita.persistence.UserRepository
 import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.service.dto.UserDTO
@@ -29,15 +26,15 @@ class AuthUserService {
     @Transactional
     fun createSpectator(registerRequest: RegisterRequest): UserDTO {
         if (userRepository.findByUsernameIgnoreCase(registerRequest.username).isPresent) {
-            throw UsernameAlreadyRegistered()
+            throw AlreadyExistsException("Nombre de usuario ya registrado")
         }
 
         if(userRepository.findByEmailIgnoreCase(registerRequest.email).isPresent) {
-            throw EmailAlreadyRegistered()
+            throw AlreadyExistsException("El correo ya esta registrado")
         }
 
         if(spectatorRepository.findByDni(registerRequest.dni).isPresent) {
-            throw DniAlreadyRegistered()
+            throw AlreadyExistsException("Ya hay una persona registrada con el dni brindado")
         }
 
         val spectator = registerRequest.toModel()
@@ -50,7 +47,7 @@ class AuthUserService {
     fun login(loginRequest: LoginRequest): Pair<String, UserDTO> {
         val maybeSpectator = userRepository.findByUsernameAndPassword(loginRequest.username, loginRequest.password)
         if (!maybeSpectator.isPresent) {
-            throw InvalidCredentialsException()
+            throw BusinessException("Las credenciales introducidas son incorrectas, intente de nuevo")
         }
 
         return Pair(jwtUtil.generateToken(maybeSpectator.get()), UserDTO.fromModel(maybeSpectator.get()))

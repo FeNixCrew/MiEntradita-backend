@@ -3,9 +3,9 @@ package ar.edu.unq.mientradita.model.user
 import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.Ticket
+import ar.edu.unq.mientradita.model.exception.AlreadyExistsException
+import ar.edu.unq.mientradita.model.exception.BusinessException
 import ar.edu.unq.mientradita.model.exception.TicketFromMatchNotFoundException
-import ar.edu.unq.mientradita.model.exception.TicketNotFoundException
-import ar.edu.unq.mientradita.model.exception.UserAlreadyHasTicket
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -36,7 +36,7 @@ class Spectator(
     }
 
     fun reserveATicketFor(match: Match, reserveTime: LocalDateTime = LocalDateTime.now()): Ticket {
-        if (tickets.any { it.match.isEquals(match) }) throw UserAlreadyHasTicket()
+        if (tickets.any { it.match.isEquals(match) }) throw AlreadyExistsException("Ya tienes una entrada para este partido")
         return match.reserveTicket(this, reserveTime)
     }
 
@@ -57,7 +57,7 @@ class Spectator(
         try {
             tickets.find { it.isFrom(ticket.match) }!!.markAsPaid(paymentId)
         } catch (_: NullPointerException) {
-            throw TicketNotFoundException()
+            throw BusinessException("la entrada no pertenece al espectador")
         }
     }
 

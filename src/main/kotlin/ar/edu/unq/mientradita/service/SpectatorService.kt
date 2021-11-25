@@ -3,7 +3,7 @@ package ar.edu.unq.mientradita.service
 import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.Ticket
-import ar.edu.unq.mientradita.model.exception.MatchDoNotExistsException
+import ar.edu.unq.mientradita.model.exception.MatchNotFoundException
 import ar.edu.unq.mientradita.model.exception.SpectatorNotRegistered
 import ar.edu.unq.mientradita.model.exception.TeamNotRegisteredException
 import ar.edu.unq.mientradita.model.user.Spectator
@@ -45,7 +45,7 @@ class SpectatorService {
         matchId: Long,
         reserveTicketTime: LocalDateTime = LocalDateTime.now()
     ): TicketDTO {
-        val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
+        val match = matchRepository.findById(matchId).orElseThrow { MatchNotFoundException() }
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
 
         val newTicket: Ticket = createTicketWithMPLink(spectator, match, reserveTicketTime)
@@ -94,7 +94,7 @@ class SpectatorService {
 
     @Transactional
     fun fansFrom(matchId: Long): List<Spectator> {
-        val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
+        val match = matchRepository.findById(matchId).orElseThrow { MatchNotFoundException() }
 
         return spectatorRepository.fansFrom(match)
     }

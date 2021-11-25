@@ -1,6 +1,6 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.model.exception.TeamAlredyRegisteredException
+import ar.edu.unq.mientradita.model.exception.AlreadyExistsException
 import ar.edu.unq.mientradita.model.exception.TeamNotFoundException
 import ar.edu.unq.mientradita.persistence.StadiumRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
@@ -20,7 +20,7 @@ class TeamService {
 
     @Transactional
     fun registerTeam(createTeamRequest: CreateTeamRequest): TeamDTO {
-        teamRepository.findByName(createTeamRequest.name).ifPresent { throw TeamAlredyRegisteredException() }
+        teamRepository.findByName(createTeamRequest.name).ifPresent { throw AlreadyExistsException("El equipo ya fue registrado") }
 
         val team = createTeamRequest.toModel()
         stadiumRepository.save(team.stadium)

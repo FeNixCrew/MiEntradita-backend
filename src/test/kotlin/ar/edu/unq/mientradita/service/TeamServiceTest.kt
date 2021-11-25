@@ -1,6 +1,6 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.model.exception.TeamAlredyRegisteredException
+import ar.edu.unq.mientradita.model.exception.AlreadyExistsException
 import ar.edu.unq.mientradita.service.dto.CreateTeamRequest
 import ar.edu.unq.mientradita.service.dto.TeamDTO
 import org.assertj.core.api.Assertions.assertThat
@@ -33,7 +33,7 @@ class TeamServiceTest {
 
     @Test
     fun `no se pueden registrar a un equipo con un nombre ya existente`() {
-        val exception = assertThrows<TeamAlredyRegisteredException> {
+        val exception = assertThrows<AlreadyExistsException> {
             teamService.registerTeam(CreateTeamRequest("River", "El Millo", "El Monumental", 200, 0.0, 0.0))
         }
 

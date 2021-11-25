@@ -1,8 +1,7 @@
 package ar.edu.unq.mientradita.service.client
 
 import ar.edu.unq.mientradita.model.Ticket
-import ar.edu.unq.mientradita.model.exception.InvalidPaymentException
-import ar.edu.unq.mientradita.model.exception.PaymentNotApprovedException
+import ar.edu.unq.mientradita.model.exception.BusinessException
 import ar.edu.unq.mientradita.model.user.Spectator
 import com.mercadopago.MercadoPago
 import com.mercadopago.resources.Payment
@@ -49,9 +48,9 @@ class MercadoPagoClient {
     fun validatePaymentId(paymentId: String) {
         val payment: Payment = Payment.findById(paymentId)
 
-        if (payment.dateCreated == null) throw InvalidPaymentException()
+        if (payment.dateCreated == null) throw BusinessException("El id de pago no es valido")
 
-        if (payment.status != Payment.Status.approved) throw PaymentNotApprovedException()
+        if (payment.status != Payment.Status.approved) throw BusinessException("El pago de la entrada no posee un estado de aprobado")
     }
 }
 

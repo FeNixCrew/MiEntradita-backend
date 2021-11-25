@@ -17,11 +17,11 @@ class MiEntraditaExceptionTest {
         val horaDeEntrada = horarioDePartido.minusHours(1)
         entrada.markAsPresent(horaDeEntrada)
 
-        val exception = assertThrows<MiEntraditaException> { entrada.markAsPresent(horaDeEntrada) }
+        val exception = assertThrows<BusinessException> { entrada.markAsPresent(horaDeEntrada) }
 
         val diccionarioEsperado = mapOf(
-            Pair("exception", "AlreadyPresentInGameException"),
-            Pair("message", "El espectador ya ha ingresado al partido")
+            Pair("exception", exception.javaClass.simpleName),
+            Pair("message", exception.message)
         )
 
         assertThat(exception.toMap()).isEqualTo(diccionarioEsperado)

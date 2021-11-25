@@ -1,7 +1,8 @@
 package ar.edu.unq.mientradita.model.user
 
 import ar.edu.unq.mientradita.model.builders.*
-import ar.edu.unq.mientradita.model.exception.TicketNotFoundException
+import ar.edu.unq.mientradita.model.exception.BusinessException
+import ar.edu.unq.mientradita.model.exception.TicketFromMatchNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -51,6 +52,18 @@ class SpectatorTest {
     }
 
     @Test
+    fun `se levanta una excepcion al pedirle una entrada a un espectador que el mismo no posee`() {
+        val team = TeamBuilder().withStadium(StadiumBuilder().withCapacity(10).build()).build()
+        val partido = MatchBuilder().withHome(team).build()
+
+        val exception = assertThrows<TicketFromMatchNotFoundException> { espectador.findTicketFrom(partido) }
+
+        assertThat(exception.message)
+            .isEqualTo("No se ha encontrado una entrada reservada de ${espectador.fullname()}" +
+                    " para el partido ${partido.home} vs ${partido.away}")
+    }
+
+    @Test
     fun `un espectador conoce las entradas pendientes de pago`() {
         val team = TeamBuilder().withStadium(StadiumBuilder().withCapacity(10).build()).build()
         val partido = MatchBuilder().withHome(team).build()
@@ -77,7 +90,7 @@ class SpectatorTest {
         val partido = MatchBuilder().withHome(team).build()
         val entradaReservada = otroEspectador.reserveATicketFor(partido)
 
-        val exception = assertThrows<TicketNotFoundException> {
+        val exception = assertThrows<BusinessException> {
             espectador.savePayedTicket(entradaReservada, "un id de pago")
         }
         assertThat(exception.message).isEqualTo("la entrada no pertenece al espectador")

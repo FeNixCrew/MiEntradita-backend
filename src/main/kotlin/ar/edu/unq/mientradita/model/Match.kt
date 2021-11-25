@@ -35,7 +35,7 @@ class Match(
             reservedTickets += 1
             return spectator.addTicket(newTicket)
         } else {
-            throw TicketsNotAvailablesException()
+            throw BusinessException("Ya no hay entradas disponibles para este partido")
         }
     }
 
@@ -59,18 +59,18 @@ class Match(
     }
 
     private fun checkIfIsTheSameMatch(match: Match) {
-        if (!this.isEquals(match)) throw DifferentGameException()
+        if (!this.isEquals(match)) throw BusinessException("La entrada pertenece a otro partido")
     }
 
     private fun checkIfCanComeIn(attendDate: LocalDateTime) {
-        if (attendDate < openingTime()) throw InvalidOpeningTimeException()
-        if (attendDate > closingTime()) throw InvalidClosingTimeException()
+        if (attendDate < openingTime()) throw BusinessException("Aún no se puede ingresar al partido")
+        if (attendDate > closingTime()) throw BusinessException("Ya no se puede ingresar al partido")
     }
     private fun openingTime() = matchStartTime.minusHours(3)
 
     private fun closingTime() = matchStartTime.plusMinutes(90)
 
     private fun checkValidPercentage(newPercentage: Int) {
-        if(newPercentage < 0 || newPercentage > 100) throw InvalidPercentageException()
+        if(newPercentage < 0 || newPercentage > 100) throw BusinessException("El porcentaje debe estar entre 0 y 100")
     }
 }

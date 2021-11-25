@@ -1,10 +1,7 @@
 package ar.edu.unq.mientradita.model
 
 import ar.edu.unq.mientradita.model.builders.*
-import ar.edu.unq.mientradita.model.exception.DifferentGameException
-import ar.edu.unq.mientradita.model.exception.InvalidClosingTimeException
-import ar.edu.unq.mientradita.model.exception.InvalidOpeningTimeException
-import ar.edu.unq.mientradita.model.exception.InvalidPercentageException
+import ar.edu.unq.mientradita.model.exception.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -56,7 +53,7 @@ class MatchTest {
         partido = MatchBuilder().withHome(TeamBuilder().withName("river").build()).build()
         entrada = TicketBuilder().build()
 
-        val exception = assertThrows<DifferentGameException> {
+        val exception = assertThrows<BusinessException> {
             partido.comeIn(entrada, LocalDateTime.now())
         }
 
@@ -73,11 +70,11 @@ class MatchTest {
                 .build()
 
         val horarioAnteriorAPoderEntrarAlPartido = horaDelPartido.minusHours(4)
-        val exception = assertThrows<InvalidOpeningTimeException> {
+        val exception = assertThrows<BusinessException> {
             partido.comeIn(entrada, horarioAnteriorAPoderEntrarAlPartido)
         }
 
-        assertThat(exception.message).isEqualTo("Aun no se puede ingresar al partido")
+        assertThat(exception.message).isEqualTo("Aún no se puede ingresar al partido")
     }
 
     @Test
@@ -90,7 +87,7 @@ class MatchTest {
                 .build()
 
         val horarioAntesDePoderEntrarAlPartido = horaDelPartido.plusMinutes(91)
-        val exception = assertThrows<InvalidClosingTimeException> {
+        val exception = assertThrows<BusinessException> {
             partido.comeIn(entrada, horarioAntesDePoderEntrarAlPartido)
         }
 
@@ -156,7 +153,7 @@ class MatchTest {
         val equipo = TeamBuilder().withStadium(estadio).build()
         val partido = MatchBuilder().withHome(equipo).build()
 
-        val exception = assertThrows<InvalidPercentageException> {
+        val exception = assertThrows<BusinessException> {
             partido.admittedPercentage = -1
         }
 
@@ -169,7 +166,7 @@ class MatchTest {
         val equipo = TeamBuilder().withStadium(estadio).build()
         val partido = MatchBuilder().withHome(equipo).build()
 
-        val exception = assertThrows<InvalidPercentageException> {
+        val exception = assertThrows<BusinessException> {
             partido.admittedPercentage = 101
         }
 

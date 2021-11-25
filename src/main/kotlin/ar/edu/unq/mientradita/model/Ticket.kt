@@ -1,6 +1,6 @@
 package ar.edu.unq.mientradita.model
 
-import ar.edu.unq.mientradita.model.exception.AlreadyPresentInGameException
+import ar.edu.unq.mientradita.model.exception.BusinessException
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -18,7 +18,7 @@ class Ticket(
     val payment: Payment = Payment()
 
     fun markAsPresent(presentTime: LocalDateTime = LocalDateTime.now()): LocalDateTime {
-        if (existPresentTime()) throw AlreadyPresentInGameException()
+        if (existPresentTime()) throw BusinessException("El espectador ya ha ingresado al partido")
         this.presentTime = presentTime
         return presentTime
     }

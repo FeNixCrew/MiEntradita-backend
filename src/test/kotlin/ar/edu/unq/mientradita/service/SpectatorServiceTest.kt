@@ -83,7 +83,7 @@ class SpectatorServiceTest {
         authUserService.createSpectator(
                 RegisterRequest("Fede", "Sandoval", "fede1234", "9999", 45456784, "fede1234@gmail.com"))
 
-        val exception = assertThrows<UsernameAlreadyRegistered> {
+        val exception = assertThrows<AlreadyExistsException> {
             authUserService.createSpectator(
                     RegisterRequest("Fede", "Sandoval", "fede1234", "9999", 45456784, "fede1234@gmail.com"))
         }
@@ -101,7 +101,7 @@ class SpectatorServiceTest {
 
     @Test
     fun `no se puede obtener informacion de un espectador si se introduce mal sus credenciales`() {
-        val exception = assertThrows<InvalidCredentialsException> { authUserService.login(LoginRequest("nico0510", "incorrecto")) }
+        val exception = assertThrows<BusinessException> { authUserService.login(LoginRequest("nico0510", "incorrecto")) }
 
         assertThat(exception.message).isEqualTo("Las credenciales introducidas son incorrectas, intente de nuevo")
     }
@@ -131,7 +131,7 @@ class SpectatorServiceTest {
         val partidoDTO = matchService.createMatch(CreateMatchRequest("Equipo 1", nombreEquipoVisitante, 500F, horarioPartido, 50), cargaDePartido)
         spectatorService.reserveTicket(espectador2.id, partidoDTO.id, horarioPartido.minusDays(4))
 
-        val exception = assertThrows<TicketsNotAvailablesException> {
+        val exception = assertThrows<BusinessException> {
             spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
         }
 
@@ -143,7 +143,7 @@ class SpectatorServiceTest {
         val partidoDTO = matchService.createMatch(CreateMatchRequest("Boca", "Velez", 500F, horarioPartido, 50), cargaDePartido)
         spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
-        val exception = assertThrows<UserAlreadyHasTicket> { spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(2)) }
+        val exception = assertThrows<AlreadyExistsException> { spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(2)) }
 
         assertThat(exception.message).isEqualTo("Ya tienes una entrada para este partido")
     }
@@ -251,7 +251,7 @@ class SpectatorServiceTest {
 
     @Test
     fun `no se pueden obtener los fans de los equipos de un partido inexistente`() {
-        val exception = assertThrows<MatchDoNotExistsException> {
+        val exception = assertThrows<MatchNotFoundException> {
             spectatorService.fansFrom(999999999)
         }
 
@@ -328,7 +328,7 @@ class SpectatorServiceTest {
         val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido, 50), cargaDePartido)
         val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
-        val exception = assertThrows<InvalidPaymentException> {
+        val exception = assertThrows<BusinessException> {
             spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entradaReservada.id, "999999999"))
         }
 
@@ -340,7 +340,7 @@ class SpectatorServiceTest {
         val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido, 50), cargaDePartido)
         val entradaReservada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
 
-        val exception = assertThrows<PaymentNotApprovedException> {
+        val exception = assertThrows<BusinessException> {
             spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entradaReservada.id, "1243732308"))
         }
 

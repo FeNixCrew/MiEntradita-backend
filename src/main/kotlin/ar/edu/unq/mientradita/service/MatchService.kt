@@ -49,7 +49,7 @@ class MatchService {
 
     @Transactional
     fun comeIn(spectatorId: Long, matchId: Long, attendTime: LocalDateTime = LocalDateTime.now()): String {
-        val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
+        val match = matchRepository.findById(matchId).orElseThrow { MatchNotFoundException() }
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
         val ticket = spectator.findTicketFrom(match)
 
@@ -77,7 +77,7 @@ class MatchService {
 
     @Transactional
     fun getMatchDetails(matchId: Long): MatchDTO {
-        val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
+        val match = matchRepository.findById(matchId).orElseThrow { MatchNotFoundException() }
         return MatchDTO.fromModel(match)
     }
 
@@ -113,7 +113,7 @@ class MatchService {
 
     private fun checkIsntSameTeam(createMatchRequest: CreateMatchRequest) {
         if (createMatchRequest.home == createMatchRequest.away) {
-            throw TeamCannotPlayAgainstHimselfException()
+            throw BusinessException("Un equipo no puede jugar contra si mismo")
         }
     }
 
@@ -132,7 +132,7 @@ class MatchService {
 
     private fun checkIfWasPlayed(home: Team, away: Team) {
         if (matchRepository.findByHomeAndAway(home, away).isPresent) {
-            throw MatchAlreadyExists(home.name, away.name)
+            throw MatchAlreadyExistsException(home.name, away.name)
         }
     }
 
@@ -141,7 +141,7 @@ class MatchService {
         val comparingActualTime = withoutTime(actualTime)
 
         if(comparingStartTime <= comparingActualTime.plusDays(6)) {
-            throw InvalidStartTimeException()
+            throw BusinessException("Los partidos tienen que crearse con al menos siete dias de anticipacion")
         }
     }
 
