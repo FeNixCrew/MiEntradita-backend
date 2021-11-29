@@ -1,9 +1,6 @@
 package ar.edu.unq.mientradita.aspect
 
-import ar.edu.unq.mientradita.model.exception.AlreadyExistsException
-import ar.edu.unq.mientradita.model.exception.BusinessException
-import ar.edu.unq.mientradita.model.exception.MiEntraditaException
-import ar.edu.unq.mientradita.model.exception.NotFoundException
+import ar.edu.unq.mientradita.model.exception.*
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -21,6 +18,8 @@ class ControllerExceptionsAspect {
     fun manageExceptions(proceedingJoinPoint: ProceedingJoinPoint): Any {
         return try {
             proceedingJoinPoint.proceed()
+        } catch (exception: PaymentNotRegistered) {
+            ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(exception.toMap())
         } catch (exception: BusinessException) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toMap())
         } catch (exception: AlreadyExistsException) {

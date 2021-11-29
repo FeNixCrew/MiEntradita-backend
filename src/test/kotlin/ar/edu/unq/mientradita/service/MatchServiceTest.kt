@@ -118,6 +118,16 @@ class MatchServiceTest {
     }
 
     @Test
+    fun `un espectador no puede ingresar a un partido si su entrada no esta paga`() {
+        val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido), cargaDePartido)
+        spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
+
+        val exception = assertThrows<PaymentNotRegistered> { matchService.comeIn(espectador.id, partidoDTO.id, horarioPartido) }
+
+        assertThat(exception.message).isEqualTo("La entrada no esta paga")
+    }
+
+    @Test
     fun `se pueden buscar partidos proximos por matcheo de nombre de un equipo`() {
         val partidosCreados = mutableListOf<MatchDTO>()
         partidosCreados.add(matchService.createMatch(CreateMatchRequest(nombreOtroEquipo, nombreEquipoVisitante, 500F, horarioPartido), cargaDePartido))
