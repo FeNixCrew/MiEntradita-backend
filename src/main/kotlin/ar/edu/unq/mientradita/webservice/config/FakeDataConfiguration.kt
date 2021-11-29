@@ -7,10 +7,7 @@ import ar.edu.unq.mientradita.service.AuthUserService
 import ar.edu.unq.mientradita.service.MatchService
 import ar.edu.unq.mientradita.service.SpectatorService
 import ar.edu.unq.mientradita.service.TeamService
-import ar.edu.unq.mientradita.service.dto.CreateTeamRequest
-import ar.edu.unq.mientradita.service.dto.MatchDTO
-import ar.edu.unq.mientradita.service.dto.UserDTO
-import ar.edu.unq.mientradita.service.dto.CreateMatchRequest
+import ar.edu.unq.mientradita.service.dto.*
 import ar.edu.unq.mientradita.webservice.controllers.RegisterRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
@@ -59,7 +56,7 @@ class FakeDataConfiguration {
                 )
         )
 
-        generateTicketsFor(pepe.id, matchs, spectatorService)
+        val pepeEntradas = generateTicketsFor(pepe.id, matchs, spectatorService)
 
         val moniFutbolera = authUserService.createSpectator(
                 RegisterRequest(
@@ -102,16 +99,19 @@ class FakeDataConfiguration {
             )
             losJuanes.add(spectator)
             contador += 1
-            spectatorService.reserveTicket(spectator.id, partido.id)
+            val entrada = spectatorService.reserveTicket(spectator.id, partido.id)
+            spectatorService.savePaymentFrom(SuccessPaymentRequest(spectator.id, entrada.id, "1243590211"))
         }
+
+        spectatorService.savePaymentFrom(SuccessPaymentRequest(pepe.id, pepeEntradas.last().id, "1243590211"))
 
         matchService.comeIn(pepe.id, partido.id)
         matchService.comeIn(losJuanes.first().id, partido.id)
         matchService.comeIn(losJuanes.last().id, partido.id)
     }
 
-    private fun generateTicketsFor(spectatorId: Long, matchs: List<MatchDTO>, spectatorService: SpectatorService) {
-        matchs.forEach {
+    private fun generateTicketsFor(spectatorId: Long, matchs: List<MatchDTO>, spectatorService: SpectatorService): List<TicketDTO> {
+        return matchs.map {
             spectatorService.reserveTicket(spectatorId, it.id)
         }
     }

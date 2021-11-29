@@ -8,5 +8,6 @@ class TeamNearlyPlayException(teamName:String, expectedDate: LocalDateTime, regi
     : BusinessException("$teamName no puede jugar el " + format(expectedDate) +
         " porque tiene un partido el dia " + format(registeredMatchDate))
 
+class PaymentNotRegistered: BusinessException("La entrada no esta paga")
 
 fun format(time: LocalDateTime)= "${time.dayOfMonth}/${time.monthValue}/${time.year}"

@@ -1,10 +1,7 @@
 package ar.edu.unq.mientradita.service
 
 import ar.edu.unq.mientradita.model.exception.*
-import ar.edu.unq.mientradita.service.dto.CreateTeamRequest
-import ar.edu.unq.mientradita.service.dto.MatchDTO
-import ar.edu.unq.mientradita.service.dto.UserDTO
-import ar.edu.unq.mientradita.service.dto.CreateMatchRequest
+import ar.edu.unq.mientradita.service.dto.*
 import ar.edu.unq.mientradita.webservice.controllers.RegisterRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -65,7 +62,8 @@ class MatchServiceTest {
     @Test
     fun `al asistir a un partido se ve un mensaje de bienvenida`() {
         val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido), cargaDePartido)
-        spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
+        val entrada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
+        spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entrada.id, "1243590211"))
 
         assertThat(matchService.comeIn(espectador.id, partidoDTO.id, horarioPartido))
                 .isEqualTo("Bienvenido ${espectador.username} al partido de ${partidoDTO.home} vs ${partidoDTO.away}")
@@ -110,7 +108,8 @@ class MatchServiceTest {
     @Test
     fun `un espectador no puede asistir dos veces a un partido`() {
         val partidoDTO = matchService.createMatch(CreateMatchRequest(nombreEquipoLocal, nombreEquipoVisitante, 500F, horarioPartido), cargaDePartido)
-        spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
+        val entrada = spectatorService.reserveTicket(espectador.id, partidoDTO.id, horarioPartido.minusDays(4))
+        spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entrada.id, "1243590211"))
         matchService.comeIn(espectador.id, partidoDTO.id, horarioPartido)
 
         val exception = assertThrows<BusinessException> { matchService.comeIn(espectador.id, partidoDTO.id, horarioPartido) }

@@ -15,6 +15,7 @@ class MiEntraditaExceptionTest {
         val partido = MatchBuilder().withMatchStart(horarioDePartido).build()
         val entrada = TicketBuilder().withGame(partido).build()
         val horaDeEntrada = horarioDePartido.minusHours(1)
+        entrada.markAsPaid("unIdDePago")
         entrada.markAsPresent(horaDeEntrada)
 
         val exception = assertThrows<BusinessException> { entrada.markAsPresent(horaDeEntrada) }

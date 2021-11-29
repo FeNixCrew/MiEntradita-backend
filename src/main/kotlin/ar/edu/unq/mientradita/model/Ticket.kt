@@ -1,6 +1,7 @@
 package ar.edu.unq.mientradita.model
 
 import ar.edu.unq.mientradita.model.exception.BusinessException
+import ar.edu.unq.mientradita.model.exception.PaymentNotRegistered
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -18,7 +19,9 @@ class Ticket(
     val payment: Payment = Payment()
 
     fun markAsPresent(presentTime: LocalDateTime = LocalDateTime.now()): LocalDateTime {
+        if(!isPaid()) throw PaymentNotRegistered()
         if (existPresentTime()) throw BusinessException("El espectador ya ha ingresado al partido")
+
         this.presentTime = presentTime
         return presentTime
     }

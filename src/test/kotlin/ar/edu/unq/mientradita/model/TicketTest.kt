@@ -47,6 +47,7 @@ class TicketTest {
     @Test
     fun `cuando una entrada se marca como presente se registra la hora en la que fue marcada`() {
         val horaDeEntrada = horarioDePartido.minusHours(1)
+        entrada.markAsPaid("unIdDePago")
 
         entrada.markAsPresent(horaDeEntrada)
 

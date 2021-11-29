@@ -29,6 +29,7 @@ class MatchTest {
                 .withGame(partido)
                 .build()
 
+        entrada.markAsPaid("unIdDePago")
         partido.comeIn(entrada, horaDelPartido.minusHours(3))
 
         assertThat(entrada.wasPresent()).isTrue
@@ -43,6 +44,7 @@ class MatchTest {
                 .withGame(partido)
                 .build()
 
+        entrada.markAsPaid("unIdDePago")
         partido.comeIn(entrada, horaDelPartido.plusMinutes(90))
 
         assertThat(entrada.wasPresent()).isTrue

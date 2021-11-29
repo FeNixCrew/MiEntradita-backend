@@ -3,12 +3,12 @@ package ar.edu.unq.mientradita.service
 import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.exception.*
-import ar.edu.unq.mientradita.persistence.match.MatchRepository
-import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
 import ar.edu.unq.mientradita.persistence.match.MailAndMatch
-import ar.edu.unq.mientradita.service.dto.MatchDTO
+import ar.edu.unq.mientradita.persistence.match.MatchRepository
+import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.service.dto.CreateMatchRequest
+import ar.edu.unq.mientradita.service.dto.MatchDTO
 import ar.edu.unq.mientradita.webservice.config.security.JWTTokenUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -52,12 +52,10 @@ class MatchService {
         val match = matchRepository.findById(matchId).orElseThrow { MatchNotFoundException() }
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
         val ticket = spectator.findTicketFrom(match)
-
         match.comeIn(ticket, attendTime)
 
         return "Bienvenido ${spectator.username} al partido de ${match.home.name} vs ${match.away.name}"
     }
-
 
     @Transactional
     fun searchNextMatchsByPartialName(
