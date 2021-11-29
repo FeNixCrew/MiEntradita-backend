@@ -66,4 +66,9 @@ class MatchController {
         return ResponseEntity(matchService.matchs(), HttpStatus.OK)
     }
 
+    @RequestMapping(value = ["/next-matches"], method = [RequestMethod.GET])
+    fun nextMatchesOfFavoriteTeam(): ResponseEntity<*> {
+        return ResponseEntity(matchService.nextMatches(), HttpStatus.OK)
+    }
+
 }

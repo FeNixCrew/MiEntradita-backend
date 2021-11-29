@@ -9,7 +9,7 @@ import java.util.*
 interface MatchRepositoryCustom {
     fun searchNextMatchsBy(partialTeamName: String, isFinished: Boolean?, aDate: LocalDateTime): List<Match>
     fun matchFromTeamBetweenDate(team: String, wantedStartTime: LocalDateTime): Optional<Match>
-    fun matchsOf(actualTime: LocalDateTime): List<Match>
+    fun matchsOf(actualTime: LocalDateTime, plusDays: Long = 1): List<Match>
     fun rememberOf(actualTime: LocalDateTime): List<MailAndMatch>
     fun getSpectatorsAttendance(match: Match): List<SpectatorAttendance>
 }
