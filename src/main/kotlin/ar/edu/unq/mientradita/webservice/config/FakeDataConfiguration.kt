@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.LocalDateTime
 
 @Configuration
@@ -33,6 +34,9 @@ class FakeDataConfiguration {
     @Autowired
     private lateinit var userRepository: UserRepository
 
+    @Autowired
+    private lateinit var passwordEncoder: PasswordEncoder
+
     @Bean
     fun fakeDataInject() =
             CommandLineRunner {
@@ -42,8 +46,8 @@ class FakeDataConfiguration {
     private fun createSpectators() {
         val matchs = generateMatchs()
 
-        userRepository.save(Admin("admin", "admin", "admin.mientradita2021@gmail.com"))
-        userRepository.save(Scanner("scanner", "scanner", "scanner.mientradita2021@gmail.com"))
+        userRepository.save(Admin("admin", passwordEncoder.encode("admin"), "admin.mientradita2021@gmail.com"))
+        userRepository.save(Scanner("scanner", passwordEncoder.encode("scanner"), "scanner.mientradita2021@gmail.com"))
 
         val pepe = authUserService.createSpectator(
                 RegisterRequest(

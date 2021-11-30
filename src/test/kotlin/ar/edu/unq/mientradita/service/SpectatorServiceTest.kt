@@ -100,8 +100,15 @@ class SpectatorServiceTest {
     }
 
     @Test
-    fun `no se puede obtener informacion de un espectador si se introduce mal sus credenciales`() {
+    fun `no se puede obtener informacion de un espectador si se introduce mal su nombre de usuario`() {
         val exception = assertThrows<BusinessException> { authUserService.login(LoginRequest("nico0510", "incorrecto")) }
+
+        assertThat(exception.message).isEqualTo("Las credenciales introducidas son incorrectas, intente de nuevo")
+    }
+
+    @Test
+    fun `no se puede obtener informacion de un espectador si se introduce mal su contrasenia`() {
+        val exception = assertThrows<BusinessException> { authUserService.login(LoginRequest("malUsuario", "1234")) }
 
         assertThat(exception.message).isEqualTo("Las credenciales introducidas son incorrectas, intente de nuevo")
     }
