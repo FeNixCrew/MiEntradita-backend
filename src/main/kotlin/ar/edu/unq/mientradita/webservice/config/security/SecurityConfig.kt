@@ -56,6 +56,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Bean
     fun encoder(): PasswordEncoder {
-        return BCryptPasswordEncoder(20)
+        return BCryptPasswordEncoder(12)
     }
 }
