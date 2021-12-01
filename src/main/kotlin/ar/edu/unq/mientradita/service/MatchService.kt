@@ -91,7 +91,7 @@ class MatchService {
 
     @Transactional
     fun nextMatches(actualTime: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
-        return matchRepository.matchsOf(withoutTime(actualTime), plusDays = 14).map { MatchDTO.fromModel(it) }
+        return matchRepository.matchsOf(withoutTime(actualTime), plusDays = 30).map { MatchDTO.fromModel(it) }
     }
 
     @Transactional
