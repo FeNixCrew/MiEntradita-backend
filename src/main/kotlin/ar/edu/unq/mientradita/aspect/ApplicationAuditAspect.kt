@@ -16,7 +16,10 @@ import org.springframework.util.StopWatch
 class ApplicationAuditAspect {
     private val logger = LoggerFactory.getLogger(ApplicationAuditAspect::class.java)
 
-    @Around("execution(* ar.edu.unq.mientradita.webservice.controllers.*.*(..))")
+    @Around("execution(* ar.edu.unq.mientradita.webservice.controllers.*.*(..))"
+            + "&& !@annotation(NoLogging)"
+            + "&& !@target(NoLogging)"
+    )
     fun audit(proceedingJoinPoint: ProceedingJoinPoint): Any {
         val methodSignature: MethodSignature = proceedingJoinPoint.signature as MethodSignature
 
@@ -36,7 +39,7 @@ class ApplicationAuditAspect {
                         .toString()
                         .replace("[", ">> ")
                         .replace("]", " <<")
-                        .replace("null,","")
+                        .replace("null,", "")
 
         val stopWatch = StopWatch()
         //Measure method execution time
@@ -51,3 +54,5 @@ class ApplicationAuditAspect {
     }
 
 }
+
+annotation class NoLogging
