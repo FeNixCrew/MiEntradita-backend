@@ -107,6 +107,7 @@ class FakeDataConfiguration {
             spectatorService.savePaymentFrom(SuccessPaymentRequest(spectator.id, entrada.id, "1243590211"))
         }
 
+        spectatorService.savePaymentFrom(SuccessPaymentRequest(pepe.id, pepeEntradas.first().id, "1243590211"))
         spectatorService.savePaymentFrom(SuccessPaymentRequest(pepe.id, pepeEntradas.last().id, "1243590211"))
 
         matchService.comeIn(pepe.id, partido.id)
