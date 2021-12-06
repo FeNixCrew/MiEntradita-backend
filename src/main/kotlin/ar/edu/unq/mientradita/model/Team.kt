@@ -7,8 +7,8 @@ class Team(
     @Column(unique = true)
     val name: String,
     val knowName: String,
-    val stadium: String,
-    val stadiumCapacity: Int) {
+    @OneToOne(fetch=FetchType.EAGER)
+    val stadium: Stadium) {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

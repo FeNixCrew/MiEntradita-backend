@@ -3,12 +3,12 @@ package ar.edu.unq.mientradita.service
 import ar.edu.unq.mientradita.model.Match
 import ar.edu.unq.mientradita.model.Team
 import ar.edu.unq.mientradita.model.exception.*
-import ar.edu.unq.mientradita.persistence.match.MatchRepository
-import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
 import ar.edu.unq.mientradita.persistence.TeamRepository
 import ar.edu.unq.mientradita.persistence.match.MailAndMatch
+import ar.edu.unq.mientradita.persistence.match.MatchRepository
+import ar.edu.unq.mientradita.persistence.spectator.SpectatorRepository
+import ar.edu.unq.mientradita.service.dto.CreateMatchRequest
 import ar.edu.unq.mientradita.service.dto.MatchDTO
-import ar.edu.unq.mientradita.webservice.controllers.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.config.security.JWTTokenUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -49,15 +49,13 @@ class MatchService {
 
     @Transactional
     fun comeIn(spectatorId: Long, matchId: Long, attendTime: LocalDateTime = LocalDateTime.now()): String {
-        val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
+        val match = matchRepository.findById(matchId).orElseThrow { MatchNotFoundException() }
         val spectator = spectatorRepository.findById(spectatorId).orElseThrow { SpectatorNotRegistered() }
         val ticket = spectator.findTicketFrom(match)
-
         match.comeIn(ticket, attendTime)
 
         return "Bienvenido ${spectator.username} al partido de ${match.home.name} vs ${match.away.name}"
     }
-
 
     @Transactional
     fun searchNextMatchsByPartialName(
@@ -77,7 +75,7 @@ class MatchService {
 
     @Transactional
     fun getMatchDetails(matchId: Long): MatchDTO {
-        val match = matchRepository.findById(matchId).orElseThrow { MatchDoNotExistsException() }
+        val match = matchRepository.findById(matchId).orElseThrow { MatchNotFoundException() }
         return MatchDTO.fromModel(match)
     }
 
@@ -89,6 +87,11 @@ class MatchService {
     @Transactional
     fun matchs(): List<MatchDTO> {
         return matchRepository.findAll().map { MatchDTO.fromModel(it) }
+    }
+
+    @Transactional
+    fun nextMatches(actualTime: LocalDateTime = LocalDateTime.now()): List<MatchDTO> {
+        return matchRepository.matchsOf(withoutTime(actualTime), plusDays = 30).map { MatchDTO.fromModel(it) }
     }
 
     @Transactional
@@ -113,7 +116,7 @@ class MatchService {
 
     private fun checkIsntSameTeam(createMatchRequest: CreateMatchRequest) {
         if (createMatchRequest.home == createMatchRequest.away) {
-            throw TeamCannotPlayAgainstHimselfException()
+            throw BusinessException("Un equipo no puede jugar contra si mismo")
         }
     }
 
@@ -132,7 +135,7 @@ class MatchService {
 
     private fun checkIfWasPlayed(home: Team, away: Team) {
         if (matchRepository.findByHomeAndAway(home, away).isPresent) {
-            throw MatchAlreadyExists(home.name, away.name)
+            throw MatchAlreadyExistsException(home.name, away.name)
         }
     }
 
@@ -141,7 +144,7 @@ class MatchService {
         val comparingActualTime = withoutTime(actualTime)
 
         if(comparingStartTime <= comparingActualTime.plusDays(6)) {
-            throw InvalidStartTimeException()
+            throw BusinessException("Los partidos tienen que crearse con al menos siete dias de anticipacion")
         }
     }
 

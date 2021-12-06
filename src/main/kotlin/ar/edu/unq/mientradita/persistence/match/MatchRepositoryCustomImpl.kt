@@ -15,7 +15,7 @@ import javax.persistence.criteria.Predicate
 import javax.persistence.criteria.Root
 
 @Repository
-class MatchRepositoryCustomImpl: MatchRepositoryCustom {
+class MatchRepositoryCustomImpl : MatchRepositoryCustom {
 
     @Autowired
     private lateinit var em: EntityManager
@@ -33,7 +33,7 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
         val matchWithAnyTeam = cb.or(matchWithHomeTeam, matchWithAwayTeam)
         predicates.add(matchWithAnyTeam)
 
-        if(isFinished!=null) {
+        if (isFinished != null) {
             val expectedTime = aDate.minusMinutes(90)
             if (isFinished) {
                 val finished = cb.lessThan(match.get("matchStartTime"), expectedTime)
@@ -66,20 +66,20 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
         cq.where(condition)
 
         val result = em.createQuery(cq).resultList
-        return if(result.size > 0) {
+        return if (result.size > 0) {
             Optional.of(result[0])
         } else {
             Optional.empty()
         }
     }
 
-    override fun matchsOf(actualTime: LocalDateTime): List<Match> {
+    override fun matchsOf(actualTime: LocalDateTime, plusDays: Long): List<Match> {
         val cb = em.criteriaBuilder
         val cq: CriteriaQuery<Match> = cb.createQuery(Match::class.java)
         val match: Root<Match> = cq.from(Match::class.java)
 
         val playAfter = cb.greaterThanOrEqualTo(match.get("matchStartTime"), actualTime)
-        val playBefore = cb.lessThan(match.get("matchStartTime"), actualTime.plusDays(1))
+        val playBefore = cb.lessThan(match.get("matchStartTime"), actualTime.plusDays(plusDays))
 
         val condition = cb.and(playAfter, playBefore)
         cq.where(condition)
@@ -101,8 +101,8 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
         cq.where(condition)
 
         cq.multiselect(
-            spectator.get<String>("email"),
-            spectatorAndTicket.get<Match>("match")
+                spectator.get<String>("email"),
+                spectatorAndTicket.get<Match>("match")
         )
 
         return em.createQuery(cq).resultList
@@ -120,26 +120,25 @@ class MatchRepositoryCustomImpl: MatchRepositoryCustom {
         cq.orderBy(cb.asc(spectator.get<Long>("dni")))
 
         cq.multiselect(
-            spectator.get<Long>("id"),
-            spectator.get<Int>("dni"),
-            spectator.get<String>("name"),
-            spectator.get<String>("surname"),
-            spectatorAndTicket.get<LocalDateTime?>("presentTime")
+                spectator.get<Long>("id"),
+                spectator.get<Int>("dni"),
+                spectator.get<String>("name"),
+                spectator.get<String>("surname"),
+                spectatorAndTicket.get<LocalDateTime?>("presentTime")
         )
 
         return em.createQuery(cq).resultList
     }
 
-
 }
 
 
-data class MailAndMatch(val mail:String, val match: Match)
+data class MailAndMatch(val mail: String, val match: Match)
 
 data class SpectatorAttendance(
-    val id: Long,
-    val dni: Int,
-    val name: String,
-    val surname: String,
-    val presentTime: LocalDateTime?,
+        val id: Long,
+        val dni: Int,
+        val name: String,
+        val surname: String,
+        val presentTime: LocalDateTime?,
 )

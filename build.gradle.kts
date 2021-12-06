@@ -35,7 +35,8 @@ dependencies {
 	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 	runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly("com.h2database:h2")
-
+	implementation("com.mercadopago:sdk-java:1.8.0")
+	implementation ("org.slf4j:slf4j-api:1.7.30")
 }
 
 tasks.withType<KotlinCompile> {
@@ -72,10 +73,11 @@ tasks.jacocoTestReport {
 			include("ar/edu/unq/mientradita/model/**")
 			include("ar/edu/unq/mientradita/persistence/**")
 			include("ar/edu/unq/mientradita/service/**")
-			exclude("ar/edu/unq/mientradita/service/MailSender*")
-			exclude("ar/edu/unq/mientradita/service/Reminder*")
-			exclude("ar/edu/unq/mientradita/model/builders")
+			exclude("ar/edu/unq/mientradita/aspect/**")
 			exclude("ar/edu/unq/mientradita/service/dto/**")
+			exclude("ar/edu/unq/mientradita/model/builders/**")
+			exclude("ar/edu/unq/mientradita/service/Reminder*")
+			exclude("ar/edu/unq/mientradita/service/MailSender*")
 		}
 	)
 }

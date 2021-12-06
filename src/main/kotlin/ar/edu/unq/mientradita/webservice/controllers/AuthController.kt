@@ -1,5 +1,6 @@
 package ar.edu.unq.mientradita.webservice.controllers
 
+import ar.edu.unq.mientradita.aspect.NoLogging
 import ar.edu.unq.mientradita.service.AuthUserService
 import ar.edu.unq.mientradita.service.dto.LoginRequest
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +15,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/auth")
 @EnableAutoConfiguration
+@NoLogging
 class AuthController {
     @Autowired
     private lateinit var authUserService: AuthUserService

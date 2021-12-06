@@ -1,10 +1,6 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.service.dto.Asistencia
-import ar.edu.unq.mientradita.service.dto.CreateTeamRequest
-import ar.edu.unq.mientradita.service.dto.MatchDTO
-import ar.edu.unq.mientradita.service.dto.UserDTO
-import ar.edu.unq.mientradita.webservice.controllers.CreateMatchRequest
+import ar.edu.unq.mientradita.service.dto.*
 import ar.edu.unq.mientradita.webservice.controllers.RegisterRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -53,10 +49,10 @@ class AdminServiceTest {
                 )
         )
 
-        teamService.registerTeam(CreateTeamRequest(river, "un apodo", "un estadio", 20))
-        teamService.registerTeam(CreateTeamRequest(racing, "un apodo", "un estadio", 20))
-        teamService.registerTeam(CreateTeamRequest(velez, "un apodo", "un estadio", 20))
-        partido = matchService.createMatch(CreateMatchRequest(river, racing, 500.00, horarioPartido), cargaDePartido)
+        teamService.registerTeam(CreateTeamRequest(river, "un apodo", "un estadio", 20, 0.0, 0.0))
+        teamService.registerTeam(CreateTeamRequest(racing, "un apodo", "un estadio", 20, 0.0, 0.0))
+        teamService.registerTeam(CreateTeamRequest(velez, "un apodo", "un estadio", 20, 0.0, 0.0))
+        partido = matchService.createMatch(CreateMatchRequest(river, racing, 500F, horarioPartido), cargaDePartido)
 
     }
 
@@ -87,8 +83,10 @@ class AdminServiceTest {
                 dni = 12345679
             )
         )
-        spectatorService.reserveTicket(espectador.id, partido.id)
-        spectatorService.reserveTicket(otroEspectador.id, partido.id)
+        val entrada1 = spectatorService.reserveTicket(espectador.id, partido.id)
+        val entrada2 = spectatorService.reserveTicket(otroEspectador.id, partido.id)
+        spectatorService.savePaymentFrom(SuccessPaymentRequest(espectador.id, entrada1.id, "1243590211"))
+        spectatorService.savePaymentFrom(SuccessPaymentRequest(otroEspectador.id, entrada2.id, "1243590211"))
         matchService.comeIn(espectador.id, partido.id, horarioPartido)
         matchService.comeIn(otroEspectador.id, partido.id, horarioPartido)
 

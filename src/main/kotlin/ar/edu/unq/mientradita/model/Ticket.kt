@@ -1,6 +1,7 @@
 package ar.edu.unq.mientradita.model
 
-import ar.edu.unq.mientradita.model.exception.AlreadyPresentInGameException
+import ar.edu.unq.mientradita.model.exception.BusinessException
+import ar.edu.unq.mientradita.model.exception.PaymentNotRegistered
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -14,11 +15,23 @@ class Ticket(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
     var presentTime: LocalDateTime? = null
+    @OneToOne(fetch= FetchType.EAGER, cascade = [CascadeType.ALL])
+    val payment: Payment = Payment()
 
     fun markAsPresent(presentTime: LocalDateTime = LocalDateTime.now()): LocalDateTime {
-        if (existPresentTime()) throw AlreadyPresentInGameException()
+        if(!isPaid()) throw PaymentNotRegistered()
+        if (existPresentTime()) throw BusinessException("El espectador ya ha ingresado al partido")
+
         this.presentTime = presentTime
         return presentTime
+    }
+
+    fun savePaymentLink(paymentLink: String) {
+        payment.saveLink(paymentLink)
+    }
+
+    fun markAsPaid(paymentId: String) {
+        this.payment.savePayment(paymentId)
     }
 
     fun wasPresent(): Boolean{
@@ -31,6 +44,7 @@ class Ticket(
 
     fun isFrom(aMatch: Match) = match.isEquals(aMatch)
 
+    fun isPaid() = payment.isPaid()
+
     private fun existPresentTime() = presentTime != null
 }
-

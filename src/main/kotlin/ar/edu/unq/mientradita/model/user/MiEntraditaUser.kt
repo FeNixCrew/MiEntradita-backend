@@ -10,6 +10,7 @@ open class MiEntraditaUser(
     open val password: String,
     @Column(unique = true)
     open val email:String,
+    @Enumerated(EnumType.STRING)
     open val role: Role) {
 
     @Id

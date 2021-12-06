@@ -28,6 +28,8 @@ jobs:
         run: chmod +x ./gradlew
       
       - name: Run tests
+        env:
+          MP_ACCESS_TOKEN: ${{ secrets.MP_ACCESS_TOKEN }}
         run: ./gradlew test -i
         
       - name: Update coverage report in Codacy

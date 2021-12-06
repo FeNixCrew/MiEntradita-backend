@@ -1,18 +1,17 @@
 package ar.edu.unq.mientradita.webservice.controllers
 
 import ar.edu.unq.mientradita.service.MatchService
+import ar.edu.unq.mientradita.service.dto.ComeInRequest
+import ar.edu.unq.mientradita.service.dto.CreateMatchRequest
 import ar.edu.unq.mientradita.webservice.config.CHANNEL
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime
 import javax.validation.Valid
-import javax.validation.constraints.NotBlank
 
 @RestController
 @RequestMapping("/api/match")
@@ -67,17 +66,9 @@ class MatchController {
         return ResponseEntity(matchService.matchs(), HttpStatus.OK)
     }
 
+    @RequestMapping(value = ["/next-matches"], method = [RequestMethod.GET])
+    fun nextMatchesOfFavoriteTeam(): ResponseEntity<*> {
+        return ResponseEntity(matchService.nextMatches(), HttpStatus.OK)
+    }
+
 }
-
-data class ComeInRequest(val spectatorId: Long, val matchId: Long)
-
-data class CreateMatchRequest(
-    @field:NotBlank(message = "El equipo local es requerido")
-    val home: String,
-    @field:NotBlank(message = "El equipo visitante es requerido")
-    val away: String,
-    val ticketPrice: Double,
-    @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    val matchStartTime: LocalDateTime,
-    val admittedPercentage: Int? = 50
-)

@@ -12,7 +12,7 @@ class Match(
     @ManyToOne(fetch=FetchType.EAGER)
     val away: Team,
     val matchStartTime: LocalDateTime,
-    val ticketPrice: Double
+    val ticketPrice: Float
     ) {
 
     @Id
@@ -29,13 +29,13 @@ class Match(
 
     fun numberOfTicketsAvailable() = this.maximumCapacity() - reservedTickets
 
-    fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime) {
+    fun reserveTicket(spectator: Spectator, reserveTicketTime: LocalDateTime): Ticket {
         if(numberOfTicketsAvailable() > 0){
             val newTicket = Ticket(this, reserveTicketTime)
             reservedTickets += 1
-            spectator.addTicket(newTicket)
+            return spectator.addTicket(newTicket)
         } else {
-            throw TicketsNotAvailablesException()
+            throw BusinessException("Ya no hay entradas disponibles para este partido")
         }
     }
 
@@ -46,7 +46,7 @@ class Match(
         ticket.markAsPresent(attendDate)
     }
 
-    fun maximumCapacity() = home.stadiumCapacity * admittedPercentage / 100
+    fun maximumCapacity() = home.stadium.capacity * admittedPercentage / 100
 
     fun isEquals(match: Match) = this.home.isEquals(match.home) && this.away.isEquals(match.away)
 
@@ -59,18 +59,18 @@ class Match(
     }
 
     private fun checkIfIsTheSameMatch(match: Match) {
-        if (!this.isEquals(match)) throw DifferentGameException()
+        if (!this.isEquals(match)) throw BusinessException("La entrada pertenece a otro partido")
     }
 
     private fun checkIfCanComeIn(attendDate: LocalDateTime) {
-        if (attendDate < openingTime()) throw InvalidOpeningTimeException()
-        if (attendDate > closingTime()) throw InvalidClosingTimeException()
+        if (attendDate < openingTime()) throw BusinessException("Aún no se puede ingresar al partido")
+        if (attendDate > closingTime()) throw BusinessException("Ya no se puede ingresar al partido")
     }
     private fun openingTime() = matchStartTime.minusHours(3)
 
     private fun closingTime() = matchStartTime.plusMinutes(90)
 
     private fun checkValidPercentage(newPercentage: Int) {
-        if(newPercentage < 0 || newPercentage > 100) throw InvalidPercentageException()
+        if(newPercentage < 0 || newPercentage > 100) throw BusinessException("El porcentaje debe estar entre 0 y 100")
     }
 }

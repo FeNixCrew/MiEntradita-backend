@@ -1,6 +1,6 @@
 package ar.edu.unq.mientradita.service
 
-import ar.edu.unq.mientradita.model.exception.TeamAlredyRegisteredException
+import ar.edu.unq.mientradita.model.exception.AlreadyExistsException
 import ar.edu.unq.mientradita.service.dto.CreateTeamRequest
 import ar.edu.unq.mientradita.service.dto.TeamDTO
 import org.assertj.core.api.Assertions.assertThat
@@ -23,7 +23,7 @@ class TeamServiceTest {
 
     @BeforeEach
     fun setUp() {
-        equipo = teamService.registerTeam(CreateTeamRequest("River", "El Millo", "El Monumental", 200))
+        equipo = teamService.registerTeam(CreateTeamRequest("River", "El Millo", "El Monumental", 200, 0.0, 0.0))
     }
 
     @Test
@@ -33,8 +33,8 @@ class TeamServiceTest {
 
     @Test
     fun `no se pueden registrar a un equipo con un nombre ya existente`() {
-        val exception = assertThrows<TeamAlredyRegisteredException> {
-            teamService.registerTeam(CreateTeamRequest("River", "El Millo", "El Monumental", 200))
+        val exception = assertThrows<AlreadyExistsException> {
+            teamService.registerTeam(CreateTeamRequest("River", "El Millo", "El Monumental", 200, 0.0, 0.0))
         }
 
         assertThat(exception.message).isEqualTo("El equipo ya fue registrado")
@@ -42,9 +42,9 @@ class TeamServiceTest {
 
     @Test
     fun `se pueden obtener todos los equipos`() {
-        val racing = teamService.registerTeam(CreateTeamRequest("Racing", "La Academia", "El Cilindro", 200))
+        val racing = teamService.registerTeam(CreateTeamRequest("Racing", "La Academia", "El Cilindro", 200, 0.0, 0.0))
 
-        val equiposEsperados = listOf(equipo, racing).map { TeamDTO(it.id, it.name, it.knowName, it.stadium, it.stadiumCapacity) }
+        val equiposEsperados = listOf(equipo, racing).map { TeamDTO(it.id, it.name, it.knowName, it.stadium, it.stadiumCapacity, it.stadiumLatitude, it.stadiumLongitude) }
         assertThat(teamService.getTeams()).usingRecursiveComparison().isEqualTo(equiposEsperados)
     }
 

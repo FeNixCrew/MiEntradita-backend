@@ -7,10 +7,12 @@ data class TeamDTO(
         val name: String,
         val knowName: String,
         val stadium: String,
-        val stadiumCapacity: Int) {
+        val stadiumCapacity: Int,
+        val stadiumLatitude: Double,
+        val stadiumLongitude: Double) {
     companion object {
         fun fromModel(team: Team): TeamDTO {
-            return TeamDTO(team.id!!, team.name, team.knowName, team.stadium, team.stadiumCapacity)
+            return TeamDTO(team.id!!, team.name, team.knowName, team.stadium.name, team.stadium.capacity, team.stadium.latitude, team.stadium.longitude)
         }
     }
 }

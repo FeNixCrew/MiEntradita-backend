@@ -1,16 +1,16 @@
 package ar.edu.unq.mientradita.model.builders
 
+import ar.edu.unq.mientradita.model.Stadium
 import ar.edu.unq.mientradita.model.Team
 
 class TeamBuilder {
 
     private var name: String = "a"
     private var knowName: String = "b"
-    private var stadium: String = "c"
-    private var maximumCapacity = 0
+    private var stadium: Stadium = StadiumBuilder().build()
 
     fun build(): Team {
-        return Team(name, knowName, stadium, maximumCapacity)
+        return Team(name, knowName, stadium)
     }
 
     fun withName(name: String): TeamBuilder {
@@ -23,12 +23,7 @@ class TeamBuilder {
         return this
     }
 
-    fun withMaximumCapacity(maximumCapacity: Int): TeamBuilder {
-        this.maximumCapacity = maximumCapacity
-        return this
-    }
-
-    fun withStadium(stadium: String): TeamBuilder {
+    fun withStadium(stadium: Stadium): TeamBuilder {
         this.stadium = stadium
         return this
     }

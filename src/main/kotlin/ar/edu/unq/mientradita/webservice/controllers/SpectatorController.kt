@@ -1,6 +1,7 @@
 package ar.edu.unq.mientradita.webservice.controllers
 
 import ar.edu.unq.mientradita.service.SpectatorService
+import ar.edu.unq.mientradita.service.dto.SuccessPaymentRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -23,6 +24,19 @@ class SpectatorController {
     @RequestMapping(value = ["/new-reserve"], method = [RequestMethod.POST])
     fun reserveTicket(@RequestParam spectatorId: Long, matchId: Long): ResponseEntity<*> {
         return ResponseEntity(spectatorService.reserveTicket(spectatorId, matchId), HttpStatus.OK)
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @RequestMapping(value = ["/tickets/pending-payment"], method = [RequestMethod.GET])
+    fun pendingPaymentTicketsFrom(@RequestParam spectatorId: Long): ResponseEntity<*> {
+        return ResponseEntity.ok(spectatorService.pendingTicketsPaymentFor(spectatorId))
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @RequestMapping(value = ["/tickets/success"], method = [RequestMethod.POST])
+    fun savePayment(@RequestBody successPaymentRequest: SuccessPaymentRequest): ResponseEntity<*> {
+        spectatorService.savePaymentFrom(successPaymentRequest)
+        return ResponseEntity.ok(null)
     }
 
     @PreAuthorize("hasRole('USER')")
